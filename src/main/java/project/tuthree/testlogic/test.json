@@ -1,0 +1,18 @@
+{
+  "prob" : 3,
+  "1" : {
+    "ans" : "5",
+    "type" : "num",
+  },
+  "2" : {
+    "ans" : "secret",
+    "type" : "str",
+    "auto" : "yes"
+  },
+  "3" : {
+    "ans" : "i think it's ...",
+    "type" : "str",
+    "auto" : "no"
+  }
+}
+
