@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static javax.persistence.FetchType.*;
 
@@ -25,7 +26,7 @@ public class Calendar {
     private StudyRoom room;
 
     @Temporal(TemporalType.DATE)
-    private LocalDateTime date;
+    private Date date;
 
     private String schedule;
     private String detail;

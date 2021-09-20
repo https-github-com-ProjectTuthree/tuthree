@@ -34,7 +34,7 @@ public class InitDatabase {
 
             //user가 admin 것도 같이 수정하지를 못함..
             User parent = new User("user_id","pwd1","user1", new Mail("parent","domain.com"), new Tel("010","0000","0000"),
-                    Sex.FEMALE, 2001,"/home/ubuntu/tell", Grade.PARENT, LocalDateTime.now());
+                    Sex.FEMALE, 2001,"/home/ubuntu/tell", Grade.PARENT, new Date());
             System.out.println(parent.getId());
 
             User parent1 = User.builder()
@@ -47,7 +47,7 @@ public class InitDatabase {
                     .birth(2001)
                     .post("/picture/mimi")
                     .grade(Grade.PARENT)
-                    .create_date(LocalDateTime.now())
+                    .create_date(new Date())
                     .build();
 
         }
