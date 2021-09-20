@@ -24,6 +24,7 @@ public class UserFile {
 
     //@ManyToOne
     //joinclumn을 어떻게 해야하나..
+    @Column(name = "user_id")
     private String userId;
 
     @Column(name = "save_title")

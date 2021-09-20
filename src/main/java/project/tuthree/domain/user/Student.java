@@ -18,9 +18,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student extends User {
 
-    @Builder
+    //@Builder
     public Student(String id, String pwd, String name, Mail mail, Tel tel, Sex sex, int birth,
-                   String post, Grade grade, LocalDateTime create_date, Status registration,
+                   String post, Grade grade, Date create_date, Status registration,
                    String region, String subject, int cost, String detail, School school, List<User> parent) {
         super(id, pwd, name, mail, tel, sex, birth, post, grade, create_date);
         this.registration = registration;
@@ -46,7 +46,7 @@ public class Student extends User {
     @Enumerated(EnumType.STRING)
     private School school;
 
-    @OneToMany(mappedBy = "parent")///////////////////////////////////////////////////
+    @OneToMany///////////////////////////////////////////////////mappedby 원칙적으로 있으면 안된다
     @JoinColumn(name = "user_id")
     private List<User> parent;
 
