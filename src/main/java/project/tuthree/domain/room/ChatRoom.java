@@ -14,10 +14,10 @@ public class ChatRoom {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    //동일한 연과노간계 두개 가 ㅐ핑이 되지 않음
     private Admin user1;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+//    @JoinColumn(name = "user_id")
     private Admin user2;
 }

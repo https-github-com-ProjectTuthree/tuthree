@@ -8,5 +8,5 @@ import javax.persistence.Entity;
 @Getter
 public class PostNotice extends Post{
 
-    private String id; //admin
+    private String admin_id; //admin
 }

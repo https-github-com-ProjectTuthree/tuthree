@@ -10,15 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Teacher extends User{
 
-    @Builder
+    //@Builder
     public Teacher(String id, String pwd, String name, Mail mail, Tel tel, Sex sex, int birth,
-                   String post, Grade grade, LocalDateTime create_date, Status registration,
+                   String post, Grade grade, Date create_date, Status registration,
                    String region, String subject, int cost, String detail, String school,
                    SchoolStatus status, String major) {
         super(id, pwd, name, mail, tel, sex, birth, post, grade, create_date);
