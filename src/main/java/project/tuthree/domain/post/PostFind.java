@@ -6,7 +6,6 @@ import project.tuthree.domain.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity

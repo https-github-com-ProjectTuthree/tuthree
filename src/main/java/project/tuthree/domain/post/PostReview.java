@@ -5,7 +5,6 @@ import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity

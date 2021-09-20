@@ -1,7 +1,6 @@
 package project.tuthree.domain.user;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
@@ -9,7 +8,6 @@ import project.tuthree.domain.Status;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
