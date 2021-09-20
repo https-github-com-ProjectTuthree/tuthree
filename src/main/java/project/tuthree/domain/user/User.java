@@ -1,10 +1,7 @@
 package project.tuthree.domain.user;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity

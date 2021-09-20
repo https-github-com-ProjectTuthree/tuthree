@@ -1,14 +1,12 @@
 package project.tuthree;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Component
