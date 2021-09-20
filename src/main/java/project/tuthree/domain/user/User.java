@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class User extends Admin{
 
     @Builder
-    public User(String id, String pwd, String name, Mail mail, Tel tel, Sex sex, int birth, String post, Grade grade, LocalDateTime create_date) {
+    public User(String id, String pwd, String name, Mail mail, Tel tel, Sex sex, int birth, String post, Grade grade, Date create_date) {
         super(id, pwd);
         this.name = name;
         this.mail = mail;
@@ -47,6 +48,6 @@ public class User extends Admin{
     private Grade grade;
 
     @Temporal(TemporalType.DATE)
-    private LocalDateTime create_date;
+    private Date create_date;
 
 }

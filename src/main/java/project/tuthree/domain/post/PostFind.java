@@ -7,6 +7,7 @@ import project.tuthree.domain.user.User;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -22,10 +23,10 @@ public class PostFind implements Serializable {
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime write_at;
+    private Date write_at;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime alter_at;
+    private Date alter_at;
 
     @Enumerated(EnumType.ORDINAL)
     private Status secret;

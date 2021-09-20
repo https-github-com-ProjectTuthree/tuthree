@@ -5,6 +5,7 @@ import project.tuthree.domain.Status;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -32,11 +33,11 @@ public abstract class Post {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "wirte_at")
-    private LocalDateTime writeAt;
+    private Date writeAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "alter_at")
-    private LocalDateTime alterAt;
+    private Date alterAt;
 
     @Enumerated(EnumType.STRING)
     private Status secret;

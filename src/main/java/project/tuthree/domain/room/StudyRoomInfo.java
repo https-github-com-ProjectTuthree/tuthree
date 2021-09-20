@@ -7,6 +7,7 @@ import project.tuthree.domain.Status;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -26,7 +27,7 @@ public class StudyRoomInfo implements Serializable {
     private String account;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime check_date;
+    private Date check_date;
 
     @Enumerated(EnumType.STRING)
     private Status status; //학생의 수락 상태

@@ -4,7 +4,7 @@ import lombok.Getter;
 import project.tuthree.domain.room.ChatRoom;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import static javax.persistence.FetchType.*;
 
@@ -32,7 +32,7 @@ public class Chat {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "chat_at")
-    private LocalDateTime chatAt;
+    private Date chatAt;
 
     @Column(name = "chat_content")
     private String chatContent;
