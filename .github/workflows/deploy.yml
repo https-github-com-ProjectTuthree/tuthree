@@ -48,4 +48,4 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./build.zip s3://tuthree-bucket/server/build.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name testapp --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=isntyet-deploy,bundleType=zip,key=server/build.zip
+        run: aws deploy create-deployment --application-name  EC2-S3-Deploy --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=isntyet-deploy,bundleType=zip,key=server/build.zip
