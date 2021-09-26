@@ -1,29 +1,23 @@
-package project.tuthree.domain.room;
+package project.tuthree.domain.post;
 
 import lombok.Getter;
+import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter
 @SequenceGenerator(
-        name = "CALENDAR_SEQ_GENERATOR",
-        sequenceName = "CALENDAR_SEQ",
+        name = "POSTSTUDY_SEQ_GENERATOR",
+        sequenceName = "POSTSTUDY_SEQ",
         allocationSize = 1
 )
-public class Calendar {
-    /**
-     * 복합키 식별 관계 매핑... 하나도 모르겠다..
-     * 결국 복합키 안하는 걸로
-     */
-
+public class PostStudy {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "CALENDAR_SEQ_GENERATOR")
-    @Column(name = "cal_id")
+            generator = "POSTSTUDY_SEQ")
+    @Column(name = "post_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
@@ -32,11 +26,4 @@ public class Calendar {
             @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     })
     private StudyRoom studyRoomId;
-
-    @Temporal(TemporalType.DATE)
-    private Date date;
-
-    private String schedule;
-
-
 }
