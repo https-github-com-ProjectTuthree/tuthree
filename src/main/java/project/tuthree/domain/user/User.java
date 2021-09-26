@@ -6,33 +6,23 @@ import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-//@DiscriminatorColumn(name = "member_type")
 @Getter
 @Table(name = "Parent")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class User{
 
-public class User extends Admin{
+    @Id @Column(name = "user_id")
+    private String id;
 
-    @Builder
-    public User(String id, String pwd, String name, Mail mail, Tel tel, Sex sex, int birth, String post, Grade grade, Date create_date) {
-        super(id, pwd);
-        this.name = name;
-        this.mail = mail;
-        this.tel = tel;
-        this.sex = sex;
-        this.birth = birth;
-        this.post = post;
-        this.grade = grade;
-        this.create_date = create_date;
-    }
+    @Column(name = "user_pwd")
+    private String pwd;
 
     private String name;
 
-    @Embedded
-    private Mail mail;
+    private String email;
 
-    @Embedded
-    private Tel tel;
+    private String tel;
 
     @Enumerated(EnumType.ORDINAL)
     private Sex sex;
@@ -44,7 +34,7 @@ public class User extends Admin{
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
 }
