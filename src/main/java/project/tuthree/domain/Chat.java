@@ -17,10 +17,9 @@ import static javax.persistence.FetchType.*;
 )
 public class Chat {
 
-    //chat admin 은 고려하지 않음
-    //어떻게 해야되냐..
-
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CHAT_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "CHAT_SEQ_GENERATOR")
+    @Column(name = "chat_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
@@ -35,7 +34,6 @@ public class Chat {
     private Date chatAt;
 
     @Column(name = "chat_content")
-    private String chatContent;
-
+    private String content;
 
 }

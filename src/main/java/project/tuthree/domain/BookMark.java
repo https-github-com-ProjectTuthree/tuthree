@@ -6,7 +6,6 @@ import project.tuthree.domain.user.User;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter
@@ -21,10 +20,9 @@ public class BookMark {
     @Column(name = "mark_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id1")
+    private String user;
 
-    @Column(name = "plus_id")
+    @Column(name = "user_id2")
     private String user2;
 }

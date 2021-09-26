@@ -6,16 +6,16 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "admins")
+@Table(name = "admin")
 public class Admin {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "admin_id")
     private String id;
 
+    @Column(name = "admin_pwd")
     private String pwd;
 
 }

@@ -6,18 +6,22 @@ import project.tuthree.domain.user.Admin;
 import javax.persistence.*;
 
 @Entity
-//@DiscriminatorColumn(name = "chat_room")
 @Getter
+@SequenceGenerator(
+        name = "CHATROOM_SEQ_GENERATOR",
+        sequenceName = "CHATROOM_SEQ",
+        allocationSize = 1
+)
 public class ChatRoom {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "CHATROOM_SEQ_GENERATOR")
     @Column(name = "room_id")
     private Long id;
 
-    @ManyToOne
-    //동일한 연과노간계 두개 가 ㅐ핑이 되지 않음
-    private Admin user1;
+    @Column(name = "user_id1")
+    private String user1;
 
-    @ManyToOne
-//    @JoinColumn(name = "user_id")
-    private Admin user2;
+    @Column(name = "user_id2")
+    private String user2;
+
 }
