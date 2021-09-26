@@ -7,30 +7,35 @@ import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
+
 import static javax.persistence.FetchType.*;
 
 @Entity
-//@DiscriminatorColumn(name = "study_room")
 @Getter
-@SequenceGenerator(
-        name = "STUDY_SEQ_GENERATOR",
-        sequenceName = "STUDY_SEQ",
-        allocationSize = 1
-)
-public class StudyRoom{
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "STUDY_SEQ_GENERATOR")
-    @Column(name = "room_id")
-    private Long id;
-
+//@IdClass(StudyRoomId.class)
+public class StudyRoom implements Serializable {
+    @Id
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
+    private Teacher teacherId;
 
+    @Id
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "student_id")
-    private Student student;
+    private Student studentId;
 
     @Enumerated(EnumType.STRING)
-    private Status room_status;
+    @Column(name = "room_status")
+    private Status Status;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

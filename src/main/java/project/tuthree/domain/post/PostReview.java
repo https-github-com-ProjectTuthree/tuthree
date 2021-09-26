@@ -2,18 +2,29 @@ package project.tuthree.domain.post;
 
 import lombok.Getter;
 import project.tuthree.domain.room.StudyRoom;
+import project.tuthree.domain.room.StudyRoomId;
+import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Getter
+@IdClass(StudyRoomId.class)
 public class PostReview implements Serializable {
+    /**
+     * 복합키 식별 관계 매핑
+     */
 
     @Id
-    @OneToOne
-    @JoinColumn(name = "room_id")
+    @OneToOne(fetch = EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id"),
+            @JoinColumn(name = "student_id", referencedColumnName = "student_id")
+    })
     private StudyRoom id;
 
     private int star;
@@ -21,5 +32,16 @@ public class PostReview implements Serializable {
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date write_at;
+    @Column(name = "write_at")
+    private Date writeAt;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
