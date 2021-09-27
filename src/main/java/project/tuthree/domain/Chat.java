@@ -1,5 +1,6 @@
 package project.tuthree.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import project.tuthree.domain.room.ChatRoom;
 
@@ -22,7 +23,7 @@ public class Chat {
     @Column(name = "chat_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private ChatRoom room;
 

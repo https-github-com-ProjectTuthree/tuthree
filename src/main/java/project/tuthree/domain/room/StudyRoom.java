@@ -1,5 +1,6 @@
 package project.tuthree.domain.room;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Student;
@@ -16,12 +17,12 @@ import static javax.persistence.FetchType.*;
 //@IdClass(StudyRoomId.class)
 public class StudyRoom implements Serializable {
     @Id
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacherId;
 
     @Id
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private Student studentId;
 
