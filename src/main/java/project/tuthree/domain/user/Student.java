@@ -1,5 +1,6 @@
 package project.tuthree.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +41,7 @@ public class Student extends User{
 
     private String detail;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private User parent;
 

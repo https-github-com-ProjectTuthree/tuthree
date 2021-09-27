@@ -1,5 +1,6 @@
 package project.tuthree.domain.room;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public class Calendar {
     @Column(name = "cal_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id"),
             @JoinColumn(name = "student_id", referencedColumnName = "student_id")

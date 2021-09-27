@@ -1,5 +1,6 @@
 package project.tuthree.domain.file;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import project.tuthree.domain.post.PostTestPaper;
@@ -46,7 +47,7 @@ public class UserFile {
     @Column(name = "real_title")
     private String realTitle;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "testpaper_id")
     private PostTestPaper testpaperId;
 
