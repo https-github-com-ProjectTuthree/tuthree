@@ -1,6 +1,6 @@
 package project.tuthree.domain.post;
 
-import lombok.Getter;
+import lombok.*;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Admin;
 
@@ -11,24 +11,25 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@Setter
 @SequenceGenerator(
         name = "POSTNOTICE_SEQ_GENERATOR",
         sequenceName = "POSTNOTICE_SEQ",
         allocationSize = 1
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class PostNotice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "POSTNOTICE_SEQ_GENERATOR")
     @Column(name = "post_id")
-    private String id;
+    private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "admin_id")
     private Admin admin;
-
-    private String type;
 
     private String title;
 
@@ -45,4 +46,19 @@ public class PostNotice {
     private Date alterAt;
 
     private Status secret;
+
+    @Enumerated(EnumType.STRING)
+    private NoticeType type;
+
+    @Builder
+    public PostNotice(Admin admin, String title, String content, Long view, Date writeAt, Date alterAt, Status secret, NoticeType type) {
+        this.admin = admin;
+        this.title = title;
+        this.content = content;
+        this.view = view;
+        this.writeAt = writeAt;
+        this.alterAt = alterAt;
+        this.secret = secret;
+        this.type = type;
+    }
 }
