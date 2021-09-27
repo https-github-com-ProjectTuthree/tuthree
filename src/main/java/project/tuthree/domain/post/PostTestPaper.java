@@ -1,5 +1,6 @@
 package project.tuthree.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class PostTestPaper {
     @Column(name = "post_id")
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacherId;
 

@@ -1,0 +1,38 @@
+devtools:
+  livereload:
+    enabled: true
+
+#local / dev / prod
+spring:
+  profiles:
+    active: local
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  mail:
+    host: stmp.gmail.com
+    port: 587
+    username: project.tuthree
+    password: tuthree1234!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+            required: true
+  security:
+    user:
+      password: 542ced02-3ec0-40cd-a5b7-0dbdeca9bcf1
+
+#---
+#spring:
+#  profiles:
+#    active: dev
+
+#---
+#spring:
+#  profiles:
+#    active: prod //aws

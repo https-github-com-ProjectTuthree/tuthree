@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/Documents/IdeaProjects/TuthreeDatabase
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create #create => none
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+
+logging:
+  level:
+    #org.hibernate.SQL: debug # log
+    org.hibernate.type: trace #query parameter | external library 사용 | spring-boot-datasource-decorator
