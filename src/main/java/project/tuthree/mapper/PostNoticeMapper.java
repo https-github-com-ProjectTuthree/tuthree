@@ -8,7 +8,7 @@ import project.tuthree.domain.post.PostNotice;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.dto.PostnoticeDTO;
 
-@Mapper(componentModel = "spring", uses = {PostNoticeMapper.class})
+@Mapper(componentModel = "spring")
 public interface PostNoticeMapper extends GenericMapper<PostnoticeDTO, PostNotice> {
 
     @Mappings({
@@ -16,5 +16,8 @@ public interface PostNoticeMapper extends GenericMapper<PostnoticeDTO, PostNotic
     })
     PostnoticeDTO toDto(PostNotice postNotice);
 
+    @Mappings({
+            @Mapping(source = "adminId", target = "admin")
+    })
     PostNotice toEntity(PostnoticeDTO postnoticeDTO);
 }
