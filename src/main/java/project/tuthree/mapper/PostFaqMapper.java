@@ -8,7 +8,7 @@ import project.tuthree.dto.PostfaqDTO;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {PostFaqMapper.class})
+@Mapper(componentModel = "spring")
 public interface PostFaqMapper extends GenericMapper<PostfaqDTO, PostFaq> {
 
 //인자로 받은 것 / setter로 설정할 것
@@ -18,6 +18,9 @@ public interface PostFaqMapper extends GenericMapper<PostfaqDTO, PostFaq> {
     })
     PostfaqDTO toDto(PostFaq postFaq);
 
+    @Mappings({
+            @Mapping(source = "adminId", target = "admin")
+    })
     PostFaq toEntity(PostfaqDTO postfaqDTO);
 
 }

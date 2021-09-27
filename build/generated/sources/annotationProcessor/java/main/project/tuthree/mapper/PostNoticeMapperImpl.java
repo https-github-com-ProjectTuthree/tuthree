@@ -11,7 +11,7 @@ import project.tuthree.dto.PostnoticeDTO.PostnoticeDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-09-27T18:39:43+0900",
+    date = "2021-09-27T22:54:52+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -51,6 +51,27 @@ public class PostNoticeMapperImpl implements PostNoticeMapper {
             return;
         }
 
+        if ( dto.getId() != null ) {
+            entity.setId( dto.getId() );
+        }
+        if ( dto.getTitle() != null ) {
+            entity.setTitle( dto.getTitle() );
+        }
+        if ( dto.getContent() != null ) {
+            entity.setContent( dto.getContent() );
+        }
+        if ( dto.getView() != null ) {
+            entity.setView( dto.getView() );
+        }
+        if ( dto.getWriteAt() != null ) {
+            entity.setWriteAt( dto.getWriteAt() );
+        }
+        if ( dto.getAlterAt() != null ) {
+            entity.setAlterAt( dto.getAlterAt() );
+        }
+        if ( dto.getSecret() != null ) {
+            entity.setSecret( dto.getSecret() );
+        }
         if ( dto.getType() != null ) {
             entity.setType( dto.getType() );
         }
@@ -85,6 +106,7 @@ public class PostNoticeMapperImpl implements PostNoticeMapper {
 
         PostNoticeBuilder postNotice = PostNotice.builder();
 
+        postNotice.admin( postnoticeDTO.getAdminId() );
         postNotice.title( postnoticeDTO.getTitle() );
         postNotice.content( postnoticeDTO.getContent() );
         postNotice.view( postnoticeDTO.getView() );
