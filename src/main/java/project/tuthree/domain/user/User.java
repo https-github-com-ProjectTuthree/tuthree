@@ -1,5 +1,7 @@
 package project.tuthree.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.scene.NodeBuilder;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
@@ -9,13 +11,14 @@ import java.util.Date;
 @Getter
 @Table(name = "Parent")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User{
 
-    @Id @Column(name = "user_id")
+    @Id
+    @Column(name = "user_id")
     private String id;
 
     @Column(name = "user_pwd")
+    @JsonIgnore
     private String pwd;
 
     private String name;
@@ -37,4 +40,17 @@ public class User{
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
+    @Builder
+    public User(String id, String pwd, String name, String email, String tel, Sex sex, int birth,String post, Grade grade, Date create_date){
+        this.id = id;
+        this.pwd = pwd;
+        this.name = name;
+        this.email = email;
+        this.tel = tel;
+        this.sex = sex;
+        this.birth = birth;
+        this.post = post;
+        this.grade = grade;
+        this.create_date = create_date;
+    }
 }
