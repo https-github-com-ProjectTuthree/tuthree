@@ -1,10 +1,15 @@
 package project.tuthree.domain.post;
 
-public enum NoticeType {
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 
-    act1("타입1"),
-    act2("타입2"),
-    act3("타입3");
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum NoticeType {
+    /** 공지사항 분류 */
+
+    NORMAL("일반"),
+    IMPORTANT("중요");
 
     private String korType;
 

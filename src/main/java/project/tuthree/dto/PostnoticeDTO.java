@@ -11,6 +11,7 @@ import project.tuthree.domain.user.Admin;
 import javax.swing.text.View;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -21,16 +22,16 @@ public class PostnoticeDTO {
 
     private Long id;
 
-    @NotBlank
+    @NotNull
     private Admin adminId;
 
-    @NotBlank
+    @NotNull
     private NoticeType type;
 
-    @NotBlank
+    @NotNull
     private String title;
 
-    @NotEmpty
+    @NotNull
     private String content;
 
     @ColumnDefault("0")
@@ -40,7 +41,7 @@ public class PostnoticeDTO {
 
     private Date alterAt;
 
-    @NotBlank
+    @NotNull
     private Status secret;
 
     @Builder
@@ -51,7 +52,7 @@ public class PostnoticeDTO {
         Assert.hasText(title, "title must not be blank");
         Assert.hasText(content, "content must not be blank");
         //Assert.notNull(view, "view must not be blank");
-        Assert.notNull(writeAt, "writeAt must not be blank");
+        //Assert.notNull(writeAt, "writeAt must not be blank");
         Assert.notNull(secret, "secret must not be blank");
         this.id = id;
         this.adminId = adminId;
