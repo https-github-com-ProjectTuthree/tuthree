@@ -42,9 +42,9 @@ public class PostNoticeRepository {
      * 공지사항 id로 특정 글 조회하기
      */
     public PostNotice findById(Long id) {
-        return em.createQuery("select p from PostNotice p where p.id = :id", PostNotice.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        PostNotice postNotice = em.find(PostNotice.class, id);
+        postNotice.updateView();
+        return postNotice;
     }
 
     /**
@@ -58,14 +58,23 @@ public class PostNoticeRepository {
     /**
      * 공지사항 삭제
      */
-    public int deleteNotice(Long id) {
+    public Long deleteNotice(Long id) {
         try {
             em.remove(em.find(PostNotice.class, id));
-            return 0;
+            return id;
         } catch (Exception e) {
             e.printStackTrace();
-            return 1;
+            return 0L;
         }
+    }
+
+    /**
+     * 공지사항 수정
+     */
+    public int updateNotice(Long id, PostNotice postNotice) {
+        PostNotice post = em.find(PostNotice.class, id);
+        post.updateNotice(postNotice);
+        return 0;
     }
 
 
