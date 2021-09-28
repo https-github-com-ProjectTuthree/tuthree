@@ -65,9 +65,6 @@ public class PostAdminApiController {
     /** faq  작성 */
     @PostMapping("/faq/admin/write")
     public NotExistDataResultResponse faqWrite(@RequestBody @Valid PostfaqDTO postfaqDTO) {
-        //res.setHeader("Authorization", "tokenid");
-        //int code = res.getStatus();
-        //res.setHeader("code", String.valueOf(code));
         Long id = postFaqService.writeFaq(postfaqDTO);
         log.debug("\n---- 관리자 FAQ 작성 [ID : " + id + " ] ----\n");
         return new NotExistDataResultResponse(id + "번 FAQ가 작성되었습니다.");

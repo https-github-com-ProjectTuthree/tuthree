@@ -18,9 +18,7 @@ public class PostUserApiController {
     /** responsebody 처리하기 valid */
 
     private final PostFaqService postFaqService;
-    private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
-    private final PostNoticeRepository postNoticeRepository;
 
     @ResponseBody
     @GetMapping("/faq/{page}")
@@ -34,8 +32,6 @@ public class PostUserApiController {
         return postFaqService.faqFindById(id);
     }
 
-
-
     @ResponseBody
     @GetMapping("/notice/{page}")
     public List<PostnoticeDTO> NoticeList(@PathVariable("page") int page) {
@@ -47,8 +43,5 @@ public class PostUserApiController {
     public PostnoticeDTO NoticeFind(@PathVariable("notice_id") Long id) {
         return postNoticeService.noticeById(id);
     }
-
-
-
 
 }
