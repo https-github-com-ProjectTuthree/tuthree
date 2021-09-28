@@ -1,7 +1,9 @@
 package project.tuthree.ApiController;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.dto.PostnoticeDTO;
@@ -14,84 +16,121 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PostAdminApiController {
-
-    /** responsebody 처리하기 valid */
 
     private final PostFaqService postFaqService;
     private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
     private final PostNoticeRepository postNoticeRepository;
+    private final HttpServletResponse response;
 
-    //FAQ 글 목록 조회
-    @ResponseBody
+    @Getter
+    @AllArgsConstructor
+    class ExistDataSuccessResponse<T>{
+        private final Boolean Success = true;
+        private final int StatusCode = response.getStatus();
+        String Message;
+        T data;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    class NotExistDataResultResponse<T>{
+        private final Boolean Success = true;
+        private final int StatusCode = response.getStatus();
+        String Message;
+    }
+
+    /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
-    public List<PostfaqDTO> FaqList(@PathVariable("page") int page) {
-        return postFaqService.faqFindByPage(page);
+    public ExistDataSuccessResponse FaqList(@PathVariable("page") int page) {
+        List<PostfaqDTO> dtoList = postFaqService.faqFindByPage(page);
+        log.debug("\n---- 관리자 FAQ 페이지 리스트 조회 ----\n");
+        return new ExistDataSuccessResponse(
+                page + " 페이지의 FAQ가 조회되었습니다.", dtoList);
     }
 
-    @ResponseBody
+    /** faq 특정 글 조회 */
     @GetMapping("/faq/admin/id/{faq_id}")
-    public PostfaqDTO FaqFind(@PathVariable("faq_id") Long id){
-        return postFaqService.faqFindById(id);
+    public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id){
+        PostfaqDTO postfaqDTO = postFaqService.faqFindById(id);
+        log.debug("\n---- 관리자 FAQ 게시글 조회 [ID : " + id + " ] ----\n");
+        return new ExistDataSuccessResponse(
+                postfaqDTO.getId() + "번 FAQ가 조회되었습니다.", postfaqDTO);
     }
 
-    /**
-     * faq  작성
-     */
-    @ResponseBody
+    /** faq  작성 */
     @PostMapping("/faq/admin/write")
-    public Long faqWrite(@RequestBody PostfaqDTO postfaqDTO, HttpServletResponse res) {
-        res.setHeader("Authorization", "tokenid");
-        int code = res.getStatus();
-        res.setHeader("code", String.valueOf(code));
-        return postFaqService.writeFaq(postfaqDTO);
+    public NotExistDataResultResponse faqWrite(@RequestBody @Valid PostfaqDTO postfaqDTO) {
+        //res.setHeader("Authorization", "tokenid");
+        //int code = res.getStatus();
+        //res.setHeader("code", String.valueOf(code));
+        Long id = postFaqService.writeFaq(postfaqDTO);
+        log.debug("\n---- 관리자 FAQ 작성 [ID : " + id + " ] ----\n");
+        return new NotExistDataResultResponse(id + "번 FAQ가 작성되었습니다.");
     }
 
-    /**
-     * faq 삭제
-     */
-    @ResponseBody
+    /** faq 삭제 */
     @DeleteMapping("/faq/admin/id/{faq_id}")
-    public int faqDelete(@PathVariable("faq_id") Long id, HttpServletResponse response) {
-        postFaqRepository.deleteFaq(id);
-        return response.getStatus();
+    public NotExistDataResultResponse faqDelete(@PathVariable("faq_id") Long id) {
+        Long deleteId = postFaqRepository.deleteFaq(id);
+        log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
+        return new NotExistDataResultResponse(deleteId + "번 FAQ가 삭제되었습니다.");
     }
 
-    @ResponseBody
+    /**  faq 수정 */
+    @PutMapping("/faq/admin/id/{faq_id}")
+    public NotExistDataResultResponse FaqpUpdate(@PathVariable("faq_id") Long id, @RequestBody @Valid PostfaqDTO postfaqDTO) {
+        Long updatedId = postFaqService.updateFaq(id, postfaqDTO);
+        log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId + " ] ----\n");
+        return new NotExistDataResultResponse(updatedId + "번 FAQ가 수정되었습니다.");
+    }
+    //////////////////////////////////////////////////////////////////
+
+    /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/admin/{page}")
-    public List<PostnoticeDTO> NoticeList(@PathVariable("page") int page) {
-        return postNoticeService.noticeByPage(page);
+    public ExistDataSuccessResponse NoticeList(@PathVariable("page") int page) {
+        List<PostnoticeDTO> dtoList = postNoticeService.noticeByPage(page);
+        log.debug("\n---- NOTICE 페이지 리스트 조회 ----\n");
+        return new ExistDataSuccessResponse(
+                page + " 페이지의 공지사항이 조회되었습니다.", dtoList);
     }
 
-    @ResponseBody
+    /** 공지사항 특정 글 조회 */
     @GetMapping("/notice/admin/id/{notice_id}")
-    public PostnoticeDTO NoticeFind(@PathVariable("notice_id") Long id) {
-        return postNoticeService.noticeById(id);
+    public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
+        PostnoticeDTO postnoticeDTO = postNoticeService.noticeById(id);
+        log.debug("\n---- 관리자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
+        return new ExistDataSuccessResponse(
+                postnoticeDTO.getId() + "번 FAQ가 조회되었습니다.", postnoticeDTO);
     }
 
-    /**
-     * 관리자 공지사항 작성
-     */
-    @ResponseBody
+    /** 관리자 공지사항 작성 */
     @PostMapping("/notice/admin/write")
-    public Long NoticeWrite(@RequestBody PostnoticeDTO postnoticeDTO, HttpServletResponse res) {
+    public NotExistDataResultResponse NoticeWrite(@RequestBody @Valid PostnoticeDTO postnoticeDTO) {
 
-        res.setHeader("Authorization", "tokenid");
-        int code = res.getStatus();
-        res.setHeader("code", String.valueOf(code));
-        return postNoticeService.writeNotice(postnoticeDTO);
+        Long id = postNoticeService.writeNotice(postnoticeDTO);
+        log.debug("\n---- 관리자 공지사항 작성 [ID : " + id + " ] ----\n");
+        return new NotExistDataResultResponse(id + "번 공지사항이 작성되었습니다.");
     }
 
-    /**
-     * 공지사항 삭제
-     */
-    @ResponseBody
+    /** 공지사항 삭제 */
     @DeleteMapping("/notice/admin/id/{notice_id}")
-    public int NoticeDelete(@PathVariable("notice_id") Long id, HttpServletResponse response) {
-        postNoticeRepository.deleteNotice(id);
-        return response.getStatus();
+    public NotExistDataResultResponse NoticeDelete(@PathVariable("notice_id") Long id) {
+        Long deleteId = postNoticeRepository.deleteNotice(id);
+        log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
+        return new NotExistDataResultResponse(deleteId + "번 공지사항이 삭제되었습니다.");
+    }
+
+    /** 공지사항 수정 */
+    @PutMapping("/notice/admin/id/{notice_id}")
+    public NotExistDataResultResponse NoticeUpdate(@PathVariable("notice_id") Long id, @RequestBody @Valid PostnoticeDTO postnoticeDTO) {
+        Long updatedId = postNoticeService.updateNotice(id, postnoticeDTO);
+        log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId +" ] ----\n");
+
+        return new NotExistDataResultResponse(updatedId + "번 공지사항이 수정되었습니다.");
     }
 }

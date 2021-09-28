@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(false)
+@Rollback
 class PostNoticeServiceTest {
 
     @Autowired
@@ -52,8 +52,19 @@ class PostNoticeServiceTest {
     @Test
     public void 공지사항삭제() {
         Long id = 4L;
-        int code = postNoticeRepository.deleteNotice(id);
-        Assertions.assertEquals(code, 0);
+        Long code = postNoticeRepository.deleteNotice(id);
+        assertEquals(code, id);
+    }
+
+    @Test
+    public void 공지사항수정() {
+        Admin admin = new Admin("admin_test", "admin_test");
+        em.persist(admin);
+        PostnoticeDTO postnoticeDTO = new PostnoticeDTO(null, admin, NoticeType.act1, "title_Test", "content_test",0L, new Date(), null, Status.OPEN);
+        Long id = 5L;
+        Long res = postNoticeService.updateNotice(id, postnoticeDTO);
+        assertEquals(res, id);
+
     }
 
 }
