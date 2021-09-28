@@ -1,7 +1,6 @@
 package project.tuthree.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.scene.NodeBuilder;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
