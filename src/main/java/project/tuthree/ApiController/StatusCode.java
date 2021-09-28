@@ -1,5 +1,10 @@
 package project.tuthree.ApiController;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum StatusCode {
     OK(200),
     CREATED(201),
@@ -12,9 +17,9 @@ public enum StatusCode {
     SERVICE_UNAVAILABLE(503),
     DB_ERROR(600);
 
-    private int statusInfo;
+    private int code;
 
-    StatusCode(int statusInfo) {
-        this.statusInfo = this.statusInfo;
+    StatusCode(int code) {
+        this.code = code;
     }
 }

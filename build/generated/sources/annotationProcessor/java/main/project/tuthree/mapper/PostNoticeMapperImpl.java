@@ -11,7 +11,7 @@ import project.tuthree.dto.PostnoticeDTO.PostnoticeDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-09-28T22:54:20+0900",
+    date = "2021-09-29T04:45:43+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
