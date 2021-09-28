@@ -5,18 +5,18 @@ import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-@Controller
 @Getter
 @Slf4j
+@Controller
 @RequiredArgsConstructor
 public class JwtController {
     /**
@@ -53,20 +53,22 @@ public class JwtController {
 
     public Map<String, Object> decryptValidJwtToken(String token) throws JsonParseException {
         Map<String, Object> map = null;
-//        String msg = null;
-//        try {
-//            map = Jwts.parser()
-//                    .setSigningKey(SECRET_KEY)
-//                    .parseClaimsJws(token)
-//                    .getBody();
-//            return map;
-//
-//        } catch (SignatureException | MalformedJwtException e) {
-//            msg = "SignatureException error";
-//        } catch (ExpiredJwtException e) {
-//            msg = "ExpiredJwtException error";
-//        }
-//        return map.put(msg, response.);
+        /**
+        String msg = null;
+        try {
+            map = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return map;
+
+        } catch (SignatureException | MalformedJwtException e) {
+            msg = "SignatureException error";
+        } catch (ExpiredJwtException e) {
+            msg = "ExpiredJwtException error";
+        }
+        return map.put(msg, response.);
+         */
 
         map = Jwts.parser()
                 .setSigningKey(SECRET_KEY)

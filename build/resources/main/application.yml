@@ -6,6 +6,7 @@ devtools:
 spring:
   profiles:
     active: local
+    include: jwt
   mvc:
     hiddenmethod:
       filter:
@@ -26,6 +27,7 @@ spring:
   security:
     user:
       password: 542ced02-3ec0-40cd-a5b7-0dbdeca9bcf1
+
 
 #---
 #spring:
