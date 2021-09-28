@@ -1,6 +1,7 @@
 package project.tuthree.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.dto.PostfaqDTO;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostFaqService {
 
@@ -39,11 +41,20 @@ public class PostFaqService {
      */
     public Long writeFaq(PostfaqDTO postfaqDTO) {
         postfaqDTO.setWriteAt(new Date());
-        postfaqDTO.setView(0L);
+        //postfaqDTO.setView(0L);
 
         return postFaqRepository.writeFaq(postFaqMapper.toEntity(postfaqDTO));
     }
 
+    /**
+     * faq 수정
+     */
+    public Long updateFaq(Long id, PostfaqDTO postfaqDTO) {
+        postfaqDTO.setAlterAt(new Date());
+        PostFaq faq = postFaqMapper.toEntity(postfaqDTO);
+        postFaqRepository.updateFaq(id, faq);
+        return id;
+    }
 
 
 }

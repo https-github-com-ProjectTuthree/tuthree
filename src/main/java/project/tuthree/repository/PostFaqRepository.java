@@ -32,9 +32,9 @@ public class PostFaqRepository {
      * faq 특정 글 조회
      */
     public PostFaq findById(Long id) {
-        return em.createQuery("select p from PostFaq p where p.id = :id", PostFaq.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        PostFaq faq = em.find(PostFaq.class, id);
+        faq.updateView();
+        return faq;
     }
 
     /**
@@ -48,14 +48,23 @@ public class PostFaqRepository {
     /**
      * faq 삭제
      */
-    public int deleteFaq(Long id) {
+    public Long deleteFaq(Long id) {
         try {
             em.remove(em.find(PostFaq.class, id));
-            return 0;
+            return id;
         } catch (Exception e) {
             e.printStackTrace();
-            return 1;
+            return 0L;
         }
+    }
+
+    /**
+     * faq 수정 : faqtype, title, content,secret, -  alterAt 넣어주기
+     */
+    public int updateFaq(Long id, PostFaq postFaq) {
+        PostFaq faq = em.find(PostFaq.class, id);
+        faq.updateFaq(postFaq);
+        return 0;
     }
 
 }
