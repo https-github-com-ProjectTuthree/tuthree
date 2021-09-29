@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.*;
         sequenceName = "CHAT_SEQ",
         allocationSize = 1
 )
+@Table(name = "chat")
 public class Chat {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,

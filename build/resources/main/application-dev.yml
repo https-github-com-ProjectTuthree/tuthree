@@ -1,15 +1,15 @@
 #배포용
 
-#spring:
-#  datasource:
-#    url: jdbc:oracle:thin:@database-tuthree.cuhft9d20wyq.ap-northeast-2.rds.amazonaws.com:1521/DATABASE
-#    username: admin
-#    password: tuthree.admin.1234
-#    driver-class-name: oracle.jdbc.driver.OracleDriver
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@database-tuthree.cuhft9d20wyq.ap-northeast-2.rds.amazonaws.com:1521/DATABASE
+    username: admin
+    password: tuthree1234
+    driver-class-name: oracle.jdbc.driver.OracleDriver
 
-#  jpa:
-#    hibernate:
-#      ddl-auto: none
+  jpa:
+    hibernate:
+      ddl-auto: none
 
     #logging:
     #pattern:

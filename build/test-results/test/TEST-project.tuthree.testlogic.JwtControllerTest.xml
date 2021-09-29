@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="project.tuthree.testlogic.JwtControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-09-28T20:13:59" hostname="seojaehui-950SBE-951SBE" time="0.407">
+  <properties/>
+  <testcase name="토큰생성_검증()" classname="project.tuthree.testlogic.JwtControllerTest" time="0.407"/>
+  <system-out><![CDATA[05:13:59.873 [Test worker] INFO project.tuthree.controller.JwtController - {iss=fresh_token, iat=1632860039, exp=1632860939, userId=admin1, Grade=admin}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

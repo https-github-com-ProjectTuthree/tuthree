@@ -19,6 +19,7 @@ import java.util.Date;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@Table(name = "post_faq")
 public class PostFaq {
 
     @Id
@@ -31,10 +32,16 @@ public class PostFaq {
     @JoinColumn(name = "admin_id")
     private Admin admin;
 
+    @Column(name = "post_type")
+    @Enumerated(EnumType.STRING)
+    private FaqType type;
+
     private String title;
 
+    @Column(name = "post_content")
     private String content;
 
+    @Column(name = "post_view")
     private Long view;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,10 +52,9 @@ public class PostFaq {
     @Column(name = "alter_at")
     private Date alterAt;
 
+    @Column(name = "post_secret")
     private Status secret;
 
-    @Enumerated(EnumType.STRING)
-    private FaqType type;
 
     @Builder
     public PostFaq(Admin admin, String title, String content, Long view, Date writeAt, Date alterAt, Status secret, FaqType type) {

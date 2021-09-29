@@ -5,12 +5,13 @@ spring:
     username: tuthreeadmin
     password: admin1234
     driver-class-name: oracle.jdbc.driver.OracleDriver
+
     #hikari:
       #schema: classpath:src/main/resources/schema.sql
 
-  #jpa:
-   # hibernate:
-    #  ddl-auto: create
+  jpa:
+    hibernate:
+      ddl-auto: none
 #logging:
 #  level:
 #    "[org.hibernate]": debug

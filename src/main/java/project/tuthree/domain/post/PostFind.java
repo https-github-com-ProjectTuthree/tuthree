@@ -19,20 +19,13 @@ import static javax.persistence.FetchType.*;
         sequenceName = "POSTFIND_SEQ",
         allocationSize = 1
 )
+@Table(name = "post_find")
 public class PostFind implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "POSTFIND_SEQ_GENERATOR")
     @Column(name = "post_id")
     private Long id;
-
-    private Long view;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date write_at;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date alter_at;
 
     @OneToOne(fetch = EAGER)
     @JoinColumn(name = "teacher_id")
@@ -42,5 +35,15 @@ public class PostFind implements Serializable {
     @JoinColumn(name = "student_id")
     private Student studentId;
 
+    @Column(name = "post_view")
+    private Long view;
+
+    @Column(name = "write_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date writeAt;
+
+    @Column(name = "alter_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date alterAt;
 
 }

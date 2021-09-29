@@ -17,12 +17,14 @@ import java.util.Date;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "log")
 public class Log {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "LOG_SEQ_GENERATOR")
     @Column(name = "log_id")
     private Long id;
 
+    @Column(name = "user_time")
     @Temporal(TemporalType.TIMESTAMP)//time?timestamp?
     private Date time;
 
