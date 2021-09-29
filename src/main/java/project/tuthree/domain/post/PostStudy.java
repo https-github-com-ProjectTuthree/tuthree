@@ -6,6 +6,8 @@ import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.*;
 
+import java.util.Date;
+
 import static javax.persistence.FetchType.*;
 
 @Entity
@@ -15,9 +17,11 @@ import static javax.persistence.FetchType.*;
         sequenceName = "POSTSTUDY_SEQ",
         allocationSize = 1
 )
+@Table(name = "post_study")
 public class PostStudy {
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "POSTSTUDY_SEQ")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "POSTSTUDY_SEQ_GENERATOR")
     @Column(name = "post_id")
     private Long id;
 
@@ -27,4 +31,19 @@ public class PostStudy {
             @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     })
     private StudyRoom studyRoomId;
+
+    @Column(name = "post_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+
+    @Column(name = "post_number")
+    private Long number;
+
+    @Column(name = "post_start")
+    private String start;
+
+    @Column(name = "post_end")
+    private String end;
+
+    private String detail;
 }

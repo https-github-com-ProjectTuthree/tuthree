@@ -16,10 +16,10 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Getter
 @RequiredArgsConstructor
-@Table(name = "file")
+@Table(name = "user_file")
 @SequenceGenerator(
         name = "FILE_SEQ_GENERATOR",
-        sequenceName = "FILE_SEQ_GENERATOR",
+        sequenceName = "FILE_SEQ",
         initialValue = 1,
         allocationSize = 1
 )
@@ -41,15 +41,17 @@ public class UserFile {
     private StudyRoom studyRoomId;
     //스터디룸 복합키 비식별 관계 매핑
 
+    @ManyToOne
+    @JoinColumn(name = "testpaper_id")
+    private PostTestPaper testpaperId;
+
     @Column(name = "save_title")
     private String saveTitle;
 
     @Column(name = "real_title")
     private String realTitle;
 
-    @ManyToOne
-    @JoinColumn(name = "testpaper_id")
-    private PostTestPaper testpaperId;
+
 
 
 }

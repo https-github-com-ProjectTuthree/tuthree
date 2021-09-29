@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.*;
         sequenceName = "CALENDAR_SEQ",
         allocationSize = 1
 )
+@Table(name = "calendar")
 public class Calendar {
     /**
      * 복합키 식별 관계 매핑... 하나도 모르겠다..
@@ -35,7 +36,7 @@ public class Calendar {
     private StudyRoom studyRoomId;
 
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private Date dateAt;
 
     private String schedule;
 

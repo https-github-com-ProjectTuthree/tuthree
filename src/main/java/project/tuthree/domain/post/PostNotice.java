@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.LAZY;
         allocationSize = 1
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@Table(name = "post_notice")
 public class PostNotice {
 
     @Id
@@ -31,10 +31,16 @@ public class PostNotice {
     @JoinColumn(name = "admin_id")
     private Admin admin;
 
+    @Column(name = "post_type")
+    @Enumerated(EnumType.STRING)
+    private NoticeType type;
+
     private String title;
 
+    @Column(name = "post_content")
     private String content;
 
+    @Column(name = "post_view")
     private Long view;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,10 +51,9 @@ public class PostNotice {
     @Column(name = "alter_at")
     private Date alterAt;
 
+    @Column(name = "post_secret")
     private Status secret;
 
-    @Enumerated(EnumType.STRING)
-    private NoticeType type;
 
     @Builder
     public PostNotice(Admin admin, String title, String content, Long view, Date writeAt, Date alterAt, Status secret, NoticeType type) {

@@ -12,7 +12,9 @@ import javax.persistence.*;
         sequenceName = "CHATROOM_SEQ",
         allocationSize = 1
 )
+@Table(name = "chat_room")
 public class ChatRoom {
+
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "CHATROOM_SEQ_GENERATOR")
     @Column(name = "room_id")
