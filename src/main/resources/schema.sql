@@ -40,7 +40,7 @@ CREATE TABLE student
     school       VARCHAR2(20) NOT NULL,
     detail       VARCHAR2(4000) NOT NULL,
     PRIMARY KEY (user_id),
-    FOREIGN KEY (parent_id) REFERENCES parent (parent_id)
+    FOREIGN KEY (parent_id) REFERENCES parent (user_id)
 );
 
 CREATE TABLE teacher (
@@ -100,9 +100,10 @@ CREATE TABLE file (
     file_id  NUMBER  NOT NULL,
     teacher_id  VARCHAR2(20),
     student_id  VARCHAR2(20),
+    testpaper_id NUMBER,
     save_title  VARCHAR2(50)  NOT NULL,
     real_title  VARCHAR2(50)  NOT NULL,
-    PRIMARY KEY (file_id)
+    PRIMARY KEY (file_id),
     FOREIGN KEY (teacher_id, student_id) REFERENCES study_room(teacher_id, student_id),
     FOREIGN KEY (testpaper_id) REFERENCES post_testpaper(post_id)
 );
@@ -130,8 +131,8 @@ CREATE TABLE post_find (
     write_at  DATE  NOT NULL,
     alter_at  DATE,
     PRIMARY KEY (post_id),
-    FOREIGN KEY (teacher_id) REFERENCES teacher(teacher_id),
-    FOREIGN KEY (student_id) REFERENCES student(student_id)
+    FOREIGN KEY (teacher_id) REFERENCES teacher(user_id),
+    FOREIGN KEY (student_id) REFERENCES student(user_id)
 );
 
 CREATE TABLE post_testpaper (
@@ -157,7 +158,7 @@ CREATE TABLE post_faq (
     write_at  DATE  NOT NULL,
     alter_at  DATE,
     secret  VARCHAR2(5)  NOT NULL,
-    PRIMARY KEY (user_id),
+    PRIMARY KEY (post_id),
     FOREIGN KEY (admin_id) REFERENCES admin(admin_id)
 );
 
@@ -171,11 +172,11 @@ CREATE TABLE post_notice (
     write_at  DATE  NOT NULL,
     alter_at  DATE,
     secret  VARCHAR2(5)  NOT NULL,
-    PRIMARY KEY (user_id),
+    PRIMARY KEY (post_id),
     FOREIGN KEY (admin_id) REFERENCES admin(admin_id)
 );
 
-CREATE TABLE post_review {
+CREATE TABLE post_review (
     teacher_id  VARCHAR2(20)  NOT NULL,
     student_id  VARCHAR2(20)  NOT NULL,
     star  NUMBER  NOT NULL,
@@ -192,17 +193,17 @@ CREATE TABLE chat_room (
     PRIMARY KEY (room_id)
 );
 
-CREATE TABLE chat {
+CREATE TABLE chat (
     chat_id  NUMBER  NOT NULL,
     room_id  NUMBER  NOT NULL,
     user_id  VARCHAR2(20)  NOT NULL,
     chat_at  DATE  NOT NULL,
     chat_content  VARCHAR2(1000)  NOT NULL,
     PRIMARY KEY (chat_id),
-    FOREIGN KEY (room_id) REFERENCES char_room(room_id)
+    FOREIGN KEY (room_id) REFERENCES chat_room(room_id)
 );
 
-CREATE TABLE post_study {
+CREATE TABLE post_study (
     post_id  NUMBER  NOT NULL,
     teacher_id  VARCHAR2(20)  NOT NULL,
     student_id  VARCHAR2(20)  NOT NULL,
@@ -212,7 +213,7 @@ CREATE TABLE post_study {
     end  VARCHAR2(10)  NOT NULL,
     detail  VARCHAR2(2000)  NOT NULL,
     PRIMARY KEY (post_id),
-    FOREIGN KEY (room_id) REFERENCES char_room(room_id)
+    FOREIGN KEY (teacher_id, student_id) REFERENCES study_room(teacher_id, student_id)
 );
 
 

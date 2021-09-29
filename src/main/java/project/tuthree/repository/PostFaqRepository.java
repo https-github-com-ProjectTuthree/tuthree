@@ -3,7 +3,6 @@ package project.tuthree.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.controller.ExceptionController;
 import project.tuthree.domain.post.PostAdmin;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.dto.PostfaqDTO;
@@ -16,7 +15,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class PostFaqRepository {
-    private ExceptionController exceptionController;
 
     private final EntityManager em;
     private final PostFaqMapper postFaqMapper;

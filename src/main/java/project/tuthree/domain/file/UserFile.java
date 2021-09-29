@@ -19,7 +19,7 @@ import static javax.persistence.FetchType.*;
 @Table(name = "file")
 @SequenceGenerator(
         name = "FILE_SEQ_GENERATOR",
-        sequenceName = "FILE_SEQ_GENERATOR",
+        sequenceName = "FILE_SEQ",
         initialValue = 1,
         allocationSize = 1
 )
