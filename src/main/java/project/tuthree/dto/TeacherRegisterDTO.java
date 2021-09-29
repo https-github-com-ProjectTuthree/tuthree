@@ -1,6 +1,8 @@
 package project.tuthree.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.tuthree.domain.Status;
@@ -11,6 +13,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.util.Date;
 
+@Getter
+@NoArgsConstructor
 public class TeacherRegisterDTO extends UserRegisterDTO {
 
     @Builder

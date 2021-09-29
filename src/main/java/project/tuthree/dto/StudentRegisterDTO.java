@@ -1,6 +1,8 @@
 package project.tuthree.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
@@ -10,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Date;
 
+@Getter
+@NoArgsConstructor
 public class StudentRegisterDTO extends UserRegisterDTO{
 
     @Builder
