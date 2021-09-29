@@ -14,6 +14,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Getter
 @IdClass(StudyRoomId.class)
+@Table(name = "post_review")
 public class PostReview implements Serializable {
     /**
      * 복합키 식별 관계 매핑
@@ -27,8 +28,10 @@ public class PostReview implements Serializable {
     })
     private StudyRoom id;
 
+    @Column(name = "post_star")
     private int star;
 
+    @Column(name = "post_content")
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)

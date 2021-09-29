@@ -15,6 +15,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Getter
 //@IdClass(StudyRoomId.class)
+@Table(name = "study_room")
 public class StudyRoom implements Serializable {
     @Id
     @ManyToOne
