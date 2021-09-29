@@ -2,6 +2,8 @@ package project.tuthree.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import project.tuthree.domain.Status;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -32,6 +34,8 @@ public class User{
     private int birth;
 
     private String post;
+
+    private Status notification;
 
     @Enumerated(EnumType.STRING)
     private Grade grade;

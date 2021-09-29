@@ -17,7 +17,7 @@ import static javax.persistence.FetchType.*;
 )
 public class PostStudy {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "POSTSTUDY_SEQ")
+            generator = "POSTSTUDY_SEQ_GENERATOR")
     @Column(name = "post_id")
     private Long id;
 
