@@ -32,7 +32,7 @@ public class JwtController {
      */
 
     private final String SECRET_KEY = "qweasdzxcqweasdzxc";
-    private final Long EXPIRATION_TIME = 15 * 60 * 1000L;
+    private final Long EXPIRATION_TIME = 15 * 60 * 4 * 1000L;
 
 
     public String makeJwtToken() {

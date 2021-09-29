@@ -9,12 +9,14 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.After;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import project.tuthree.controller.JwtController;
 import project.tuthree.repository.AdminRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @Aspect
@@ -38,7 +40,7 @@ public class JwtApiController {
         response.setHeader("Autorization", BarerToken);
     }
 
-    @Before("execution(* project.tuthree.ApiController..*(..))")
+    @Before("execution(* PostAdminApiController.*(..))")
     public void checkAdminValidToken() throws JsonParseException {
         /** 로직 개선하기!! */
         String[] token = request.getHeader("token").split(" ");
@@ -54,6 +56,15 @@ public class JwtApiController {
         adminRepository.findById(String.valueOf(map.get("userId")));
     }
 
-
-
+    @RestController
+    class example {
+        @GetMapping("/token")
+        public Map<String, String> exampleToken() {
+            String Token = jwtController.makeJwtToken();
+            String BarerToken = "Barer " + Token;
+            Map<String, String> token = new HashMap<>();
+            token.put("Authorization", BarerToken);
+            return token;
+        }
+    }
 }

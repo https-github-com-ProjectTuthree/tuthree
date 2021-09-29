@@ -29,6 +29,7 @@ public class PostAdminApiController {
     private final PostNoticeRepository postNoticeRepository;
     private final HttpServletResponse response;
 
+
     @Getter
     @AllArgsConstructor
     class ExistDataSuccessResponse<T>{
@@ -45,6 +46,7 @@ public class PostAdminApiController {
         private final int StatusCode = response.getStatus();
         String Message;
     }
+
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
