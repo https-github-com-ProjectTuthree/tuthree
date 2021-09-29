@@ -14,7 +14,9 @@ import project.tuthree.service.PostNoticeService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,6 +29,7 @@ public class PostAdminApiController {
     private final PostNoticeRepository postNoticeRepository;
     private final HttpServletResponse response;
 
+
     @Getter
     @AllArgsConstructor
     class ExistDataSuccessResponse<T>{
@@ -38,16 +41,20 @@ public class PostAdminApiController {
 
     @Getter
     @AllArgsConstructor
-    class NotExistDataResultResponse<T>{
+    class NotExistDataResultResponse{
         private final Boolean Success = true;
         private final int StatusCode = response.getStatus();
         String Message;
     }
 
+
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
     public ExistDataSuccessResponse FaqList(@PathVariable("page") int page) {
         List<PostfaqDTO> dtoList = postFaqService.faqFindByPage(page);
+        Long list = postFaqRepository.faqHasRow();
+//        Map<String,Long> map = new HashMap<>();
+//        dtoList.add();
         log.debug("\n---- 관리자 FAQ 페이지 리스트 조회 ----\n");
         return new ExistDataSuccessResponse(
                 page + " 페이지의 FAQ가 조회되었습니다.", dtoList);

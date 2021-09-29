@@ -1,12 +1,14 @@
 package project.tuthree.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostAdmin;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
+import project.tuthree.service.PostFaqService;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class PostFaqRepository {
-
+    /** faq_repository */
     private final EntityManager em;
     private final PostFaqMapper postFaqMapper;
 
@@ -67,4 +69,7 @@ public class PostFaqRepository {
         return 0;
     }
 
+    public Long faqHasRow() {
+        return (Long) em.createQuery("select count(p) from PostFaq p").getSingleResult();
+    }
 }

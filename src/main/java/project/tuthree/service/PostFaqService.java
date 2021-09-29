@@ -3,6 +3,7 @@ package project.tuthree.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
@@ -23,6 +24,9 @@ public class PostFaqService {
     /** faq 페이지 목록 조회 */
     public List<PostfaqDTO> faqFindByPage(int page) {
         List<PostFaq> list = postFaqRepository.findByPage(page);
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
 
         return list.stream()
                 .map(m -> postFaqMapper.toDto(m))

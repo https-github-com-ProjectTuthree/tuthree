@@ -25,6 +25,9 @@ public class PostNoticeService {
      */
     public List<PostnoticeDTO> noticeByPage(int page) {
         List<PostNotice> list = postNoticeRepository.findByPage(page);
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
 
         return list.stream()
                 .map(m -> postNoticeMapper.toDto(m))
