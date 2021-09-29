@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "teacher")
 public class Teacher extends User{
 
-    public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, int birth,
-                   String post, Grade grade, Date create_date, String region, Status registration, String subject,
-                   int cost, String school, SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
-        super(id, pwd, name, email, tel, sex, birth, post, grade, create_date);
+    public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
+                   Grade grade, Date create_date, String region, Status registration, String subject, int cost, String school,
+                   SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
+        super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
         this.region = region;
         this.registration = registration;
         this.subject = subject;

@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
-@Table(name = "Parent")
+@Table(name = "parent")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User{
 
@@ -22,6 +22,7 @@ public class User{
     @JsonIgnore
     private String pwd;
 
+    @Column(name = "user_name")
     private String name;
 
     private String email;
@@ -35,6 +36,7 @@ public class User{
 
     private String post;
 
+    @Column(name = "user_notification")
     private Status notification;
 
     @Enumerated(EnumType.STRING)
@@ -44,7 +46,7 @@ public class User{
     private Date create_date;
 
     @Builder
-    public User(String id, String pwd, String name, String email, String tel, Sex sex, int birth,String post, Grade grade, Date create_date){
+    public User(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date create_date) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -53,6 +55,7 @@ public class User{
         this.sex = sex;
         this.birth = birth;
         this.post = post;
+        this.notification = notification;
         this.grade = grade;
         this.create_date = create_date;
     }

@@ -19,6 +19,7 @@ import java.util.Date;
         sequenceName = "POSTTESTPAPER_SEQ",
         allocationSize = 1
 )
+@Table(name = "post_testpaper")
 public class PostTestPaper {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
@@ -27,20 +28,26 @@ public class PostTestPaper {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacherId;
+    @JoinColumn(name = "user_id")
+    private Teacher userId;
 
     private String title;
+
+    @Column(name = "post_content")
     private String content;
 
+    @Column(name = "post_view")
     private Long view;
 
+    @Column(name = "write_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date write_at;
+    private Date writeAt;
 
+    @Column(name = "alter_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date alter_at;
+    private Date alterAt;
 
+    @Column(name = "post_secret")
     private Status secret;
 
 }

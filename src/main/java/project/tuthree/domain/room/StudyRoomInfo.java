@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 @RequiredArgsConstructor
 @IdClass(StudyRoomId.class)
+@Table(name = "study_room_info")
 public class StudyRoomInfo implements Serializable {
 
     /**
@@ -29,18 +30,23 @@ public class StudyRoomInfo implements Serializable {
 
     private String subject;
 
+    @Column(name = "room_cost")
     private int cost;
 
+    @Column(name = "room_day")
     private String day;
 
+    @Column(name = "room_start")
     private String start;
 
+    @Column(name = "room_end")
     private String end;
 
     private String detail;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date check_date;
+    @Column(name = "check_date")
+    private Date checkDate;
 
     private boolean status; //학생의 수락 상태
     /**
