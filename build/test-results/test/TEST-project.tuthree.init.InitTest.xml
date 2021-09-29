@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="project.tuthree.init.InitTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-09-28T20:13:59" hostname="seojaehui-950SBE-951SBE" time="0.014">
+<testsuite name="project.tuthree.init.InitTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-09-29T04:07:13" hostname="seojaehui-950SBE-951SBE" time="0.009">
   <properties/>
-  <testcase name="initTest()" classname="project.tuthree.init.InitTest" time="0.014"/>
+  <testcase name="initTest()" classname="project.tuthree.init.InitTest" time="0.009"/>
   <system-out><![CDATA[admin1234
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
