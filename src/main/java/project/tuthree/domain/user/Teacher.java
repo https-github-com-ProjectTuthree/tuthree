@@ -1,6 +1,7 @@
 package project.tuthree.domain.user;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Table(name = "teacher")
 public class Teacher extends User{
 
+    @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
                    Grade grade, Date create_date, String region, Status registration, String subject, int cost, String school,
                    SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {

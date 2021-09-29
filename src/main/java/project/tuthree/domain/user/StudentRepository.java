@@ -7,12 +7,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface StudentRepository extends JpaRepository<Student, String> {
     //아이디중복체크
     boolean existsById(String id);
 
     //로그인
     @EntityGraph(attributePaths = "authorities")
-    Optional<User> findById(String id);
-
+    Optional<Student> findById(String id);
 }

@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.*;
 @Table(name = "student")
 public class Student extends User{
 
+    @Builder
     public Student(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
                    Grade grade, Date create_date, String region, Status registration, String subject, int cost, School school, String detail, User parent) {
         super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
