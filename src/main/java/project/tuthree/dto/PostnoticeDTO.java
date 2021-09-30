@@ -4,20 +4,16 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.Assert;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.post.FaqType;
 import project.tuthree.domain.post.NoticeType;
 import project.tuthree.domain.user.Admin;
 
-import javax.swing.text.View;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
 @RequiredArgsConstructor
-@ToString
-@Setter
 public class PostnoticeDTO {
 
     private Long id;
@@ -26,6 +22,7 @@ public class PostnoticeDTO {
     private Admin adminId;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private NoticeType type;
 
     @NotNull
@@ -63,5 +60,13 @@ public class PostnoticeDTO {
         this.writeAt = writeAt;
         this.alterAt = alterAt;
         this.secret = secret;
+    }
+
+    public void noticeWriteAt() {
+        this.writeAt = new Date();
+    }
+
+    public void noticeAlterAt() {
+        this.alterAt = new Date();
     }
 }
