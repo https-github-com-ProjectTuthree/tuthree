@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.domain.user.User;
 import project.tuthree.dto.UserRegisterDTO;
 import project.tuthree.dto.StudentRegisterDTO;
 import project.tuthree.dto.TeacherRegisterDTO;

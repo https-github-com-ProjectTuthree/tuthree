@@ -12,9 +12,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Getter
+//@AllArgsConstructor
 @NoArgsConstructor
 public class UserRegisterDTO {
     @NotBlank(message = "아이디를 입력해주세요")
@@ -41,7 +41,7 @@ public class UserRegisterDTO {
     private String post;
     private Grade grade;
 
-    @Builder
+   @Builder
     public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Grade grade){
         this.id = id;
         this.pwd = pwd;
