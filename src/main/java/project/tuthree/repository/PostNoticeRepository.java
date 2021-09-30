@@ -76,6 +76,9 @@ public class PostNoticeRepository {
         post.updateNotice(postNotice);
         return 0;
     }
+    public Long noticeHasRow() {
+        return (Long) em.createQuery("select count(p) from PostNotice p").getSingleResult();
+    }
 
 
 }

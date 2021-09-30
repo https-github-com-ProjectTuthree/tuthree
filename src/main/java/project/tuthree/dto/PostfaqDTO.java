@@ -7,6 +7,8 @@ import project.tuthree.domain.Status;
 import project.tuthree.domain.post.FaqType;
 import project.tuthree.domain.user.Admin;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,15 +16,14 @@ import java.util.Date;
 
 @Getter
 @RequiredArgsConstructor
-@ToString
-@Setter
 public class PostfaqDTO {
-    //id처리를 어떻게 하는가? 그냥 entity에서도 아이디 안적어도 알아서 들어가는것?
 
     private Long id;
     @NotNull
     private Admin adminId;
+
     @NotNull
+    @Enumerated(EnumType.STRING)
     private FaqType type;
     @NotNull
     private String title;
@@ -40,8 +41,7 @@ public class PostfaqDTO {
     private Status secret;
 
     @Builder
-    public PostfaqDTO(Long id, Admin adminId, FaqType type, String title, String content,
-                      Long view, Date writeAt, Date alterAt, Status secret) {
+    public PostfaqDTO(Long id, Admin adminId, FaqType type, String title, String content, Status secret) {
         Assert.notNull(adminId, "adminId must not be blank");
         Assert.notNull(type, "type must not be blank");
         Assert.hasText(title, "title must not be blank");
@@ -54,9 +54,16 @@ public class PostfaqDTO {
         this.type = type;
         this.title = title;
         this.content = content;
-        this.view = view;
-        this.writeAt = writeAt;
-        this.alterAt = alterAt;
+        this.view = 0L;
+        this.writeAt = new Date();
         this.secret = secret;
+    }
+
+    public void faqWriteAt() {
+        this.writeAt = new Date();
+    }
+
+    public void faqAlterAt() {
+        this.alterAt = new Date();
     }
 }

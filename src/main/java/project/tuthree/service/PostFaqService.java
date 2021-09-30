@@ -36,7 +36,6 @@ public class PostFaqService {
     /** faq id로 조회 */
     public PostfaqDTO faqFindById(Long id) {
         PostFaq postFaq = postFaqRepository.findById(id);
-
         return postFaqMapper.toDto(postFaq);
     }
 
@@ -44,21 +43,18 @@ public class PostFaqService {
      * faq 작성
      */
     public Long writeFaq(PostfaqDTO postfaqDTO) {
-        postfaqDTO.setWriteAt(new Date());
-        //postfaqDTO.setView(0L);
-
-        return postFaqRepository.writeFaq(postFaqMapper.toEntity(postfaqDTO));
+        postfaqDTO.faqWriteAt();
+        PostFaq postFaq = postFaqMapper.toEntity(postfaqDTO);
+        return postFaqRepository.writeFaq(postFaq);
     }
 
     /**
      * faq 수정
      */
     public Long updateFaq(Long id, PostfaqDTO postfaqDTO) {
-        postfaqDTO.setAlterAt(new Date());
+        postfaqDTO.faqAlterAt();
         PostFaq faq = postFaqMapper.toEntity(postfaqDTO);
         postFaqRepository.updateFaq(id, faq);
         return id;
     }
-
-
 }

@@ -27,14 +27,13 @@ public class PostAdminApiController {
     private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
     private final PostNoticeRepository postNoticeRepository;
-    private final HttpServletResponse response;
 
 
     @Getter
     @AllArgsConstructor
     class ExistDataSuccessResponse<T>{
         private final Boolean Success = true;
-        private final int StatusCode = response.getStatus();
+        int StatusCode;
         String Message;
         T data;
     }
@@ -43,21 +42,24 @@ public class PostAdminApiController {
     @AllArgsConstructor
     class NotExistDataResultResponse{
         private final Boolean Success = true;
-        private final int StatusCode = response.getStatus();
+        int StatusCode;
         String Message;
     }
 
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
-    public ExistDataSuccessResponse FaqList(@PathVariable("page") int page) {
+    public Map<String,Object> FaqList(@PathVariable("page") int page) {
+        Map<String, Object> map = new HashMap<>();
         List<PostfaqDTO> dtoList = postFaqService.faqFindByPage(page);
         Long list = postFaqRepository.faqHasRow();
-//        Map<String,Long> map = new HashMap<>();
-//        dtoList.add();
-        log.debug("\n---- 관리자 FAQ 페이지 리스트 조회 ----\n");
-        return new ExistDataSuccessResponse(
-                page + " 페이지의 FAQ가 조회되었습니다.", dtoList);
+        map.put("Success", true);
+        map.put("StatusCode", StatusCode.OK.getCode());
+        map.put("Message", page + "페이지의 FAQ가 조회되었습니다.");
+        map.put("list", list);
+        map.put("data", dtoList);
+        log.debug("\n---- 관리자 FAQ 페이지 " + page + "리스트 조회 ----\n");
+        return map;
     }
 
     /** faq 특정 글 조회 */
@@ -65,7 +67,7 @@ public class PostAdminApiController {
     public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id){
         PostfaqDTO postfaqDTO = postFaqService.faqFindById(id);
         log.debug("\n---- 관리자 FAQ 게시글 조회 [ID : " + id + " ] ----\n");
-        return new ExistDataSuccessResponse(
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 postfaqDTO.getId() + "번 FAQ가 조회되었습니다.", postfaqDTO);
     }
 
@@ -74,7 +76,7 @@ public class PostAdminApiController {
     public NotExistDataResultResponse faqWrite(@RequestBody @Valid PostfaqDTO postfaqDTO) {
         Long id = postFaqService.writeFaq(postfaqDTO);
         log.debug("\n---- 관리자 FAQ 작성 [ID : " + id + " ] ----\n");
-        return new NotExistDataResultResponse(id + "번 FAQ가 작성되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 FAQ가 작성되었습니다.");
     }
 
     /** faq 삭제 */
@@ -82,7 +84,7 @@ public class PostAdminApiController {
     public NotExistDataResultResponse faqDelete(@PathVariable("faq_id") Long id) {
         Long deleteId = postFaqRepository.deleteFaq(id);
         log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
-        return new NotExistDataResultResponse(deleteId + "번 FAQ가 삭제되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deleteId + "번 FAQ가 삭제되었습니다.");
     }
 
     /**  faq 수정 */
@@ -90,17 +92,23 @@ public class PostAdminApiController {
     public NotExistDataResultResponse FaqpUpdate(@PathVariable("faq_id") Long id, @RequestBody @Valid PostfaqDTO postfaqDTO) {
         Long updatedId = postFaqService.updateFaq(id, postfaqDTO);
         log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId + " ] ----\n");
-        return new NotExistDataResultResponse(updatedId + "번 FAQ가 수정되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 FAQ가 수정되었습니다.");
     }
     //////////////////////////////////////////////////////////////////
 
     /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/admin/{page}")
-    public ExistDataSuccessResponse NoticeList(@PathVariable("page") int page) {
+    public Map<String, Object> NoticeList(@PathVariable("page") int page) {
+        Map<String, Object> map = new HashMap<>();
         List<PostnoticeDTO> dtoList = postNoticeService.noticeByPage(page);
-        log.debug("\n---- NOTICE 페이지 리스트 조회 ----\n");
-        return new ExistDataSuccessResponse(
-                page + " 페이지의 공지사항이 조회되었습니다.", dtoList);
+        Long list = postNoticeRepository.noticeHasRow();
+        map.put("Success", true);
+        map.put("StatusCode", StatusCode.OK);
+        map.put("Message", page + "페이지의 공지사항이 조회되었습니다.");
+        map.put("list", list);
+        map.put("data", dtoList);
+        log.debug("\n---- 관리자 공지사항 " + page + "페이지 리스트 조회 ----\n");
+        return map;
     }
 
     /** 공지사항 특정 글 조회 */
@@ -108,7 +116,7 @@ public class PostAdminApiController {
     public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
         PostnoticeDTO postnoticeDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 관리자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
-        return new ExistDataSuccessResponse(
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 postnoticeDTO.getId() + "번 FAQ가 조회되었습니다.", postnoticeDTO);
     }
 
@@ -118,7 +126,7 @@ public class PostAdminApiController {
 
         Long id = postNoticeService.writeNotice(postnoticeDTO);
         log.debug("\n---- 관리자 공지사항 작성 [ID : " + id + " ] ----\n");
-        return new NotExistDataResultResponse(id + "번 공지사항이 작성되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 공지사항이 작성되었습니다.");
     }
 
     /** 공지사항 삭제 */
@@ -126,7 +134,7 @@ public class PostAdminApiController {
     public NotExistDataResultResponse NoticeDelete(@PathVariable("notice_id") Long id) {
         Long deleteId = postNoticeRepository.deleteNotice(id);
         log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
-        return new NotExistDataResultResponse(deleteId + "번 공지사항이 삭제되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deleteId + "번 공지사항이 삭제되었습니다.");
     }
 
     /** 공지사항 수정 */
@@ -135,6 +143,6 @@ public class PostAdminApiController {
         Long updatedId = postNoticeService.updateNotice(id, postnoticeDTO);
         log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId +" ] ----\n");
 
-        return new NotExistDataResultResponse(updatedId + "번 공지사항이 수정되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 공지사항이 수정되었습니다.");
     }
 }
