@@ -37,7 +37,7 @@ class PostFaqServiceTest {
     public void faq작성() {
         Admin admin = new Admin("admin2", "admin2");
         em.persist(admin);
-        PostfaqDTO postfaqDTO = new PostfaqDTO(null, admin, FaqType.MATCHING, "title12", "content12", 0L, new Date(), null, Status.OPEN);
+        PostfaqDTO postfaqDTO = new PostfaqDTO(null, admin, FaqType.MATCHING, "title12", "content12", Status.OPEN);
         Long id = postFaqService.writeFaq(postfaqDTO);
 
         Assert.assertNotNull(id);
@@ -46,7 +46,7 @@ class PostFaqServiceTest {
     @Test
     public void faq작성_관리자가없을때() {
         Admin admin = new Admin("admin2", "admin2");
-        PostfaqDTO postfaqDTO = new PostfaqDTO(null, admin, FaqType.ETC, "title12", "content12", 0L, new Date(), null, Status.OPEN);
+        PostfaqDTO postfaqDTO = new PostfaqDTO(null, admin, FaqType.ETC, "title12", "content12", Status.OPEN);
         Long id = postFaqService.writeFaq(postfaqDTO);
         //InvalidDataAccessApiUsageException
     }
@@ -79,7 +79,7 @@ class PostFaqServiceTest {
     public void faq수정() {
         Admin admin = new Admin("admin_api", "admin_test");
         em.persist(admin);
-        PostfaqDTO postfaqDTO1 = new PostfaqDTO(null, admin, FaqType.CERTIFY, "title_udpate", "content_update", null, null, null, Status.CLOSE);
+        PostfaqDTO postfaqDTO1 = new PostfaqDTO(null, admin, FaqType.CERTIFY, "title_udpate", "content_update",Status.CLOSE);
         Long id = 5L;
         Long res = postFaqService.updateFaq(id, postfaqDTO1);
         assertEquals(res, id);

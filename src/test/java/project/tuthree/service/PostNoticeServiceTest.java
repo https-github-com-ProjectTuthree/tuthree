@@ -40,11 +40,8 @@ class PostNoticeServiceTest {
                 .type(NoticeType.IMPORTANT)
                 .title("titleApi")
                 .content("contentApi")
-                .writeAt(new Date())
                 .secret(Status.OPEN)
-                .view(0L)
                 .build();
-
         Long id = postNoticeService.writeNotice(postnoticeDTO);
         Assert.assertNotNull(id);
     }
@@ -60,7 +57,8 @@ class PostNoticeServiceTest {
     public void 공지사항수정() {
         Admin admin = new Admin("admin_test", "admin_test");
         em.persist(admin);
-        PostnoticeDTO postnoticeDTO = new PostnoticeDTO(null, admin, NoticeType.IMPORTANT, "title_Test", "content_test",0L, new Date(), null, Status.OPEN);
+        PostnoticeDTO postnoticeDTO = new PostnoticeDTO(null, admin, NoticeType.IMPORTANT, "title_Test", "content_test", null, null, null, Status.OPEN);
+        postnoticeDTO.noticeAlterAt();
         Long id = 5L;
         Long res = postNoticeService.updateNotice(id, postnoticeDTO);
         assertEquals(res, id);

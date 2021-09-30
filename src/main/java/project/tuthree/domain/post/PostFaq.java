@@ -11,14 +11,12 @@ import java.util.Date;
 
 @Entity
 @Getter
-@Setter
 @SequenceGenerator(
         name = "POSTFAQ_SEQ_GENERATOR",
         sequenceName = "POSTFAQ_SEQ",
         allocationSize = 1
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Table(name = "post_faq")
 public class PostFaq {
 
@@ -54,7 +52,6 @@ public class PostFaq {
 
     @Column(name = "post_secret")
     private Status secret;
-
 
     @Builder
     public PostFaq(Admin admin, String title, String content, Long view, Date writeAt, Date alterAt, Status secret, FaqType type) {

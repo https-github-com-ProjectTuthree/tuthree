@@ -32,6 +32,7 @@ public class JwtController {
      */
 
     private final String SECRET_KEY = "qweasdzxcqweasdzxc";
+    //15 * 60 * 1000L // 15 * 60 * 4 * 1000L
     private final Long EXPIRATION_TIME = 15 * 60 * 4 * 1000L;
 
 
@@ -51,34 +52,16 @@ public class JwtController {
         //refress token
     }
 
-    public Map<String, Object> decryptValidJwtToken(String token) throws JsonParseException {
+    public Map<String, Object> decryptValidJwtToken(String token) {
         Map<String, Object> map = null;
-        /**
-        String msg = null;
-        try {
-            map = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();
-            return map;
-
-        } catch (SignatureException | MalformedJwtException e) {
-            msg = "SignatureException error";
-        } catch (ExpiredJwtException e) {
-            msg = "ExpiredJwtException error";
-        }
-        return map.put(msg, response.);
-         */
-
         map = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
-        log.info(map.toString());
         return map;
     }
 
-    public static void main(String[] args) throws JsonParseException{
+    public static void main(String[] args) {
         JwtController jwtController = new JwtController();
         String token = jwtController.makeJwtToken();
         System.out.println("token = " + token);
