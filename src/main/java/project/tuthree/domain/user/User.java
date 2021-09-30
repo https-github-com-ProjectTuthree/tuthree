@@ -8,11 +8,12 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Table(name = "parent")
+//@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User{
+public class User {
 
     @Id
     @Column(name = "user_id")
@@ -45,7 +46,7 @@ public class User{
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
-    @Builder
+   @Builder
     public User(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date create_date) {
         this.id = id;
         this.pwd = pwd;
