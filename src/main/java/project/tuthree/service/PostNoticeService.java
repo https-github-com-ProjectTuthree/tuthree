@@ -8,7 +8,6 @@ import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.mapper.PostNoticeMapper;
 import project.tuthree.repository.PostNoticeRepository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,9 +41,7 @@ public class PostNoticeService {
 
     /** 관리자 공지사항 작성 */
     public Long writeNotice(PostnoticeDTO postnoticeDTO){
-        postnoticeDTO.setWriteAt(new Date());
-        postnoticeDTO.setView(0L);
-        System.out.println("postnoticeDTO.toString() = " + postnoticeDTO.toString());
+        postnoticeDTO.noticeWriteAt();
         PostNotice postNotice = postNoticeMapper.toEntity(postnoticeDTO);
         return postNoticeRepository.writeNotice(postNotice);
     }
@@ -53,7 +50,7 @@ public class PostNoticeService {
      * 공지사항 수정
      */
     public Long updateNotice(Long id, PostnoticeDTO postnoticeDTO) {
-        postnoticeDTO.setAlterAt(new Date());
+        postnoticeDTO.noticeAlterAt();
         PostNotice postNotice = postNoticeMapper.toEntity(postnoticeDTO);
         postNoticeRepository.updateNotice(id, postNotice);
         return id;

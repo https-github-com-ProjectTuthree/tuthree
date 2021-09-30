@@ -11,7 +11,7 @@ import project.tuthree.dto.PostfaqDTO.PostfaqDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-09-29T15:06:02+0900",
+    date = "2021-09-30T12:27:12+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -58,9 +58,6 @@ public class PostFaqMapperImpl implements PostFaqMapper {
         postfaqDTO.type( postFaq.getType() );
         postfaqDTO.title( postFaq.getTitle() );
         postfaqDTO.content( postFaq.getContent() );
-        postfaqDTO.view( postFaq.getView() );
-        postfaqDTO.writeAt( postFaq.getWriteAt() );
-        postfaqDTO.alterAt( postFaq.getAlterAt() );
         postfaqDTO.secret( postFaq.getSecret() );
 
         return postfaqDTO.build();
