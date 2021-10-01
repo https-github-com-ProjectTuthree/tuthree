@@ -3,7 +3,6 @@ package project.tuthree.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
 
@@ -37,7 +36,6 @@ public class UserDTO {
     private Sex sex;
     private int birth;
     private String post;
-    private Status nofitication;
     private Grade grade;
     private Date create_date;
 

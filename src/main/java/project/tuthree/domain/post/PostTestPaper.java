@@ -50,4 +50,14 @@ public class PostTestPaper {
     @Column(name = "post_secret")
     private Status secret;
 
+    public void updateView() {
+        this.view += 1;
+    }
+
+    public void updateTestPaper(PostTestPaper post) {
+        this.userId = post.getUserId();
+        this.content = post.getContent();
+        this.alterAt = post.getAlterAt();
+        this.secret = post.getSecret();
+    }
 }
