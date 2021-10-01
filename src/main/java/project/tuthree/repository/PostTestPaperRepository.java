@@ -24,26 +24,43 @@ public class PostTestPaperRepository {
 
     /** 커뮤니티 페이지 목록 조회 *///하 몰라..
     public List<PostTestPaper> findByPage(int page) {
-        List<PostTestPaper> list = null;
         int setpage = 10;
-        try {
-            list = em.createQuery("select p.id as id, p.title as title from PostTestPaper p where p.secret = :secret order by p.id desc", PostTestPaper.class)
-                    .setParameter("secret", Status.OPEN)
-                    .setFirstResult(setpage * (page - 1))
-                    .setMaxResults(setpage)
-                    .getResultList();
-        } catch (Exception e) {
-            log.info("ereroeijrioejroie");
-        }
-        return list;
+
+        return em.createQuery("select p.id, p.title from PostTestPaper p where p.secret = :secret order by p.id desc", PostTestPaper.class)
+                .setParameter("secret", Status.OPEN)
+                .setFirstResult(setpage * (page - 1))
+                .setMaxResults(setpage)
+                .getResultList();
     }
 
     /** 커뮤니티 id로 특정 글 조회하기 *///-------------------------
     public PostTestPaper findById(Long id) {
-        PostTestPaper postTestPaper = em.find(PostTestPaper.class, id);
-        postTestPaper.updateView();
-        return postTestPaper;
+        Object singleResult = em.createNativeQuery("select * from PostTestPaper where id = ?", PostTestPaper.class)
+                .setParameter(1, id)
+                .getSingleResult();
+//        PostTestPaper postTestPaper = em.find(PostTestPaper.class, id);
+//        postTestPaper.updateView();
+        return singleResult;
     }
+//
+//    public void nativeQuery() {
+//        String sql = "SELECT MEMBER_JPQL_ID,USERAGE,USERNAME,TEAM_ID FROM MEMBER_JPQL WHERE USERAGE> ?";
+//
+//        Query nativeQuery = em.createNativeQuery(sql,MemberJPQL.class).setParameter(1, 35);
+//
+//        List<MemberJPQL> resultList = nativeQuery.getResultList();
+//
+//        System.out.println("====================nativeQuery=====================");
+//
+//        for(MemberJPQL m : resultList) {
+//            System.out.println(m.toString());
+//        }
+//
+//        System.out.println("====================nativeQuery=====================");
+//    }
+//
+//
+//    출처: https://coding-start.tistory.com/101 [코딩스타트]
 
     /** 커뮤니티 작성 */
 
@@ -53,6 +70,5 @@ public class PostTestPaperRepository {
         postTestPaper.updateTestPaper(post);
         return 0;
     }
-
 
 }
