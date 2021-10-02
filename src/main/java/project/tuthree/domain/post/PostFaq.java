@@ -42,11 +42,11 @@ public class PostFaq {
     @Column(name = "post_view")
     private Long view;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "write_at")
     private Date writeAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "alter_at")
     private Date alterAt;
 
