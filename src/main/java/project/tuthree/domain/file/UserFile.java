@@ -1,6 +1,7 @@
 package project.tuthree.domain.file;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import project.tuthree.domain.post.PostTestPaper;
@@ -51,7 +52,11 @@ public class UserFile {
     @Column(name = "real_title")
     private String realTitle;
 
-
-
-
+    @Builder
+    public UserFile(StudyRoom studyRoomId, PostTestPaper testpaperId, String saveTitle, String realTitle) {
+        this.studyRoomId = studyRoomId;
+        this.testpaperId = testpaperId;
+        this.saveTitle = saveTitle;
+        this.realTitle = realTitle;
+    }
 }

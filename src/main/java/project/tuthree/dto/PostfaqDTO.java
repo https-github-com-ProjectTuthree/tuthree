@@ -30,10 +30,9 @@ public class PostfaqDTO {
     @NotNull
     private String content;
 
-    @ColumnDefault("0")
-    private Long view;
+    private Long view = 0L;
 
-    private Date writeAt;//java.sql.timeastamp
+    private Date writeAt = new Date();
 
     private Date alterAt;
 
@@ -57,13 +56,5 @@ public class PostfaqDTO {
         this.view = 0L;
         this.writeAt = new Date();
         this.secret = secret;
-    }
-
-    public void faqWriteAt() {
-        this.writeAt = new Date();
-    }
-
-    public void faqAlterAt() {
-        this.alterAt = new Date();
     }
 }

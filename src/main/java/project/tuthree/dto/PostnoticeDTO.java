@@ -31,8 +31,7 @@ public class PostnoticeDTO {
     @NotNull
     private String content;
 
-    @ColumnDefault("0")
-    private Long view;
+    private Long view = 0L;
 
     private Date writeAt = new Date(); //java.sql.timestamp??
 
@@ -62,11 +61,4 @@ public class PostnoticeDTO {
         this.secret = secret;
     }
 
-    public void noticeWriteAt() {
-        this.writeAt = new Date();
-    }
-
-    public void noticeAlterAt() {
-        this.alterAt = new Date();
-    }
 }
