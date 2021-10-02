@@ -74,7 +74,6 @@ public class Teacher {
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
-
     private String region; ///json
 
     @Enumerated(EnumType.ORDINAL)
@@ -82,6 +81,7 @@ public class Teacher {
 
     private String subject;
 
+    @Column(name = "user_cost")
     private int cost;
 
     private String school;

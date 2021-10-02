@@ -31,7 +31,7 @@ public class Chat {
     @Column(name = "user_id")
     private String userId;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "chat_at")
     private Date chatAt;
 
