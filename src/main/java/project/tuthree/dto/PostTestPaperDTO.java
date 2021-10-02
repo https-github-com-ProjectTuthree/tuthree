@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostTestPaperDTO {
 
-    private String id;
+    private Long id;
 
     @NotNull
     private Teacher userId;
@@ -36,7 +36,7 @@ public class PostTestPaperDTO {
     private Status secret;
 
     @Builder
-    public PostTestPaperDTO(String id, Teacher userId, String title, String content,
+    public PostTestPaperDTO(Long id, Teacher userId, String title, String content,
                             Long view, Date writeAt, Date alterAt, Status secret) {
         this.id = id;
         this.userId = userId;
@@ -46,6 +46,10 @@ public class PostTestPaperDTO {
         this.writeAt = writeAt;
         this.alterAt = alterAt;
         this.secret = secret;
+    }
+
+    public void testpaperWriteAt() {
+        this.writeAt = new Date();
     }
 
 

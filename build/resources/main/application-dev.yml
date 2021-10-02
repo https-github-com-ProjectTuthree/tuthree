@@ -9,10 +9,19 @@ spring:
     #password: tuthree1234
     password: admin1234
     driver-class-name: oracle.jdbc.driver.OracleDriver
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
   jpa:
     hibernate:
       ddl-auto: none
+
 server:
   port: 8088
 

@@ -63,11 +63,11 @@ public class PostFaqRepository {
     /**
      * faq 수정 : faqtype, title, content,secret, -  alterAt 넣어주기
      */
-    public int updateFaq(Long id, PostFaq postFaq) {
+    public Long updateFaq(Long id, PostFaq postFaq) {
 
         PostFaq faq = em.find(PostFaq.class, id);
         faq.updateFaq(postFaq);
-        return 0;
+        return id;
     }
 
     public Long faqHasRow() {
