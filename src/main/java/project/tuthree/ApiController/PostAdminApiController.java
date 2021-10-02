@@ -1,10 +1,11 @@
 package project.tuthree.ApiController;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.repository.PostFaqRepository;
@@ -12,7 +13,6 @@ import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.service.PostFaqService;
 import project.tuthree.service.PostNoticeService;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -27,25 +27,6 @@ public class PostAdminApiController {
     private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
     private final PostNoticeRepository postNoticeRepository;
-
-
-    @Getter
-    @AllArgsConstructor
-    class ExistDataSuccessResponse<T>{
-        private final Boolean Success = true;
-        int StatusCode;
-        String Message;
-        T data;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    class NotExistDataResultResponse{
-        private final Boolean Success = true;
-        int StatusCode;
-        String Message;
-    }
-
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
@@ -123,7 +104,6 @@ public class PostAdminApiController {
     /** 관리자 공지사항 작성 */
     @PostMapping("/notice/admin/write")
     public NotExistDataResultResponse NoticeWrite(@RequestBody @Valid PostnoticeDTO postnoticeDTO) {
-
         Long id = postNoticeService.writeNotice(postnoticeDTO);
         log.debug("\n---- 관리자 공지사항 작성 [ID : " + id + " ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 공지사항이 작성되었습니다.");

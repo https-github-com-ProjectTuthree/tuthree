@@ -54,13 +54,14 @@ public class Student{
 
     private String tel;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private int birth;
 
     private String post;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_notification")
     private Status notification;
 
@@ -72,7 +73,7 @@ public class Student{
 
     private String region; ///json
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Status registration;
 
     private String subject;
