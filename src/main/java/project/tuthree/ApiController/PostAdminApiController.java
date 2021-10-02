@@ -117,7 +117,7 @@ public class PostAdminApiController {
         PostnoticeDTO postnoticeDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 관리자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                postnoticeDTO.getId() + "번 FAQ가 조회되었습니다.", postnoticeDTO);
+                postnoticeDTO.getId() + "번 공지사항이 조회되었습니다.", postnoticeDTO);
     }
 
     /** 관리자 공지사항 작성 */
@@ -133,7 +133,7 @@ public class PostAdminApiController {
     @DeleteMapping("/notice/admin/id/{notice_id}")
     public NotExistDataResultResponse NoticeDelete(@PathVariable("notice_id") Long id) {
         Long deleteId = postNoticeRepository.deleteNotice(id);
-        log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
+        log.debug("\n---- 관리자 공지사항 삭제 [ID : " + deleteId + " ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deleteId + "번 공지사항이 삭제되었습니다.");
     }
 
@@ -141,8 +141,7 @@ public class PostAdminApiController {
     @PutMapping("/notice/admin/id/{notice_id}")
     public NotExistDataResultResponse NoticeUpdate(@PathVariable("notice_id") Long id, @RequestBody @Valid PostnoticeDTO postnoticeDTO) {
         Long updatedId = postNoticeService.updateNotice(id, postnoticeDTO);
-        log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId +" ] ----\n");
-
+        log.debug("\n---- 관리자 공지사항 수정 [ID : " + updatedId +" ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 공지사항이 수정되었습니다.");
     }
 }

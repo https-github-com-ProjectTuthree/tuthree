@@ -43,7 +43,7 @@ public class JwtApiController {
     @Before("execution(* PostAdminApiController.*(..))")
     public void checkAdminValidToken() throws JsonParseException {
         /** 로직 개선하기!! */
-        String[] token = request.getHeader("token").split(" ");
+        String[] token = request.getHeader("Authorization").split(" ");
 
         /** 관리자 아이디 받아서 비교하기 */
 
