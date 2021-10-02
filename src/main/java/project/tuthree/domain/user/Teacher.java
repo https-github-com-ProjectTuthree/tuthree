@@ -16,6 +16,63 @@ import java.util.Date;
 @Table(name = "teacher")
 public class Teacher {
 
+    @Id
+    @Column(name = "user_id")
+    private String id;
+
+    @Column(name = "user_pwd")
+    @JsonIgnore
+    private String pwd;
+
+    @Column(name = "user_name")
+    private String name;
+
+    private String email;
+
+    private String tel;
+
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
+
+    private int birth;
+
+    private String post;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_notification")
+    private Status notification;
+
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date create_date;
+
+    private String region; ///json
+
+    @Enumerated(EnumType.STRING)
+    private Status registration;
+
+    private String subject;
+
+    @Column(name = "user_cost")
+    private int cost;
+
+    private String school;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "school_status")
+    private SchoolStatus status;
+
+    private String major;
+
+    private String certification;
+
+    @Column(name = "certify_status") //converter 적용하기
+    private boolean certifyStatus;
+
+    private String detail;
+
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
                    Grade grade, Date create_date, String region, Status registration, String subject, int cost, String school,
@@ -43,60 +100,5 @@ public class Teacher {
         this.certifyStatus = certifyStatus;
         this.detail = detail;
     }
-    @Id
-    @Column(name = "user_id")
-    private String id;
-
-    @Column(name = "user_pwd")
-    @JsonIgnore
-    private String pwd;
-
-    @Column(name = "user_name")
-    private String name;
-
-    private String email;
-
-    private String tel;
-
-    @Enumerated(EnumType.ORDINAL)
-    private Sex sex;
-
-    private int birth;
-
-    private String post;
-
-    @Column(name = "user_notification")
-    private Status notification;
-
-    @Enumerated(EnumType.STRING)
-    private Grade grade;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date create_date;
-
-    private String region; ///json
-
-    @Enumerated(EnumType.ORDINAL)
-    private Status registration;
-
-    private String subject;
-
-    @Column(name = "user_cost")
-    private int cost;
-
-    private String school;
-
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "school_status")
-    private SchoolStatus status;
-
-    private String major;
-
-    private String certification;
-
-    @Column(name = "certify_status") //converter 적용하기
-    private boolean certifyStatus;
-
-    private String detail;
 
 }

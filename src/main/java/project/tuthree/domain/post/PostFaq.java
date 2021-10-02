@@ -70,10 +70,8 @@ public class PostFaq {
     }
 
     public void updateFaq(PostFaq postFaq) {
-        this.admin = postFaq.getAdmin();
         this.title = postFaq.getTitle();
         this.content = postFaq.getContent();
-        this.alterAt = new Date();
         this.secret = postFaq.getSecret();
         this.type = postFaq.getType();
     }

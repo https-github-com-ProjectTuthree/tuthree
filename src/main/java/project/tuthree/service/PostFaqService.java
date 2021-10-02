@@ -43,7 +43,6 @@ public class PostFaqService {
      * faq 작성
      */
     public Long writeFaq(PostfaqDTO postfaqDTO) {
-        postfaqDTO.faqWriteAt();
         PostFaq postFaq = postFaqMapper.toEntity(postfaqDTO);
         return postFaqRepository.writeFaq(postFaq);
     }
@@ -52,9 +51,7 @@ public class PostFaqService {
      * faq 수정
      */
     public Long updateFaq(Long id, PostfaqDTO postfaqDTO) {
-        postfaqDTO.faqAlterAt();
         PostFaq faq = postFaqMapper.toEntity(postfaqDTO);
-        postFaqRepository.updateFaq(id, faq);
-        return id;
+        return postFaqRepository.updateFaq(id, faq);
     }
 }

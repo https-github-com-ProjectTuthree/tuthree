@@ -44,12 +44,10 @@ public class PostTestPaper {
     @Temporal(TemporalType.DATE)
     private Date alterAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "post_secret")
     private Status secret;
 
-    public void updateView() {
-        this.view += 1;
-    }
 
     @Builder
     public PostTestPaper(Teacher userId, String title, String content, Long view, Date writeAt, Date alterAt, Status secret) {
@@ -62,10 +60,13 @@ public class PostTestPaper {
         this.secret = secret;
     }
 
+    public void updateView() {
+        this.view += 1;
+    }
+
     public void updateTestPaper(PostTestPaper post) {
-        this.userId = post.getUserId();
+        this.title = post.getTitle();
         this.content = post.getContent();
-        this.alterAt = post.getAlterAt();
         this.secret = post.getSecret();
     }
 }
