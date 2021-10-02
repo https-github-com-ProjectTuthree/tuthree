@@ -3,9 +3,7 @@ package project.tuthree.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.post.PostFaq;
 import project.tuthree.domain.post.PostNotice;
-import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.mapper.PostNoticeMapper;
 
 import javax.persistence.EntityManager;
@@ -56,6 +54,15 @@ public class PostNoticeRepository {
     }
 
     /**
+     * 공지사항 수정
+     */
+    public Long updateNotice(Long id, PostNotice postNotice) {
+        PostNotice post = em.find(PostNotice.class, id);
+        post.updateNotice(postNotice);
+        return id;
+    }
+
+    /**
      * 공지사항 삭제
      */
     public Long deleteNotice(Long id) {
@@ -68,14 +75,7 @@ public class PostNoticeRepository {
         }
     }
 
-    /**
-     * 공지사항 수정
-     */
-    public int updateNotice(Long id, PostNotice postNotice) {
-        PostNotice post = em.find(PostNotice.class, id);
-        post.updateNotice(postNotice);
-        return 0;
-    }
+
     public Long noticeHasRow() {
         return (Long) em.createQuery("select count(p) from PostNotice p").getSingleResult();
     }

@@ -41,7 +41,6 @@ public class PostNoticeService {
 
     /** 관리자 공지사항 작성 */
     public Long writeNotice(PostnoticeDTO postnoticeDTO){
-        postnoticeDTO.noticeWriteAt();
         PostNotice postNotice = postNoticeMapper.toEntity(postnoticeDTO);
         return postNoticeRepository.writeNotice(postNotice);
     }
@@ -50,10 +49,8 @@ public class PostNoticeService {
      * 공지사항 수정
      */
     public Long updateNotice(Long id, PostnoticeDTO postnoticeDTO) {
-        postnoticeDTO.noticeAlterAt();
         PostNotice postNotice = postNoticeMapper.toEntity(postnoticeDTO);
-        postNoticeRepository.updateNotice(id, postNotice);
-        return id;
+        return postNoticeRepository.updateNotice(id, postNotice);
     }
 
 }
