@@ -67,10 +67,8 @@ public class PostNotice {
     }
 
     public void updateNotice(PostNotice postNotice) {
-        this.admin = postNotice.getAdmin();
         this.title = postNotice.getTitle();
         this.content = postNotice.getContent();
-        this.alterAt = new Date();
         this.secret = postNotice.getSecret();
         this.type = postNotice.getType();
     }

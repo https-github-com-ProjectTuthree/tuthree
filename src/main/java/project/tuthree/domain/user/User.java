@@ -30,7 +30,7 @@ public class User {
 
     private String tel;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private int birth;
