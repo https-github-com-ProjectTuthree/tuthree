@@ -10,12 +10,11 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.User;
 import project.tuthree.domain.user.UserRepository;
+import project.tuthree.dto.user.UserRegisterDTO;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

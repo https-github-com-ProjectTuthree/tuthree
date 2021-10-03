@@ -3,7 +3,7 @@ package project.tuthree.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.tuthree.domain.user.Teacher;
-import project.tuthree.dto.TeacherDTO;
+import project.tuthree.dto.user.TeacherDTO;
 import project.tuthree.mapper.TeacherMapper;
 import project.tuthree.repository.TeacherEntityRepository;
 

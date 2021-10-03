@@ -1,4 +1,4 @@
-package project.tuthree.dto;
+package project.tuthree.dto.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,10 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.Sex;
-import project.tuthree.domain.user.Teacher;
-import project.tuthree.domain.user.User;
+import project.tuthree.domain.user.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,9 +16,37 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
-//@AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterDTO {
+public class StudentRegisterDTO {
+
+
+    @Builder
+    public StudentRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth,
+                   String post, Grade grade, Status notification, String region, Status registration, String subject, int cost, School school, String detail) {
+        //super(id, pwd, name, email, tel, sex, birth, post, grade);
+        Assert.notNull(id, "id must not be blank");
+        Assert.notNull(pwd, "pwd must not be blank");
+        Assert.notNull(name, "name must not be blank");
+        Assert.notNull(tel, "tel must not be blank");
+        this.id = id;
+        this.pwd = pwd;
+        this.name = name;
+        this.email = email;
+        this.tel = tel;
+        this.sex = sex;
+        this.birth = birth;
+        this.post = post;
+        this.notification = Status.OPEN;
+        this.grade = grade.STUDENT;
+        this.create_date = new Date();
+        this.region = region;
+        this.registration = registration;
+        this.subject = subject;
+        this.cost = cost;
+        this.school = school;
+        this.detail = detail;
+    }
+
     @NotBlank(message = "아이디를 입력해주세요")
     @Size(min = 6, max = 12, message = "아이디는 6~12자 이어야 합니다.")
     private String id;
@@ -48,31 +73,20 @@ public class UserRegisterDTO {
     @ColumnDefault("OPEN")
     private Status notification;
 
-    @ColumnDefault("Parent")
+    @ColumnDefault("STUDENT")
     private Grade grade;
 
     private Date create_date;
+    private String region; ///json
+    private Status registration;
+    private String subject;
+    private int cost;
+    private School school;
+    private String detail;
 
-   @Builder
-    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Grade grade, Date create_date){
-       Assert.notNull(id, "id must not be blank");
-       Assert.notNull(pwd, "pwd must not be blank");
-       Assert.notNull(name, "name must not be blank");
-       Assert.notNull(tel, "tel must not be blank");
-       this.id = id;
-        this.pwd = pwd;
-        this.name = name;
-        this.email = email;
-        this.tel = tel;
-        this.sex = sex;
-        this.birth = birth;
-        this.post = post;
-        this.grade = grade.PARENT;
-        this.create_date = new Date();
-    }
-
-    public User toEntity(){
-        return User.builder()
+    public Student toEntity() {
+        //super.toEntity();
+        return Student.builder()
                 .id(id)
                 .pwd(new BCryptPasswordEncoder().encode(pwd))
                 .name(name)
@@ -83,6 +97,12 @@ public class UserRegisterDTO {
                 .post(post)
                 .grade(grade)
                 .create_date(create_date)
+                .region(region)
+                .registration(registration)
+                .subject(subject)
+                .cost(cost)
+                .school(school)
+                .detail(detail)
                 .build();
     }
 
