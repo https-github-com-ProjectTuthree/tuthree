@@ -8,7 +8,7 @@ import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResp
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
-import project.tuthree.dto.UserfileDTO;
+import project.tuthree.dto.file.UserfileDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;

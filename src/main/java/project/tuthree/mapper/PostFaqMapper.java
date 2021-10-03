@@ -4,9 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import project.tuthree.domain.post.PostFaq;
-import project.tuthree.dto.PostfaqDTO;
-
-import java.util.List;
+import project.tuthree.dto.post.PostfaqDTO;
 
 @Mapper(componentModel = "spring")
 public interface PostFaqMapper extends GenericMapper<PostfaqDTO, PostFaq> {
