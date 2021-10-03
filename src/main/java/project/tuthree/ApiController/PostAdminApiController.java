@@ -6,17 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListData;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.service.PostFaqService;
 import project.tuthree.service.PostNoticeService;
+import project.tuthree.service.PostTestPaperService;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,29 +28,28 @@ public class PostAdminApiController {
     private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
     private final PostNoticeRepository postNoticeRepository;
+    private final PostTestPaperService postTestPaperService;
+
+
+    // FAQ ////////////////////////////////
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
-    public Map<String,Object> FaqList(@PathVariable("page") int page) {
-        Map<String, Object> map = new HashMap<>();
-        List<PostfaqDTO> dtoList = postFaqService.faqFindByPage(page);
+    public ExistDataSuccessResponse FaqList(@PathVariable("page") int page) {
+        List<PostListDTO> dtoList = postFaqService.faqFindByPage(page);
         Long list = postFaqRepository.faqHasRow();
-        map.put("Success", true);
-        map.put("StatusCode", StatusCode.OK.getCode());
-        map.put("Message", page + "페이지의 FAQ가 조회되었습니다.");
-        map.put("list", list);
-        map.put("data", dtoList);
         log.debug("\n---- 관리자 FAQ 페이지 " + page + "리스트 조회 ----\n");
-        return map;
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                page + " 페이지 FAQ가 조회되었습니다.", dtoList);
     }
 
     /** faq 특정 글 조회 */
     @GetMapping("/faq/admin/id/{faq_id}")
     public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id){
-        PostfaqDTO postfaqDTO = postFaqService.faqFindById(id);
+        PostListDTO postListDTO = postFaqService.faqFindById(id);
         log.debug("\n---- 관리자 FAQ 게시글 조회 [ID : " + id + " ] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                postfaqDTO.getId() + "번 FAQ가 조회되었습니다.", postfaqDTO);
+                postListDTO.getId() + "번 FAQ가 조회되었습니다.", postListDTO);
     }
 
     /** faq  작성 */
@@ -75,30 +75,27 @@ public class PostAdminApiController {
         log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId + " ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 FAQ가 수정되었습니다.");
     }
-    //////////////////////////////////////////////////////////////////
+
+
+    // NOTICE ////////////////////////////////
 
     /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/admin/{page}")
-    public Map<String, Object> NoticeList(@PathVariable("page") int page) {
-        Map<String, Object> map = new HashMap<>();
-        List<PostnoticeDTO> dtoList = postNoticeService.noticeByPage(page);
-        Long list = postNoticeRepository.noticeHasRow();
-        map.put("Success", true);
-        map.put("StatusCode", StatusCode.OK);
-        map.put("Message", page + "페이지의 공지사항이 조회되었습니다.");
-        map.put("list", list);
-        map.put("data", dtoList);
+    public ExistDataSuccessResponse NoticeList(@PathVariable("page") int page) {
+        List<PostListDTO> dtoList = postNoticeService.noticeByPage(page);
+        PostListData data = new PostListData(postNoticeRepository.noticeHasRow(), dtoList);
         log.debug("\n---- 관리자 공지사항 " + page + "페이지 리스트 조회 ----\n");
-        return map;
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                page + "페이지의 공지사항이 조회되었습니다.", data);
     }
 
     /** 공지사항 특정 글 조회 */
     @GetMapping("/notice/admin/id/{notice_id}")
     public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
-        PostnoticeDTO postnoticeDTO = postNoticeService.noticeById(id);
+        PostListDTO postListDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 관리자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                postnoticeDTO.getId() + "번 공지사항이 조회되었습니다.", postnoticeDTO);
+                postListDTO.getId() + "번 공지사항이 조회되었습니다.", postListDTO);
     }
 
     /** 관리자 공지사항 작성 */
@@ -123,5 +120,18 @@ public class PostAdminApiController {
         Long updatedId = postNoticeService.updateNotice(id, postnoticeDTO);
         log.debug("\n---- 관리자 공지사항 수정 [ID : " + updatedId +" ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 공지사항이 수정되었습니다.");
+    }
+
+
+    // TEST PAPER ////////////////////////////////
+
+    /**
+     * 커뮤니티 게시글 삭제
+     */
+    @DeleteMapping("/community/admin/id/{post_id}")
+    public NotExistDataResultResponse CommunityDelete(@PathVariable("post_id") Long id) {
+        Long deletedId = postTestPaperService.deleteCommunity(id);
+        log.debug("\n---- 관리자 커뮤니티 글 삭제 [ID : " + id + "] ----\n");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 삭제되었습니다.");
     }
 }

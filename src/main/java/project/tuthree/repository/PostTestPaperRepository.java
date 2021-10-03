@@ -7,16 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import project.tuthree.domain.file.UserFile;
 import project.tuthree.domain.post.PostTestPaper;
 
 import javax.persistence.EntityManager;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -58,15 +51,12 @@ public class PostTestPaperRepository {
         return id;
     }
 
-    /** 커뮤니티 글 삭제 */
-    public Long deleteTestPaper(Long id){
-        try {
-            em.remove(em.find(PostTestPaper.class, id));
-            return id;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0L;
-        }
+    /**
+     * 커뮤니티 글 삭제
+     */
+    public Long deleteTestPaper(Long id) {
+        em.remove(em.find(PostTestPaper.class, id));
+        return id;
     }
 
     public Long testpaperHasRow() {
