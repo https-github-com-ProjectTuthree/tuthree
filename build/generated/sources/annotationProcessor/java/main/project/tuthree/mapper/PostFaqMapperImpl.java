@@ -6,8 +6,8 @@ import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.domain.post.PostFaq.PostFaqBuilder;
-import project.tuthree.dto.PostfaqDTO;
-import project.tuthree.dto.PostfaqDTO.PostfaqDTOBuilder;
+import project.tuthree.dto.post.PostfaqDTO;
+import project.tuthree.dto.post.PostfaqDTO.PostfaqDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",

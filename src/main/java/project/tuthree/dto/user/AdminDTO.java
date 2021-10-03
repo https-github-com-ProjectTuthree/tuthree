@@ -1,4 +1,4 @@
-package project.tuthree.dto;
+package project.tuthree.dto.user;
 
 import lombok.*;
 import org.springframework.util.Assert;
