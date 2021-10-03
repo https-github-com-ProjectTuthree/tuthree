@@ -126,9 +126,9 @@ public class PostAdminApiController {
      * 커뮤니티 게시글 삭제
      */
     @DeleteMapping("/community/admin/id/{post_id}")
-    public NotExistDataResultResponse CommunityDelete(@PathVariable("post_id") Long id) {
+    public NotExistDataResultResponse CommunityAdminDelete(@PathVariable("post_id") Long id) {
         Long deletedId = postTestPaperService.deleteCommunity(id);
-        log.debug("\n---- 관리자 커뮤니티 글 삭제 [ID : " + id + "] ----\n");
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 삭제되었습니다.");
+        log.debug("\n---- 관리자 커뮤니티 글 삭제 [ID : " + deletedId + "] ----\n");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deletedId + "번 게시글이 삭제되었습니다.");
     }
 }
