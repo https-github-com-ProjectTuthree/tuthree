@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.UnexpectedRollbackException;
 import project.tuthree.domain.post.PostFaq;
+import project.tuthree.dto.EmbeddedDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListDTO;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
 import project.tuthree.repository.PostFaqRepository;
@@ -22,21 +24,23 @@ public class PostFaqService {
     private final PostFaqMapper postFaqMapper;
 
     /** faq 페이지 목록 조회 */
-    public List<PostfaqDTO> faqFindByPage(int page) {
+    public List<PostListDTO> faqFindByPage(int page) {
         List<PostFaq> list = postFaqRepository.findByPage(page);
         if (list.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
         return list.stream()
-                .map(m -> postFaqMapper.toDto(m))
+                .map(m -> new PostListDTO(m.getId(), m.getAdmin().getId(), m.getTitle(),
+                        m.getContent(), m.getView(), m.getWriteAt(), null, m.getSecret()))
                 .collect(Collectors.toList());
     }
 
     /** faq id로 조회 */
-    public PostfaqDTO faqFindById(Long id) {
+    public PostListDTO faqFindById(Long id) {
         PostFaq postFaq = postFaqRepository.findById(id);
-        return postFaqMapper.toDto(postFaq);
+        return new PostListDTO(postFaq.getId(), postFaq.getAdmin().getId(), postFaq.getTitle(), postFaq.getContent(),
+                postFaq.getView(), postFaq.getWriteAt(), null, postFaq.getSecret());
     }
 
     /**

@@ -104,6 +104,21 @@ public class PostTestPaperService {
         return post.getId();
     }
 
+    /** 커뮤니티 글 삭제 -> post_testpaper id를 가진 user file 삭제, user file 삭제 */
+
+    public Long deleteCommunity(Long testPaperId){
+        List<Long> fileList = em.createQuery("select f.id from UserFile f where f.testpaperId.id = :id")
+                .setParameter("id", testPaperId)
+                .getResultList();
+        for (int i = 0; i < fileList.size(); i++) {
+            userFileRepository.deleteUserFile(fileList.get(i));
+            log.info("파일 " + i + "삭제되었음\n\n\n\n");
+        }
+        Long deletedId = testPaperRepository.deleteTestPaper(testPaperId);
+
+        return deletedId;
+    }
+
 
     /**
      * 커뮤니티 글 수정
