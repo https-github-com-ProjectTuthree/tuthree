@@ -3,15 +3,12 @@ package project.tuthree.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.UnexpectedRollbackException;
 import project.tuthree.domain.post.PostFaq;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
-import project.tuthree.dto.PostfaqDTO;
+import project.tuthree.dto.post.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
 import project.tuthree.repository.PostFaqRepository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,4 +1,4 @@
-package project.tuthree.dto;
+package project.tuthree.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostNotice;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
-import project.tuthree.dto.PostnoticeDTO;
+import project.tuthree.dto.post.PostnoticeDTO;
 import project.tuthree.mapper.PostNoticeMapper;
 import project.tuthree.repository.PostNoticeRepository;
 

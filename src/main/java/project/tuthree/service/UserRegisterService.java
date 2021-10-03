@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
-import project.tuthree.dto.*;
-
-import javax.persistence.EntityManager;
+import project.tuthree.dto.user.*;
 
 @Service
 @Transactional(readOnly = true)
