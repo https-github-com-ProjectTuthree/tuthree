@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostNotice;
+import project.tuthree.dto.EmbeddedDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListDTO;
 import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.mapper.PostNoticeMapper;
 import project.tuthree.repository.PostNoticeRepository;
@@ -22,21 +24,22 @@ public class PostNoticeService {
     /**
      * 공지사항 페이지 목록 조회하기
      */
-    public List<PostnoticeDTO> noticeByPage(int page) {
+    public List<PostListDTO> noticeByPage(int page) {
         List<PostNotice> list = postNoticeRepository.findByPage(page);
         if (list.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
         return list.stream()
-                .map(m -> postNoticeMapper.toDto(m))
+                .map(m -> new PostListDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getContent(), m.getView(), m.getWriteAt(), null, m.getSecret()))
                 .collect(Collectors.toList());
     }
 
     /** 공지사항 id로 조회 */
-    public PostnoticeDTO noticeById(Long id) {
+    public PostListDTO noticeById(Long id) {
         PostNotice postNotice = postNoticeRepository.findById(id);
-        return postNoticeMapper.toDto(postNotice);
+        return new PostListDTO(postNotice.getId(), postNotice.getAdmin().getId(), postNotice.getTitle(), postNotice.getContent(), postNotice.getView(),
+                postNotice.getWriteAt(), null, postNotice.getSecret());
     }
 
     /** 관리자 공지사항 작성 */
