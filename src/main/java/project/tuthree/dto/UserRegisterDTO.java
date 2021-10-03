@@ -3,15 +3,20 @@ package project.tuthree.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.Assert;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
+import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Getter
 //@AllArgsConstructor
@@ -39,11 +44,22 @@ public class UserRegisterDTO {
     private Sex sex;
     private int birth;
     private String post;
+
+    @ColumnDefault("OPEN")
+    private Status notification;
+
+    @ColumnDefault("Parent")
     private Grade grade;
 
+    private Date create_date;
+
    @Builder
-    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Grade grade){
-        this.id = id;
+    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Grade grade, Date create_date){
+       Assert.notNull(id, "id must not be blank");
+       Assert.notNull(pwd, "pwd must not be blank");
+       Assert.notNull(name, "name must not be blank");
+       Assert.notNull(tel, "tel must not be blank");
+       this.id = id;
         this.pwd = pwd;
         this.name = name;
         this.email = email;
@@ -51,7 +67,8 @@ public class UserRegisterDTO {
         this.sex = sex;
         this.birth = birth;
         this.post = post;
-        this.grade = grade;
+        this.grade = grade.PARENT;
+        this.create_date = new Date();
     }
 
     public User toEntity(){
@@ -65,6 +82,8 @@ public class UserRegisterDTO {
                 .birth(birth)
                 .post(post)
                 .grade(grade)
+                .create_date(create_date)
                 .build();
     }
+
 }
