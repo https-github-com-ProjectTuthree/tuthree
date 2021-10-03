@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.tuthree.domain.file.UserFile;
-import project.tuthree.dto.UserfileDTO;
+import project.tuthree.dto.file.UserfileDTO;
 import project.tuthree.mapper.UserFileMapper;
 import project.tuthree.repository.UserFileRepository;
 

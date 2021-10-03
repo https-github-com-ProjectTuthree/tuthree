@@ -6,8 +6,8 @@ import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 import project.tuthree.domain.file.UserFile;
 import project.tuthree.domain.file.UserFile.UserFileBuilder;
-import project.tuthree.dto.UserfileDTO;
-import project.tuthree.dto.UserfileDTO.UserfileDTOBuilder;
+import project.tuthree.dto.file.UserfileDTO;
+import project.tuthree.dto.file.UserfileDTO.UserfileDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",

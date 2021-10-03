@@ -11,7 +11,7 @@ import project.tuthree.domain.user.SchoolStatus;
 import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.Teacher.TeacherBuilder;
-import project.tuthree.dto.TeacherDTO;
+import project.tuthree.dto.user.TeacherDTO;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",

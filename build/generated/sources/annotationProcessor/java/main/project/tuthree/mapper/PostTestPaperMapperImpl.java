@@ -6,8 +6,8 @@ import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 import project.tuthree.domain.post.PostTestPaper;
 import project.tuthree.domain.post.PostTestPaper.PostTestPaperBuilder;
-import project.tuthree.dto.PostTestPaperDTO;
-import project.tuthree.dto.PostTestPaperDTO.PostTestPaperDTOBuilder;
+import project.tuthree.dto.post.PostTestPaperDTO;
+import project.tuthree.dto.post.PostTestPaperDTO.PostTestPaperDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",

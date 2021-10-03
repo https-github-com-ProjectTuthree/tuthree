@@ -1,7 +1,6 @@
 package project.tuthree.service;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,13 +8,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.post.NoticeType;
-import project.tuthree.domain.post.PostNotice;
 import project.tuthree.domain.user.Admin;
-import project.tuthree.dto.PostnoticeDTO;
+import project.tuthree.dto.post.PostnoticeDTO;
 import project.tuthree.repository.PostNoticeRepository;
 
 import javax.persistence.EntityManager;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 

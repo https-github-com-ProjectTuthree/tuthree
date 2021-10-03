@@ -1,4 +1,4 @@
-package project.tuthree.dto;
+package project.tuthree.dto.file;
 
 import lombok.Builder;
 import lombok.Getter;
