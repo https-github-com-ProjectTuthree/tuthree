@@ -3,7 +3,9 @@ package project.tuthree.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.Assert;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
@@ -11,6 +13,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Getter
 @NoArgsConstructor
@@ -38,7 +41,13 @@ public class TeacherRegisterDTO {
     private Sex sex;
     private int birth;
     private String post;
+
+    @ColumnDefault("OPEN")
+    private Status notification;
+
+    @ColumnDefault("TEACHER")
     private Grade grade;
+    private Date create_date;
     private String region; ///json
     private Status registration;
     private String subject;
@@ -47,13 +56,20 @@ public class TeacherRegisterDTO {
     private SchoolStatus status;
     private String major;
     private String certification;
+
+    @ColumnDefault("FALSE")
+    private boolean certifyStatus;
     private String detail;
 
     @Builder
     public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth,
-                              String post, Grade grade, String region, Status registration, String subject,
-                              int cost, String school, SchoolStatus status, String major, String certification, String detail) {
+                              String post, Status notification, Grade grade, String region, Status registration, String subject,
+                              int cost, String school, SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
+        Assert.notNull(id, "id must not be blank");
+        Assert.notNull(pwd, "pwd must not be blank");
+        Assert.notNull(name, "name must not be blank");
+        Assert.notNull(tel, "tel must not be blank");
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -62,7 +78,9 @@ public class TeacherRegisterDTO {
         this.sex = sex;
         this.birth = birth;
         this.post = post;
-        this.grade = grade;
+        this.notification = Status.OPEN;
+        this.grade = grade.TEACHER;
+        this.create_date = new Date();
         this.region = region;
         this.registration = registration;
         this.subject = subject;
@@ -71,6 +89,7 @@ public class TeacherRegisterDTO {
         this.status = status;
         this.major = major;
         this.certification = certification;
+        this.certifyStatus = false;
         this.detail = detail;
     }
 
@@ -87,7 +106,9 @@ public class TeacherRegisterDTO {
                 .sex(sex)
                 .birth(birth)
                 .post(post)
+                .notification(notification)
                 .grade(grade)
+                .create_date(create_date)
                 .region(region)
                 .registration(registration)
                 .subject(subject)
@@ -96,6 +117,7 @@ public class TeacherRegisterDTO {
                 .status(status)
                 .major(major)
                 .certification(certification)
+                .certifyStatus(certifyStatus)
                 .detail(detail)
                 .build();
     }

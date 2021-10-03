@@ -3,12 +3,10 @@ package project.tuthree.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.user.StudentRepository;
-import project.tuthree.domain.user.TeacherRepository;
-import project.tuthree.domain.user.UserRepository;
-import project.tuthree.dto.UserRegisterDTO;
-import project.tuthree.dto.StudentRegisterDTO;
-import project.tuthree.dto.TeacherRegisterDTO;
+import project.tuthree.domain.user.*;
+import project.tuthree.dto.*;
+
+import javax.persistence.EntityManager;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,24 +17,74 @@ public class UserRegisterService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
 
+    //학부모 회원가입
     @Transactional
     public String createParent(UserRegisterDTO registerDTO){
+        //User user = registerDTO.toEntity();
+        //user.setId("id");
+        //EntityManager.persist(user);
         return userRepository.save(registerDTO.toEntity()).getId();
     }
 
+    //학생 회원가입
     @Transactional
     public String createStudent(StudentRegisterDTO registerDTO){
         return studentRepository.save(registerDTO.toEntity()).getId();
     }
 
+    //선생님 회원가입
     @Transactional
     public String createTeacher(TeacherRegisterDTO registerDTO){
         return teacherRepository.save(registerDTO.toEntity()).getId();
     }
 
+    //아이디 중복확인
+    public boolean checkId(String id){
+        if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    //기본정보 조회
+    @Transactional(readOnly = true)
+    public UserResponseDTO findByInfo (String id, Grade grade){
+        if(grade == grade.PARENT){
+            User entity = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            return new UserResponseDTO(entity);
+        }
+        else if(grade == grade.TEACHER) {
+            Teacher entity = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
+            return new UserResponseDTO(entity);
+        }
+        else {
+            Student entity = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            return new UserResponseDTO(entity);
+        }
+    }
+
+    //튜터정보조회
+    @Transactional(readOnly = true)
+    public TeacherResponseDTO findTutorId (String id){
+        Teacher entity = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        return new TeacherResponseDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public StudentResponseDTO findTuTeeId (String id){
+        Student entity = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        return new StudentResponseDTO(entity);
+    }
+
+
+
+/*    //아이디 중복 체크
     public boolean checkId(String id){
         return userRepository.existsById(id);
-    }
+    }*/
+
 
 /*    public String makeSignature(Long time) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException {
         String space = " "; // one space

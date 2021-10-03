@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.dto.UserRegisterDTO;
-import project.tuthree.dto.StudentRegisterDTO;
-import project.tuthree.dto.TeacherRegisterDTO;
+import project.tuthree.domain.user.Grade;
+import project.tuthree.dto.*;
 import project.tuthree.service.UserRegisterService;
 
 @Slf4j
@@ -42,6 +41,33 @@ public class UserApiController {
         log.debug("\n---- 학생 회원 가입 ----\n");
         return userRegisterService.createTeacher(registerDTO);
     }
+
+    //기본정보조회
+    @GetMapping("/user/mypage")
+    public UserResponseDTO findUserInfo(@PathVariable String id, Grade grade){
+        return userRegisterService.findByInfo(id, grade);
+    }
+
+    //튜터 과외정보조회
+    @GetMapping("/user/tutorclass")
+    public TeacherResponseDTO findTutorInfo(@PathVariable String id){
+        return userRegisterService.findTutorId(id);
+    }
+
+    //튜티
+    @GetMapping("/user/tuteeclass")
+    public StudentResponseDTO findTuteeInfo(@PathVariable String id){
+        return userRegisterService.findTuTeeId(id);
+    }
+
+
+
+/*    //로그인
+    @PostMapping("/login")
+    public ResponseEntity<Boolean> login(@RequestBody LoginDTO loginDTO){
+        log.debug("\n---- 로그인 ----\n");
+        return userRegisterService.userLogin(loginDTO);
+    }*/
 
 
 }

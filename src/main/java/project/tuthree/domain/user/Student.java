@@ -78,7 +78,6 @@ public class Student{
 
     private String subject;
 
-    @Column(name = "user_cost")
     private int cost;
 
     @Enumerated(EnumType.STRING)
