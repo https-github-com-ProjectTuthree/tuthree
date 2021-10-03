@@ -3,23 +3,30 @@ package project.tuthree.repository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.Entity;
-import org.w3c.dom.stylesheets.LinkStyle;
 import project.tuthree.domain.file.UserFile;
-import project.tuthree.dto.PostTestPaperDTO;
-import project.tuthree.dto.UserfileDTO;
+import project.tuthree.domain.post.PostTestPaper;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Repository
@@ -71,9 +78,7 @@ public class UserFileRepository {
 
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
-
         }
-
 
         for(int i=0; i<files.size(); i++){
             String originName = "";
@@ -116,6 +121,44 @@ public class UserFileRepository {
     public Long deleteUserFile(Long fileId) {
         em.remove(em.find(UserFile.class, fileId));
         return fileId;
+    }
+
+    /** 파일 찾기 */
+    public UserFile userFileFindById(Long id) {
+        return em.find(UserFile.class, id);
+    }
+
+    /**
+     * post_id로 파일 찾기
+     */
+    public List<UserFile> userFileFindByPostId(Long id) {
+        List<UserFile> fileList = em.createQuery("select f from UserFile f where f.testpaperId = :id")
+                .setParameter("id", id)
+                .getResultList();
+        return fileList;
+    }
+
+
+    /** 파일 링크 url로 다운로드 */
+    public void downloadUserFile(HttpServletResponse response, Long post_id) throws IOException {
+
+        String origin = (String) em.createQuery("select f.realTitle from UserFile f where f.id = :id")
+                .setParameter("id", post_id)
+                .getSingleResult();
+
+        String path = (String) em.createQuery("select f.saveTitle from UserFile f where f.id = :id")
+                .setParameter("id", post_id)
+                .getSingleResult();
+
+        byte[] fileByte = FileUtils.readFileToByteArray(new File(path));
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; fileName=" + URLEncoder.encode(origin, "UTF-8") + ";");
+        response.setHeader("Content-Transfer-Encoding", "binary");
+
+        response.getOutputStream().write(fileByte);
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
 }
