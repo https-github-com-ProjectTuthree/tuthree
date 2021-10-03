@@ -2,6 +2,7 @@ package project.tuthree.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -38,6 +39,7 @@ public class User {
     private String post;
 
     @Column(name = "user_notification")
+    @Enumerated(EnumType.STRING)
     private Status notification;
 
     @Enumerated(EnumType.STRING)
@@ -61,3 +63,4 @@ public class User {
         this.create_date = create_date;
     }
 }
+
