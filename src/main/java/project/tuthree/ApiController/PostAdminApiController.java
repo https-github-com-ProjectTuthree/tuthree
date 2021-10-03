@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
-import project.tuthree.dto.EmbeddedDTO.PostListData;
 import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.dto.PostnoticeDTO;
 import project.tuthree.repository.PostFaqRepository;
@@ -30,17 +30,15 @@ public class PostAdminApiController {
     private final PostNoticeRepository postNoticeRepository;
     private final PostTestPaperService postTestPaperService;
 
-
     // FAQ ////////////////////////////////
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
-    public ExistDataSuccessResponse FaqList(@PathVariable("page") int page) {
+    public ExistListDataSuccessResponse FaqList(@PathVariable("page") int page) {
         List<PostListDTO> dtoList = postFaqService.faqFindByPage(page);
-        Long list = postFaqRepository.faqHasRow();
         log.debug("\n---- 관리자 FAQ 페이지 " + page + "리스트 조회 ----\n");
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                page + " 페이지 FAQ가 조회되었습니다.", dtoList);
+        return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                page + " 페이지 FAQ가 조회되었습니다.", postFaqRepository.faqHasRow(), dtoList);
     }
 
     /** faq 특정 글 조회 */
@@ -81,12 +79,11 @@ public class PostAdminApiController {
 
     /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/admin/{page}")
-    public ExistDataSuccessResponse NoticeList(@PathVariable("page") int page) {
+    public ExistListDataSuccessResponse NoticeList(@PathVariable("page") int page) {
         List<PostListDTO> dtoList = postNoticeService.noticeByPage(page);
-        PostListData data = new PostListData(postNoticeRepository.noticeHasRow(), dtoList);
         log.debug("\n---- 관리자 공지사항 " + page + "페이지 리스트 조회 ----\n");
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                page + "페이지의 공지사항이 조회되었습니다.", data);
+        return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                page + "페이지의 공지사항이 조회되었습니다.", postNoticeRepository.noticeHasRow(), dtoList);
     }
 
     /** 공지사항 특정 글 조회 */
