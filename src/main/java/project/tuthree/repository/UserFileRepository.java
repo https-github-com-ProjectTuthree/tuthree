@@ -26,7 +26,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class UserFileRepository {
+
     private final EntityManager em;
+
     @Getter
     public enum FileType{
         PARENT("/parent"),
@@ -52,9 +54,7 @@ public class UserFileRepository {
 
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
-            log.info("make directory\n\n\n\n");
         }
-        log.info(savePath + "------\n\n\n");
 
         String originName = file.getOriginalFilename();
         String saveName = saveFileNameToHash(originName + new Date());
@@ -64,41 +64,34 @@ public class UserFileRepository {
         return saveName;
     }
 
+    /** 파일을 서버에 저장 */
     public List<String> saveFile(List<MultipartFile> files, FileType type) throws NoSuchAlgorithmException, IOException {
         List<String> saveNames = new ArrayList<>();
         String savePath = "/home/seojaehui/tuthree/var" + type.getKortype();
+
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
-            log.info("make directory\n\n\n\n");
+
         }
-        log.info(savePath + "------\n\n\n");
+
 
         for(int i=0; i<files.size(); i++){
             String originName = "";
             String saveName = "";
             String saveFilePath = "";
+
             originName = files.get(i).getOriginalFilename();
-            log.info(originName + "\n\n");
             saveName = saveFileNameToHash(originName + new Date());
-            log.info(saveName + "  save\n\n");
 
             saveFilePath += savePath + "/" + saveName;
-            log.info("save : " + saveFilePath);
 
             files.get(i).transferTo(new File(saveFilePath));
             saveNames.add(saveFilePath);
-            log.info("endpointttt \n\n\n");
         }
         return saveNames;
     }
-//    String path = "/home/seojaehui/testform";
-//        if(!new File(path).exists()){
-//        new File(path).mkdir();
-//    }
-//        form.getFile().get(0).transferTo(new File(path +"/" + form.getFile().get(0).getOriginalFilename()));
-//
 
-
+    /** 파일 저장을 위한 md5 hash 생성 */
     public String saveFileNameToHash(String filename) throws NoSuchAlgorithmException {
         /**
          * 이름이 똑같으면 hash 값이 똑같이 나온다.
@@ -115,6 +108,14 @@ public class UserFileRepository {
             hashBuilder.append(hexString);
         }
         return hashBuilder.toString();
+    }
+
+    /**
+     * 파일 삭제
+     */
+    public Long deleteUserFile(Long fileId) {
+        em.remove(em.find(UserFile.class, fileId));
+        return fileId;
     }
 
 }

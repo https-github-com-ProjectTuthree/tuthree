@@ -35,7 +35,7 @@
 //
 //    @Getter
 //    @AllArgsConstructor
-//    class NotExistDataResultResponse<T> {
+//    class NotExistDataResultResponse {
 //        private final Boolean Success = false;
 //        int StatusCode;
 //        String Message;
