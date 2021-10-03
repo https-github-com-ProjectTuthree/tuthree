@@ -26,6 +26,16 @@ public class EmbeddedResponse {
 
     @Getter
     @AllArgsConstructor
+    public static class ExistDoubleDataSuccessResponse<T>{
+        private final Boolean Success = true;
+        int StatusCode;
+        String Message;
+        T list;
+        T data;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public static class NotExistDataResultResponse{
         private final Boolean Success = true;
         int StatusCode;

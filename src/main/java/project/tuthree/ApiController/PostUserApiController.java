@@ -4,17 +4,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.UserfileDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
+import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.PostFaqService;
 import project.tuthree.service.PostNoticeService;
 import project.tuthree.service.PostTestPaperService;
 import project.tuthree.service.PostTestPaperService.PaperForm;
+import project.tuthree.service.UserFileService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -34,8 +39,12 @@ public class PostUserApiController {
     private final PostTestPaperRepository postTestPaperRepository;
     private final PostNoticeRepository postNoticeRepository;
     private final PostFaqRepository postFaqRepository;
+    private final UserFileRepository userFileRepository;
+    private final UserFileService userFileService;
 
     // TEST PAPER ////////////////////////////////
+
+
     /** 커뮤니티 글 목록 조회 */
     @ResponseBody
     @GetMapping("/community/{page}")
@@ -46,13 +55,25 @@ public class PostUserApiController {
                 page + "페이지의 글이 조회되었습니다.", postTestPaperRepository.testpaperHasRow(), list);
     }
 
-    /** 커뮤니티 특정 글 조회 */
+    /////////////////////////////////////////파일 이름이랑 링크 전달해주기
+
+    /** 커뮤니티 특정 글 조회 */ //파일 이름도 같이 넘겨주기
     @ResponseBody
     @GetMapping("/community/id/{post_id}")
-    public ExistDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) {
+    public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) {
         PostListDTO dto = postTestPaperService.communityFindById(id);
+        List<UserfileDTO> userfileDTOList = userFileService.userFileFindByPostId(id);
         log.debug("\n---- 사용자 커뮤니티 글 조회 [ID : " + id + "] ----\n");
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "번 게시글이 조회되었습니다.", dto);
+        return new ExistDoubleDataSuccessResponse(StatusCode.OK.getCode(), id + "번 게시글이 조회되었습니다.", userfileDTOList, dto);
+    }
+
+    /**
+     * 파일 다운로드 테스트
+     */
+    @ResponseBody
+    @GetMapping("/community/download/{file_id}")
+    public void downFile(HttpServletResponse response, @PathVariable("file_id") Long id) throws IOException {
+        userFileRepository.downloadUserFile(response, id);
     }
 
 
