@@ -1,14 +1,10 @@
 package project.tuthree.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.post.PostAdmin;
 import project.tuthree.domain.post.PostFaq;
-import project.tuthree.dto.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
-import project.tuthree.service.PostFaqService;
 
 import javax.persistence.EntityManager;
 import java.util.List;

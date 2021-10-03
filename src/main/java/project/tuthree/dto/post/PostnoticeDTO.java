@@ -1,4 +1,4 @@
-package project.tuthree.dto;
+package project.tuthree.dto.post;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
