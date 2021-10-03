@@ -55,8 +55,7 @@ public class PostUserApiController {
     }
 
 
-    //@RequestParam("file") MultipartFile multipartFile
-    /** 커뮤니티 게시글 작성 json 저장*/
+    /** 커뮤니티 게시글 작성 -> post_testpaper & user_file*/
     @ResponseBody
     @PostMapping("/community/write")
     public NotExistDataResultResponse writeCommunity(@ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
@@ -66,24 +65,7 @@ public class PostUserApiController {
     }
     //파일 업로드 구현 후 md5 해쉬값 구현하기
 
-    /**
-     * 커뮤니티 게시글에 포함되는 파일 저장 -
-     */
-    @ResponseBody
-    @PostMapping("/community/user/write")
-    public void writec(@ModelAttribute PaperForm form) throws IOException {
-        log.debug("title : " + form.getTitle());
-        log.debug("filename : " + form.getFile().get(0).getOriginalFilename());
-        String path = "/home/seojaehui/testform";
-        if(!new File(path).exists()){
-            new File(path).mkdir();
-        }
-        form.getFile().get(0).transferTo(new File(path +"/" + form.getFile().get(0).getOriginalFilename()));
-
-
-
-    }
-
+    /** 게시글 수정 - 이미지도 수정하도록 */
     @ResponseBody
     @PutMapping("/community/id/{post_id}")
     public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @RequestBody PostListDTO postListDTO) {
@@ -118,16 +100,5 @@ public class PostUserApiController {
         return postNoticeService.noticeById(id);
     }
 
-    /**
-     * list return test logic
-     *
-     * @ResponseBody
-     * @GetMapping("/testlist") public FileListDto ListWhat() {
-     * List<String> list = new ArrayList<>();
-     * list.add("hello");
-     * list.add("test");
-     * return new FileListDto(list);
-     * }
-     */
 
 }

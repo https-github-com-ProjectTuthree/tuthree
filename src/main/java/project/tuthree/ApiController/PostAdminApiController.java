@@ -12,6 +12,7 @@ import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.service.PostFaqService;
 import project.tuthree.service.PostNoticeService;
+import project.tuthree.service.PostTestPaperService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -27,6 +28,10 @@ public class PostAdminApiController {
     private final PostFaqRepository postFaqRepository;
     private final PostNoticeService postNoticeService;
     private final PostNoticeRepository postNoticeRepository;
+    private final PostTestPaperService postTestPaperService;
+
+
+    // FAQ ////////////////////////////////
 
     /** faq 페이지 목록 조회 */
     @GetMapping("/faq/admin/{page}")
@@ -75,7 +80,9 @@ public class PostAdminApiController {
         log.debug("\n---- 관리자 FAQ 수정 [ID : " + updatedId + " ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 FAQ가 수정되었습니다.");
     }
-    //////////////////////////////////////////////////////////////////
+
+
+    // NOTICE ////////////////////////////////
 
     /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/admin/{page}")
@@ -123,5 +130,17 @@ public class PostAdminApiController {
         Long updatedId = postNoticeService.updateNotice(id, postnoticeDTO);
         log.debug("\n---- 관리자 공지사항 수정 [ID : " + updatedId +" ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 공지사항이 수정되었습니다.");
+    }
+
+
+    // TEST PAPER ////////////////////////////////
+
+    /**
+     * 커뮤니티 게시글 삭제
+     */
+    @DeleteMapping("/community/admin/id/{post_id}")
+    public NotExistDataResultResponse CommunityDelete(@PathVariable("post_id") Long id) {
+        Long deletedId = postTestPaperService.deleteCommunity(id);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 삭제되었습니다.");
     }
 }
