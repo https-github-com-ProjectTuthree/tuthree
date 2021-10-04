@@ -7,7 +7,9 @@ import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
@@ -28,6 +30,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class PostUserApiController {
     /**
      * responsebody 처리하기 valid
@@ -59,10 +62,22 @@ public class PostUserApiController {
     /** 커뮤니티 특정 글 조회 */ //파일 이름도 같이 넘겨주기
     @GetMapping("/community/id/{post_id}")
     public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) {
-        PostListDTO dto = postTestPaperService.communityFindById(id);
+        PostSingleContentDTO dto = postTestPaperService.communityFindById(id);
         List<FileIdName> userfileDTOList = userFileService.userFileFindByPostId(id);
         log.debug("\n---- 사용자 커뮤니티 글 조회 [ID : " + id + "] ----\n");
         return new ExistDoubleDataSuccessResponse(StatusCode.OK.getCode(), id + "번 게시글이 조회되었습니다.", dto, userfileDTOList);
+    }
+
+    /**
+     * 커뮤니티 게시글 검색
+     */
+    @GetMapping(value = "/community")
+    public ExistListDataSuccessResponse CommunitySearch(@RequestParam(value = "keyword") String keyword,
+                                                        @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+        List<PostListDTO> list = postTestPaperService.communityFindByKeyword(keyword, page);
+        return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                keyword + "에 대한 글 목록 중 " + page + "페이지를 조회하였습니다.",
+                postTestPaperRepository.testpaperHasRowByKeyword(keyword), list);
     }
 
     /**
@@ -86,7 +101,7 @@ public class PostUserApiController {
 
     /** 게시글 수정 - 이미지도 수정하도록 */
     @PutMapping("/community/id/{post_id}")
-    public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @RequestBody PostListDTO postListDTO) {
+    public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @RequestBody PostSingleContentDTO postListDTO) {
         /** 이전에 그 글이랑 관련된 자료는 다 지우고 새로 수정하기?? 흠... */
         Long updatedId = postTestPaperService.updateCommunity(id, postListDTO);
         log.debug("\n---- 사용자 커뮤니티 글 수정 [ID : " + id + "] ----\n");
@@ -115,7 +130,7 @@ public class PostUserApiController {
     /** FAQ 특정 글 조회 */
     @GetMapping("/faq/id/{faq_id}")
     public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id) {
-        PostListDTO postListDTO = postFaqService.faqFindById(id);
+        PostSingleContentDTO postListDTO = postFaqService.faqFindById(id);
         log.debug("\n---- 사용자 FAQ 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 id + "번 게시글이 조회되었습니다.", postListDTO);
@@ -134,7 +149,7 @@ public class PostUserApiController {
     /** 공지사항 특정 글 조회 */
     @GetMapping("/notice/id/{notice_id}")
     public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
-        PostListDTO postListDTO = postNoticeService.noticeById(id);
+        PostSingleContentDTO postListDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 사용자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "번 공지사항이 조회되었습니다.", postListDTO);
     }
