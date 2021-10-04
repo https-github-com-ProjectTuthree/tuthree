@@ -6,6 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -15,34 +18,92 @@ public class UserRegisterService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
 
+
+    //아이디 중복확인
+    public boolean checkId(String id){
+        boolean parent = userRepository.existsById(id);
+        boolean student = studentRepository.existsById(id);
+        boolean teacher = teacherRepository.existsById(id);
+
+        boolean result = TRUE;
+
+        if(parent == FALSE) {
+            if (student == FALSE) {
+                if (teacher == FALSE) {
+                    result = FALSE;
+                    return result;
+                }
+            }            
+        }else {
+            result = TRUE;
+        }
+        return result;
+    }
+
+        /*if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
+            return true;
+        }
+        else{
+            return false;
+        }*/
+    
+    /*    //아이디 중복 체크
+    public boolean checkId(String id){
+        return userRepository.existsById(id);
+    }*/
+
+
+
     //학부모 회원가입
     @Transactional
     public String createParent(UserRegisterDTO registerDTO){
-        //User user = registerDTO.toEntity();
-        //user.setId("id");
-        //EntityManager.persist(user);
-        return userRepository.save(registerDTO.toEntity()).getId();
+        //boolean result = checkId(registerDTO.getId());
+        try{
+            if(!checkId(registerDTO.getId())){
+                return userRepository.save(registerDTO.toEntity()).getId();
+            }
+            else{
+                return "redirect";
+            }
+
+        }catch(Exception e){
+            throw new RuntimeException();
+        }
+
+        //return "redirect:/";
+
+        //return userRepository.save(registerDTO.toEntity()).getId();
     }
 
     //학생 회원가입
     @Transactional
     public String createStudent(StudentRegisterDTO registerDTO){
-        return studentRepository.save(registerDTO.toEntity()).getId();
+        try{
+            if(!checkId(registerDTO.getId())){
+                return studentRepository.save(registerDTO.toEntity()).getId();
+            }
+            else{
+                return "redirect";
+            }
+
+        }catch(Exception e){
+            throw new RuntimeException();
+        }
     }
 
     //선생님 회원가입
     @Transactional
     public String createTeacher(TeacherRegisterDTO registerDTO){
-        return teacherRepository.save(registerDTO.toEntity()).getId();
-    }
+        try{
+            if(!checkId(registerDTO.getId())){
+                return teacherRepository.save(registerDTO.toEntity()).getId();
+            }
+            else{
+                return "redirect";
+            }
 
-    //아이디 중복확인
-    public boolean checkId(String id){
-        if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
-            return true;
-        }
-        else{
-            return false;
+        }catch(Exception e){
+            throw new RuntimeException();
         }
     }
 
@@ -70,18 +131,27 @@ public class UserRegisterService {
         return new TeacherResponseDTO(entity);
     }
 
+    //튜티정보조회
     @Transactional(readOnly = true)
     public StudentResponseDTO findTuTeeId (String id){
         Student entity = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
         return new StudentResponseDTO(entity);
     }
 
+/*    @Transactional
+    public String update(String id, StudentResponseDTO requestDto){
+        Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
+        student.update(requestDto.getName(),requestDto.getEmail(), requestDto.getTel(), requestDto.getSex(), requestDto.getBirth(), requestDto.getPost(), requestDto.getNotification());
 
-/*    //아이디 중복 체크
-    public boolean checkId(String id){
-        return userRepository.existsById(id);
+        return id;
     }*/
+
+
+
+
+
+
 
 
 /*    public String makeSignature(Long time) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException {

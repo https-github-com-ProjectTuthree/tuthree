@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -14,11 +15,11 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "student")
-public class Student{
+public class Student implements Persistable<String>{
 
     @Builder
-    public Student(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
-                   Grade grade, Date create_date, String region, Status registration, String subject, int cost, School school, String detail, User user) {
+    public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
+                   Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, School school, String detail, User user) {
         //super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
         this.id = id;
         this.pwd = pwd;
@@ -57,7 +58,7 @@ public class Student{
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private int birth;
+    private Integer birth;
 
     private String post;
 
@@ -68,6 +69,7 @@ public class Student{
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
+    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
@@ -78,7 +80,7 @@ public class Student{
 
     private String subject;
 
-    private int cost;
+    private Integer cost;
 
     @Enumerated(EnumType.STRING)
     private School school;
@@ -88,5 +90,10 @@ public class Student{
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private User user;
+
+    @Override
+    public boolean isNew(){
+        return create_date == null;
+    }
 
 }

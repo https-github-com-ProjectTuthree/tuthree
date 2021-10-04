@@ -3,6 +3,7 @@ package project.tuthree.domain.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.data.annotation.CreatedDate;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Table(name = "parent")
 //@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User implements Persistable<String>{
 
     @Id
     @Column(name = "user_id")
@@ -34,7 +35,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private int birth;
+    private Integer birth;
 
     private String post;
 
@@ -45,11 +46,24 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
+    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
+
+
+    @Override
+    public boolean isNew(){
+        return create_date == null;
+    }
+
+    public interface Persistable<ID>{
+        ID getId();
+        boolean isNew();
+    }
+
    @Builder
-    public User(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date create_date) {
+    public User(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
