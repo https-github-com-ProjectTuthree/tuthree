@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     //아이디중복체크
     boolean existsById(String id);
 
+
     //로그인
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findById(String id);

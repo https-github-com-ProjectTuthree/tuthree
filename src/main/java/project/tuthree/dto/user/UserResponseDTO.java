@@ -20,7 +20,7 @@ public class UserResponseDTO {
     private String email;
     private String tel;
     private Sex sex;
-    private int birth;
+    private Integer birth;
     private String post;
     private Status notification;
 

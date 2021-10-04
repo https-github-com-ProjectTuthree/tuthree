@@ -18,7 +18,7 @@ public class StudentResponseDTO {
     private String region; ///json
     private Status registration;
     private String subject;
-    private int cost;
+    private Integer cost;
     private School school;
     private String detail;
 

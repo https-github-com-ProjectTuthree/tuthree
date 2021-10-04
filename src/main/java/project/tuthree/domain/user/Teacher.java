@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "teacher")
-public class Teacher {
+public class Teacher implements Persistable<String>{
 
     @Id
     @Column(name = "user_id")
@@ -34,7 +35,7 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private int birth;
+    private Integer birth;
 
     private String post;
 
@@ -45,6 +46,7 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
+    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
@@ -56,7 +58,7 @@ public class Teacher {
     private String subject;
 
     @Column(name = "user_cost")
-    private int cost;
+    private Integer cost;
 
     private String school;
 
@@ -73,9 +75,14 @@ public class Teacher {
 
     private String detail;
 
+    @Override
+    public boolean isNew(){
+        return create_date == null;
+    }
+
     @Builder
-    public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification,
-                   Grade grade, Date create_date, String region, Status registration, String subject, int cost, String school,
+    public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
+                   Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, String school,
                    SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
         this.id = id;
@@ -102,3 +109,4 @@ public class Teacher {
     }
 
 }
+
