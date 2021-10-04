@@ -9,7 +9,9 @@ import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessRespon
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListTypeDTO;
 import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentTypeDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
@@ -122,7 +124,7 @@ public class PostUserApiController {
     /** FAQ 페이지 목록 조회 */
     @GetMapping("/faq/{page}")
     public ExistListDataSuccessResponse FaqList(@PathVariable("page") int page) {
-        List<PostListDTO> postListDTO = postFaqService.faqFindByPage(page);
+        List<PostListTypeDTO> postListDTO = postFaqService.faqFindByPage(page);
         log.debug("\n---- 사용자 FAQ 목록 조회 [PAGE : " + page + "] ----\n");
         return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 page + "페이지의 FAQ가 조회되었습니다.", postFaqRepository.faqHasRow(), postListDTO);
@@ -130,7 +132,7 @@ public class PostUserApiController {
     /** FAQ 특정 글 조회 */
     @GetMapping("/faq/id/{faq_id}")
     public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id) {
-        PostSingleContentDTO postListDTO = postFaqService.faqFindById(id);
+        PostSingleContentTypeDTO postListDTO = postFaqService.faqFindById(id);
         log.debug("\n---- 사용자 FAQ 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 id + "번 게시글이 조회되었습니다.", postListDTO);
@@ -140,7 +142,7 @@ public class PostUserApiController {
     /** 공지사항 페이지 목록 조회 */
     @GetMapping("/notice/{page}")
     public ExistListDataSuccessResponse NoticeList(@PathVariable("page") int page) {
-        List<PostListDTO> postListDTO = postNoticeService.noticeByPage(page);
+        List<PostListTypeDTO> postListDTO = postNoticeService.noticeByPage(page);
         log.debug("\n---- 사용자 공지사항 목록 조회 [PAGE : " + page + "] ----\n");
         return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 page + "페이지의 공지사항이 조회되었습니다.", postNoticeRepository.noticeHasRow(), postListDTO);
@@ -149,7 +151,7 @@ public class PostUserApiController {
     /** 공지사항 특정 글 조회 */
     @GetMapping("/notice/id/{notice_id}")
     public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
-        PostSingleContentDTO postListDTO = postNoticeService.noticeById(id);
+        PostSingleContentTypeDTO postListDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 사용자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "번 공지사항이 조회되었습니다.", postListDTO);
     }
