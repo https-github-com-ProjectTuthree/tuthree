@@ -63,7 +63,7 @@ public class UserRegisterService {
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
             else{
-                return "redirect";
+                return "redirect:/";
             }
 
         }catch(Exception e){
