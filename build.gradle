@@ -1,6 +1,9 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	//querydsl
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	//
 	id 'java'
 }
 
@@ -21,6 +24,8 @@ repositories {
 }
 
 dependencies {
+	//querydsl
+	implementation 'com.querydsl:querydsl-jpa'
 	//map struct && lombok
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
@@ -32,7 +37,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
 	//sdk
 	implementation 'net.nurigo:javaSDK:2.2'
 	//spring security
@@ -58,3 +62,28 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+//querydsl 추가
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+//build error  제거
+//compileQuerydsl.doFirst {
+//	if(file(querydslDir).exists() )
+//		delete(file(querydslDir))
+//}
+
+
+//querydsl 추가 완료
