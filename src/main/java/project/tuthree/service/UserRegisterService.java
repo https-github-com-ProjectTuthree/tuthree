@@ -63,7 +63,7 @@ public class UserRegisterService {
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
             else{
-                return "redirect";
+                return "redirect:/";
             }
 
         }catch(Exception e){
@@ -138,14 +138,32 @@ public class UserRegisterService {
         return new StudentResponseDTO(entity);
     }
 
-/*    @Transactional
-    public String update(String id, StudentResponseDTO requestDto){
+    /*@Transactional
+    public String userUpdate(String id, StudentResponseDTO requestDto){
         Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         student.update(requestDto.getName(),requestDto.getEmail(), requestDto.getTel(), requestDto.getSex(), requestDto.getBirth(), requestDto.getPost(), requestDto.getNotification());
 
         return id;
     }*/
+    //학생과외정보 수정
+    @Transactional
+    public String studentUpdate(String id, StudentUpdateDTO updateDTO){
+        Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+
+        student.update(updateDTO.getRegion(),updateDTO.getRegistration(), updateDTO.getSubject(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
+
+        return id;
+    }
+    //선생님과외정보 수정
+    @Transactional
+    public String teacherUpdate(String id, TeacherUpdateDTO updateDTO){
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+
+        teacher.update(updateDTO.getRegion(),updateDTO.getRegistration(), updateDTO.getSubject(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
+
+        return id;
+    }
 
 
 

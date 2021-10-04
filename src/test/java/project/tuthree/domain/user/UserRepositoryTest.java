@@ -38,7 +38,7 @@ public class UserRepositoryTest {
         String email="user@user.com";
         String tel="010-1234-1234";
         Sex sex=Sex.FEMALE;
-        int birth=1999;
+        Integer birth=1999;
         String post="post/user";
         Grade grade = Grade.PARENT;
 

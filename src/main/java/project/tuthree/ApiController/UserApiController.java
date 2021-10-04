@@ -68,22 +68,22 @@ public class UserApiController {
     }
 
 
-    /*//정보 수정
+    //정보 수정
     @PutMapping("/user/tutorclass/{id}")
-    public Long update(@PathVariable String id, @RequestBody TeacherResponseDTO responseDTO){
-        return userRegisterService.update(id, responseDTO);
+    public String teacherUpdate(@PathVariable String id, @RequestBody TeacherUpdateDTO updateDTO){
+        return userRegisterService.teacherUpdate(id, updateDTO);
     }
     //정보 수정
     @PutMapping("/user/tuteeclass/{id}")
-    public Long update(@PathVariable String id, @RequestBody StudentResponseDTO responseDTO){
-        return userRegisterService.update(id, responseDTO);
+    public String studentUpdate(@PathVariable String id, @RequestBody StudentUpdateDTO updateDTO){
+        return userRegisterService.studentUpdate(id, updateDTO);
     }
     //정보 수정
-    @PutMapping("/user/mypage")
+/*    @PutMapping("/user/mypage")
     public Long update(@RequestBody UserResponseDTO responseDTO){
         return userRegisterService.update(id, responseDTO);
-    }
-*/
+    }*/
+
 
 /*    //로그인
     @PostMapping("/login")

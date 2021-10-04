@@ -108,5 +108,17 @@ public class Teacher implements Persistable<String>{
         this.detail = detail;
     }
 
+    public void update(String region, Status registration, String subject, Integer cost, String school,
+                       SchoolStatus status, String major, String detail){
+        this.region = region;
+        this.registration = registration;
+        this.subject = subject;
+        this.cost = cost;
+        this.school = school;
+        this.status = status;
+        this.major = major;
+        this.detail = detail;
+    }
+
 }
 

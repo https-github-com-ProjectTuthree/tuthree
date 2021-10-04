@@ -96,4 +96,12 @@ public class Student implements Persistable<String>{
         return create_date == null;
     }
 
+    public void update(String region, Status registration, String subject, Integer cost, School school, String detail) {
+        this.region = region;
+        this.registration = registration;
+        this.subject = subject;
+        this.cost = cost;
+        this.school = school;
+        this.detail = detail;
+    }
 }

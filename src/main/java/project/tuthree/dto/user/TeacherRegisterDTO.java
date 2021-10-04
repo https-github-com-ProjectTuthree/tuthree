@@ -49,7 +49,8 @@ public class TeacherRegisterDTO {
     private Grade grade = Grade.TEACHER;
     private Date create_date = new Date();
     private String region; ///json
-    private Status registration;
+    @ColumnDefault("OPEN")
+    private Status registration = Status.OPEN;
     private String subject;
     private Integer cost;
     private String school;
@@ -78,8 +79,8 @@ public class TeacherRegisterDTO {
         this.sex = sex;
         this.birth = birth;
         this.post = post;
-        this.notification = Status.OPEN;
-        this.grade = grade.TEACHER;
+        this.notification = notification;
+        this.grade = grade;
         this.create_date = new Date();
         this.region = region;
         this.registration = registration;
