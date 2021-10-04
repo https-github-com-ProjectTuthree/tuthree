@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostNotice;
+import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListTypeDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentTypeDTO;
 import project.tuthree.dto.post.PostnoticeDTO;
 import project.tuthree.mapper.PostNoticeMapper;
 import project.tuthree.repository.PostNoticeRepository;
@@ -23,22 +27,20 @@ public class PostNoticeService {
     /**
      * 공지사항 페이지 목록 조회하기
      */
-    public List<PostListDTO> noticeByPage(int page) {
+    public List<PostListTypeDTO> noticeByPage(int page) {
         List<PostNotice> list = postNoticeRepository.findByPage(page);
-        if (list.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        if (list.isEmpty()) throw new NullPointerException();
 
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getContent(), m.getView(), m.getWriteAt(), null, m.getSecret()))
+                .map(m -> new PostListTypeDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getWriteAt(), m.getType().getKorType()))
                 .collect(Collectors.toList());
     }
 
     /** 공지사항 id로 조회 */
-    public PostListDTO noticeById(Long id) {
+    public PostSingleContentTypeDTO noticeById(Long id) {
         PostNotice postNotice = postNoticeRepository.findById(id);
-        return new PostListDTO(postNotice.getId(), postNotice.getAdmin().getId(), postNotice.getTitle(), postNotice.getContent(), postNotice.getView(),
-                postNotice.getWriteAt(), null, postNotice.getSecret());
+        return new PostSingleContentTypeDTO(postNotice.getId(), postNotice.getAdmin().getId(), postNotice.getTitle(), postNotice.getContent(), postNotice.getView(),
+                postNotice.getWriteAt(), postNotice.getType().getKorType(), postNotice.getSecret());
     }
 
     /** 관리자 공지사항 작성 */

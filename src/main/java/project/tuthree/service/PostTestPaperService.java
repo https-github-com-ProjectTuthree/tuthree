@@ -12,6 +12,7 @@ import project.tuthree.domain.Status;
 import project.tuthree.domain.post.PostTestPaper;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
 import project.tuthree.dto.post.PostTestPaperDTO;
 import project.tuthree.dto.file.UserfileDTO;
 import project.tuthree.mapper.PostTestPaperMapper;
@@ -60,13 +61,10 @@ public class PostTestPaperService {
     /** 커뮤니티 페이지 목록 조회하기 */
     public List<PostListDTO> communityFindByPage(int page) {
         List<PostTestPaper> list = testPaperRepository.findByPage(page);
-        if (list.isEmpty()) {
-            log.info("-------------------------errr-----------");
-            throw new IllegalArgumentException();
-        }
+        if (list.isEmpty()) throw new NullPointerException();
 
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), m.getContent(), m.getView(), m.getWriteAt(), m.getAlterAt(), m.getSecret()))
+                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(),m.getWriteAt()))
                 .collect(Collectors.toList());
     }
 
@@ -75,12 +73,22 @@ public class PostTestPaperService {
 //            .collect(Collectors.toList());
 
     /** 커뮤니티 글 id로 조회하기 */
-    public PostListDTO communityFindById(Long id) {
+    public PostSingleContentDTO communityFindById(Long id) {
         PostTestPaper postTestPaper = testPaperRepository.findById(id);
-        PostListDTO postListDTO = new PostListDTO(postTestPaper.getId(), postTestPaper.getUserId().getId(),
-                postTestPaper.getTitle(), postTestPaper.getContent(), postTestPaper.getView(),
-                postTestPaper.getWriteAt(), postTestPaper.getAlterAt(), postTestPaper.getSecret());
+        PostSingleContentDTO postListDTO = new PostSingleContentDTO(postTestPaper.getId(), postTestPaper.getUserId().getId(),
+                postTestPaper.getTitle(), postTestPaper.getContent(), postTestPaper.getView(), postTestPaper.getWriteAt(), postTestPaper.getSecret());
         return postListDTO;
+    }
+
+    /**
+     * 커뮤니티 글 검색
+     */
+    public List<PostListDTO> communityFindByKeyword(String keyword, int page) {
+        List<PostTestPaper> list =testPaperRepository.findByKeyword(keyword, page);
+        if(list.isEmpty()) throw new NullPointerException();
+        return list.stream()
+                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), m.getWriteAt()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -92,7 +100,6 @@ public class PostTestPaperService {
         log.info("======================" + teacher.getId());
 
         PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
-
         List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
 
         for (int i = 0; i < saveNames.size(); i++) {
@@ -109,13 +116,8 @@ public class PostTestPaperService {
         List<Long> fileList = em.createQuery("select f.id from UserFile f where f.testpaperId.id = :id")
                 .setParameter("id", testPaperId)
                 .getResultList();
-        for (int i = 0; i < fileList.size(); i++) {
-            userFileRepository.deleteUserFile(fileList.get(i));
-            log.info("파일 " + i + "삭제되었음\n\n\n\n");
-        }
-        Long deletedId = testPaperRepository.deleteTestPaper(testPaperId);
-
-        return deletedId;
+        fileList.stream().map(m -> userFileRepository.deleteUserFile(m));
+        return testPaperRepository.deleteTestPaper(testPaperId);
     }
 
 
@@ -123,14 +125,12 @@ public class PostTestPaperService {
      * 커뮤니티 글 수정
      */
 
-    public Long updateCommunity(Long id, PostListDTO postListDTO) {
+    public Long updateCommunity(Long id, PostSingleContentDTO postListDTO) {
         Teacher teacher = teacherRepository.findById(postListDTO.getUserId());
         PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(postListDTO.getId(),
                 teacher, postListDTO.getTitle(), postListDTO.getContent(), null,
-                null, null, postListDTO.getSecret());
+                null, null, null);
         PostTestPaper postTestPaper = testPaperMapper.toEntity(postTestPaperDTO);
         return testPaperRepository.updateTestPaper(id, postTestPaper);
     }
-
-
 }
