@@ -21,8 +21,8 @@ public class StudentRegisterDTO {
 
 
     @Builder
-    public StudentRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth,
-                   String post, Grade grade, Status notification, String region, Status registration, String subject, int cost, School school, String detail) {
+    public StudentRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
+                   String post, Grade grade, Status notification, String region, Status registration, String subject, Integer cost, School school, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
@@ -67,20 +67,20 @@ public class StudentRegisterDTO {
     private String tel;
 
     private Sex sex;
-    private int birth;
+    private Integer birth;
     private String post;
 
     @ColumnDefault("OPEN")
-    private Status notification;
+    private Status notification= Status.OPEN;
 
     @ColumnDefault("STUDENT")
-    private Grade grade;
+    private Grade grade = Grade.STUDENT;
 
-    private Date create_date;
+    private Date create_date = new Date();
     private String region; ///json
     private Status registration;
     private String subject;
-    private int cost;
+    private Integer cost;
     private School school;
     private String detail;
 
@@ -95,6 +95,7 @@ public class StudentRegisterDTO {
                 .sex(sex)
                 .birth(birth)
                 .post(post)
+                .notification(notification)
                 .grade(grade)
                 .create_date(create_date)
                 .region(region)

@@ -12,6 +12,7 @@ import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.User;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -42,19 +43,20 @@ public class UserRegisterDTO {
     private String tel;
 
     private Sex sex;
-    private int birth;
+    private Integer birth;
     private String post;
 
     @ColumnDefault("OPEN")
-    private Status notification;
+    private Status notification = Status.OPEN;
 
     @ColumnDefault("Parent")
-    private Grade grade;
+    private Grade grade = Grade.PARENT;
 
-    private Date create_date;
+    private Date create_date = new Date();
+
 
    @Builder
-    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Grade grade, Date create_date){
+    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date){
        Assert.notNull(id, "id must not be blank");
        Assert.notNull(pwd, "pwd must not be blank");
        Assert.notNull(name, "name must not be blank");
@@ -67,6 +69,7 @@ public class UserRegisterDTO {
         this.sex = sex;
         this.birth = birth;
         this.post = post;
+        this.notification = Status.OPEN;
         this.grade = grade.PARENT;
         this.create_date = new Date();
     }
@@ -81,6 +84,7 @@ public class UserRegisterDTO {
                 .sex(sex)
                 .birth(birth)
                 .post(post)
+                .notification(notification)
                 .grade(grade)
                 .create_date(create_date)
                 .build();

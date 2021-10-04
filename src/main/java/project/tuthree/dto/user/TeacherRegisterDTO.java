@@ -39,19 +39,19 @@ public class TeacherRegisterDTO {
     private String tel;
 
     private Sex sex;
-    private int birth;
+    private Integer birth;
     private String post;
 
     @ColumnDefault("OPEN")
-    private Status notification;
+    private Status notification = Status.OPEN;
 
     @ColumnDefault("TEACHER")
-    private Grade grade;
-    private Date create_date;
+    private Grade grade = Grade.TEACHER;
+    private Date create_date = new Date();
     private String region; ///json
     private Status registration;
     private String subject;
-    private int cost;
+    private Integer cost;
     private String school;
     private SchoolStatus status;
     private String major;
@@ -62,9 +62,9 @@ public class TeacherRegisterDTO {
     private String detail;
 
     @Builder
-    public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth,
+    public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
                               String post, Status notification, Grade grade, String region, Status registration, String subject,
-                              int cost, String school, SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
+                              Integer cost, String school, SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
