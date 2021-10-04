@@ -167,7 +167,7 @@ public class InitDatabase {
             PostTestPaper postTestPaper12 = new PostTestPaper(teacher12, "title12", "content12", 0L, new Date(), null, Status.OPEN); em.persist(postTestPaper12);
             PostTestPaper postTestPaper13 = new PostTestPaper(teacher13, "title13", "content13", 0L, new Date(), null, Status.OPEN); em.persist(postTestPaper13);
             PostTestPaper postTestPaper14 = new PostTestPaper(teacher14, "title14", "content14", 0L, new Date(), null, Status.OPEN); em.persist(postTestPaper14);
-            PostTestPaper postTestPaper15 = new PostTestPaper(teacher15, "title15", "content15", 0L, new Date(), null, Status.OPEN); em.persist(postTestPaper15);
+            PostTestPaper postTestPaper15 = new PostTestPaper(teacher15, "title 15", "content15", 0L, new Date(), null, Status.OPEN); em.persist(postTestPaper15);
         }
     }
 }

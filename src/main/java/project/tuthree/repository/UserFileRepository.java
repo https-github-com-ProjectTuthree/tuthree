@@ -4,29 +4,21 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.file.UserFile;
-import project.tuthree.domain.post.PostTestPaper;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Repository
@@ -132,14 +124,14 @@ public class UserFileRepository {
      * post_id로 파일 찾기
      */
     public List<UserFile> userFileFindByPostId(Long id) {
-        List<UserFile> fileList = em.createQuery("select f from UserFile f where f.testpaperId = :id")
+        List<UserFile> fileList = em.createQuery("select f from UserFile f where f.testpaperId.id = :id")
                 .setParameter("id", id)
                 .getResultList();
         return fileList;
     }
 
 
-    /** 파일 링크 url로 다운로드 */
+    /** 파일 다운로드 */
     public void downloadUserFile(HttpServletResponse response, Long post_id) throws IOException {
 
         String origin = (String) em.createQuery("select f.realTitle from UserFile f where f.id = :id")
