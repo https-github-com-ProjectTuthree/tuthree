@@ -1,13 +1,17 @@
 package project.tuthree.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.post.PostTestPaper;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
+import static project.tuthree.domain.post.QPostTestPaper.postTestPaper;
 
 @Slf4j
 @Repository
@@ -16,6 +20,7 @@ import java.util.List;
 public class PostTestPaperRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
 
     /** 커뮤니티 페이지 목록 조회 */
     public List<PostTestPaper> findByPage(int page) {
@@ -31,6 +36,31 @@ public class PostTestPaperRepository {
         PostTestPaper postTestPaper = em.find(PostTestPaper.class, id);
         postTestPaper.updateView();
         return postTestPaper;
+    }
+
+    /**
+     * 커뮤니티 글 검색
+     */
+    public List<PostTestPaper> findByKeyword(String keyword, int page) {
+        int setpage = 10;
+        List<PostTestPaper> list = jpaQueryFactory.selectFrom(postTestPaper)
+                .where(postTestPaper.title.contains(keyword)
+                        .and(postTestPaper.secret.eq(Status.OPEN)))
+                .orderBy(postTestPaper.id.desc())
+                .offset(setpage * (page - 1))
+                .limit(setpage)
+                .fetch();
+        return list;
+    }
+
+    /**
+     * 커뮤니티 검색 전체 글 수
+     */
+    public Long testpaperHasRowByKeyword(String keyword) {
+        return jpaQueryFactory.selectFrom(postTestPaper)
+                .where(postTestPaper.title.contains(keyword)
+                        .and(postTestPaper.secret.eq(Status.OPEN)))
+                .fetchCount();
     }
 
     /**
@@ -56,9 +86,12 @@ public class PostTestPaperRepository {
         return id;
     }
 
+    /** 커뮤니티 글 갯수 */
     public Long testpaperHasRow() {
-        Long list = (Long) em.createQuery("select count(p) from PostTestPaper p").getSingleResult();
+//        Long list = (Long) em.createQuery("select count(p) from PostTestPaper p").getSingleResult();
+        Long list = jpaQueryFactory.selectFrom(postTestPaper).fetchCount();
         return list;
     }
+
 
 }

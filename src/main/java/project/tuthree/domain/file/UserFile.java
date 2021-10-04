@@ -34,7 +34,7 @@ public class UserFile {
     @Column(name = "file_id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id"),
             @JoinColumn(name = "student_id", referencedColumnName = "student_id")

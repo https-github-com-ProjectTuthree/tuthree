@@ -1,0 +1,31 @@
+#배포용
+
+spring:
+  datasource:
+    #url: jdbc:oracle:thin:@tuthree-database.cuhft9d20wyq.ap-northeast-2.rds.amazonaws.com:1521/DATABASE
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    #username: admin
+    username: tuthreeadmin
+    #password: tuthree1234
+    password: admin1234
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+server:
+  port: 8088
+
+    #logging:
+    #pattern:
+    #console: %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+  #level: debug
