@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.tuthree.domain.post.PostFaq;
+import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
+import project.tuthree.dto.EmbeddedDTO.PostListTypeDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
+import project.tuthree.dto.EmbeddedDTO.PostSingleContentTypeDTO;
 import project.tuthree.dto.post.PostfaqDTO;
 import project.tuthree.mapper.PostFaqMapper;
 import project.tuthree.repository.PostFaqRepository;
@@ -21,23 +25,19 @@ public class PostFaqService {
     private final PostFaqMapper postFaqMapper;
 
     /** faq 페이지 목록 조회 */
-    public List<PostListDTO> faqFindByPage(int page) {
+    public List<PostListTypeDTO> faqFindByPage(int page) {
         List<PostFaq> list = postFaqRepository.findByPage(page);
-        if (list.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+        if (list.isEmpty()) throw new NullPointerException();
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getAdmin().getId(), m.getTitle(),
-                        m.getContent(), m.getView(), m.getWriteAt(), null, m.getSecret()))
+                .map(m -> new PostListTypeDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getWriteAt(), m.getType().getKorType()))
                 .collect(Collectors.toList());
     }
 
     /** faq id로 조회 */
-    public PostListDTO faqFindById(Long id) {
+    public PostSingleContentTypeDTO faqFindById(Long id) {
         PostFaq postFaq = postFaqRepository.findById(id);
-        return new PostListDTO(postFaq.getId(), postFaq.getAdmin().getId(), postFaq.getTitle(), postFaq.getContent(),
-                postFaq.getView(), postFaq.getWriteAt(), null, postFaq.getSecret());
+        return new PostSingleContentTypeDTO(postFaq.getId(), postFaq.getAdmin().getId(), postFaq.getTitle(), postFaq.getContent(),
+                postFaq.getView(), postFaq.getWriteAt(), postFaq.getType().getKorType(), postFaq.getSecret());
     }
 
     /**
