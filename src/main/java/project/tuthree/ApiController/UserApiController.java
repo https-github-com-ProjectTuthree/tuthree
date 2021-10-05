@@ -3,23 +3,16 @@ package project.tuthree.ApiController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.User;
-import project.tuthree.dto.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
-import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
-import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 
 import javax.validation.Valid;
 import java.io.IOException;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -76,14 +69,19 @@ public class UserApiController {
 
     //튜터 과외정보조회
     @GetMapping("/user/tutorclass/{id}") //토큰값으로 조회하게 바꾸기
-    public TeacherResponseDTO findTutorInfo(@PathVariable String id){
-        return userRegisterService.findTutorId(id);
+    public ExistDataSuccessResponse findTutorInfo(@PathVariable String id){
+        TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
+        log.debug("\n---- 과외정보조회 ----\n");
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
+
     }
 
     //튜티
     @GetMapping("/user/tuteeclass/{id}")
-    public StudentResponseDTO findTuteeInfo(@PathVariable String id){
-        return userRegisterService.findTuTeeId(id);
+    public ExistDataSuccessResponse findTuteeInfo(@PathVariable String id){
+        StudentResponseDTO responseDTO = userRegisterService.findTuTeeId(id);
+        log.debug("\n---- 과외정보조회 ----\n");
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
     }
 
 
@@ -97,6 +95,7 @@ public class UserApiController {
     public String studentUpdate(@PathVariable String id, @RequestBody StudentUpdateDTO updateDTO){
         return userRegisterService.studentUpdate(id, updateDTO);
     }
+
     //정보 수정
 /*    @PutMapping("/user/mypage")
     public Long update(@RequestBody UserResponseDTO responseDTO){
@@ -104,12 +103,12 @@ public class UserApiController {
     }*/
 
 
-/*    //로그인
+    //로그인
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody LoginDTO loginDTO){
+    public Optional<User> login(@RequestBody LoginDTO loginDTO){
         log.debug("\n---- 로그인 ----\n");
-        return userRegisterService.userLogin(loginDTO);
-    }*/
+        return userRegisterService.userLogin(loginDTO.getId());
+    }
 
 
 }
