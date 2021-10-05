@@ -24,10 +24,10 @@ public class InitDatabase {
         log.info("\n---------------------\n" +
                 "intiDatabase executing -- tuthree" +
                 "\n---------------------");
-        initService.init1();
-        initService.init2();
-        initService.init3();
-        initService.init4();
+//        initService.init1();
+//        initService.init2();
+//        initService.init3();
+//        initService.init4();
     }
     @Component
     @Transactional

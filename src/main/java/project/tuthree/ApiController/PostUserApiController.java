@@ -2,6 +2,7 @@ package project.tuthree.ApiController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
@@ -12,6 +13,7 @@ import project.tuthree.dto.EmbeddedDTO.PostListDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListTypeDTO;
 import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
 import project.tuthree.dto.EmbeddedDTO.PostSingleContentTypeDTO;
+import project.tuthree.dto.post.PostfaqDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
@@ -24,7 +26,11 @@ import project.tuthree.service.UserFileService;
 import project.tuthree.service.UserFileService.FileIdName;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +52,14 @@ public class PostUserApiController {
     private final PostFaqRepository postFaqRepository;
     private final UserFileRepository userFileRepository;
     private final UserFileService userFileService;
+
+    /**
+     * 파일 전송 테스트
+     */
+    @GetMapping("/community/downdown")
+    public @ResponseBody byte[] transfer(HttpServletResponse response) throws IOException {
+        return userFileRepository.transferUserFile(response, 16L);
+    }
 
     // TEST PAPER ////////////////////////////////
 
@@ -95,7 +109,6 @@ public class PostUserApiController {
     /** 커뮤니티 게시글 작성 -> post_testpaper & user_file*/
     @PostMapping("/community/write")
     public NotExistDataResultResponse writeCommunity(@ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
-        List<String> list = new ArrayList<>();
         Long id = postTestPaperService.writeCommunity(form);
         log.debug("\n---- 사용자 커뮤니티 글 작성 [ID : " + id + "] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 작성되었습니다.");
@@ -103,9 +116,9 @@ public class PostUserApiController {
 
     /** 게시글 수정 - 이미지도 수정하도록 */
     @PutMapping("/community/id/{post_id}")
-    public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @RequestBody PostSingleContentDTO postListDTO) {
+    public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
         /** 이전에 그 글이랑 관련된 자료는 다 지우고 새로 수정하기?? 흠... */
-        Long updatedId = postTestPaperService.updateCommunity(id, postListDTO);
+        Long updatedId = postTestPaperService.updateCommunity(id, form);
         log.debug("\n---- 사용자 커뮤니티 글 수정 [ID : " + id + "] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 수정되었습니다.");
     }
@@ -124,11 +137,12 @@ public class PostUserApiController {
     /** FAQ 페이지 목록 조회 */
     @GetMapping("/faq/{page}")
     public ExistListDataSuccessResponse FaqList(@PathVariable("page") int page) {
-        List<PostListTypeDTO> postListDTO = postFaqService.faqFindByPage(page);
+        List<PostSingleContentTypeDTO> postSingleContentTypeDTO = postFaqService.faqFindByPage(page);
         log.debug("\n---- 사용자 FAQ 목록 조회 [PAGE : " + page + "] ----\n");
         return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                page + "페이지의 FAQ가 조회되었습니다.", postFaqRepository.faqHasRow(), postListDTO);
+                page + "페이지의 FAQ가 조회되었습니다.", postFaqRepository.faqHasRow(), postSingleContentTypeDTO);
     }
+
     /** FAQ 특정 글 조회 */
     @GetMapping("/faq/id/{faq_id}")
     public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id) {
