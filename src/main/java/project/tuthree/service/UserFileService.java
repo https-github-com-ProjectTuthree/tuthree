@@ -8,6 +8,7 @@ import project.tuthree.domain.file.UserFile;
 import project.tuthree.mapper.UserFileMapper;
 import project.tuthree.repository.UserFileRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,17 +28,21 @@ public class UserFileService {
     public static class FileIdName{
         Long id;
         String name;
+        byte[] file;
     }
 
     /**
      * post 조회 시, 파일 이름 반환
      */
-    public List<FileIdName> userFileFindByPostId(Long postId) {
+    public List<FileIdName> userFileFindByPostId(Long postId) throws IOException {
         List<UserFile> fileList = userFileRepository.userFileFindByPostId(postId);
-        return fileList.stream()
-                .map(m -> new FileIdName(m.getId(), m.getRealTitle()))
-                .collect(Collectors.toList());
+        List<FileIdName> list = new ArrayList<>();
 
+        for (int i = 0; i < fileList.size(); i++) {
+            UserFile file = fileList.get(i);
+            list.add(new FileIdName(file.getId(), file.getRealTitle(), userFileRepository.transferUserFile(file.getId())));
+        }
+        return list;
     }
 
 //    public List<FileIdName> userFileResponseByPostId(Long postId) {

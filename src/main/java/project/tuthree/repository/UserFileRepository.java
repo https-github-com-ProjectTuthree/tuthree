@@ -157,25 +157,15 @@ public class UserFileRepository {
         response.getOutputStream().close();
     }
 
-    /** 파일 전송 */
-    public byte[] transferUserFile(HttpServletResponse response, Long post_id) throws IOException {
+    /** 파일 전송 - byte */
+    public byte[] transferUserFile(Long file_id) throws IOException {
 
-        List<String> origin = jpaQueryFactory.select(userFile.realTitle)
-                .from(userFile)
-                .where(userFile.testpaperId.id.eq(post_id))
-                .fetch();
+        String origin = em.find(UserFile.class, file_id).getRealTitle();
+        String path = em.find(UserFile.class, file_id).getSaveTitle();
 
-        List<String> path = jpaQueryFactory.select(userFile.saveTitle)
-            .from(userFile)
-            .where(userFile.testpaperId.id.eq(post_id))
-            .fetch();
-        List<MultipartFile> list = new ArrayList<>();
+        List<byte []> list = new ArrayList<>();
+        FileInputStream in = new FileInputStream(new File(path));
 
-
-        FileInputStream in = new FileInputStream(new File(path.get(0)));
         return IOUtils.toByteArray(in);
-
-
     }
-
 }
