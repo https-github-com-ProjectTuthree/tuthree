@@ -80,6 +80,7 @@ public class Student implements Persistable<String>{
 
     private String subject;
 
+    @Column(name ="user_cost")
     private Integer cost;
 
     @Enumerated(EnumType.STRING)

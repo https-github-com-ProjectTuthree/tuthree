@@ -10,6 +10,13 @@ import project.tuthree.domain.user.User;
 import project.tuthree.dto.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.service.UserRegisterService;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+
+import javax.validation.Valid;
+import java.io.IOException;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -29,24 +36,36 @@ public class UserApiController {
 
     //학부모 회원가입
     @PostMapping("/register/parent")
-    public String ParentRegister(@RequestBody UserRegisterDTO registerDTO) {
+    public NotExistDataResultResponse ParentRegister(@RequestBody @Valid UserRegisterDTO registerDTO){
         log.debug("\n---- 학부모 회원 가입 ----\n");
-        return userRegisterService.createParent(registerDTO);
+        String id = userRegisterService.createParent(registerDTO);
+        if (id == "중복"){
+            return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),   "중복된 아이디입니다.");
+        }
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
 
     }
 
     //학생 회원가입
     @PostMapping("/register/tutee")
-    public String StudentRegister(@RequestBody StudentRegisterDTO registerDTO) {
+    public NotExistDataResultResponse StudentRegister(@RequestBody @Valid StudentRegisterDTO registerDTO) throws IOException{
         log.debug("\n---- 학생 회원 가입 ----\n");
-        return userRegisterService.createStudent(registerDTO);
+        String id = userRegisterService.createStudent(registerDTO);
+        if (id == "중복"){
+            return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "중복된 아이디입니다.");
+        }
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
     //선생님 회원가입
     @PostMapping("/register/tutor")
-    public String TeacherRegister(@RequestBody TeacherRegisterDTO registerDTO) {
-        log.debug("\n---- 학생 회원 가입 ----\n");
-        return userRegisterService.createTeacher(registerDTO);
+    public NotExistDataResultResponse TeacherRegister(@RequestBody @Valid TeacherRegisterDTO registerDTO) throws IOException {
+        log.debug("\n---- 선생님 회원 가입 ----\n");
+        String id = userRegisterService.createTeacher(registerDTO);
+        if (id == "중복"){
+            return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),  "중복된 아이디입니다.");
+        }
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
 /*    //기본정보조회
