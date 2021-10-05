@@ -2,18 +2,15 @@ package project.tuthree.ApiController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListDTO;
 import project.tuthree.dto.EmbeddedDTO.PostListTypeDTO;
 import project.tuthree.dto.EmbeddedDTO.PostSingleContentDTO;
 import project.tuthree.dto.EmbeddedDTO.PostSingleContentTypeDTO;
-import project.tuthree.dto.post.PostfaqDTO;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
@@ -26,13 +23,8 @@ import project.tuthree.service.UserFileService;
 import project.tuthree.service.UserFileService.FileIdName;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -55,15 +47,14 @@ public class PostUserApiController {
 
     /**
      * 파일 전송 테스트
-     */
-    @GetMapping("/community/downdown")
-    public @ResponseBody byte[] transfer(HttpServletResponse response) throws IOException {
-        return userFileRepository.transferUserFile(response, 16L);
-    }
+//     */
+//    @GetMapping("/community/downdown")
+//    public @ResponseBody List<byte []> transfer(HttpServletResponse response) throws IOException {
+//        List<byte[]> list = userFileRepository.transferUserFile(1L);
+//        return list;
+//    }
 
     // TEST PAPER ////////////////////////////////
-
-
     /** 커뮤니티 글 목록 조회 */
     @GetMapping("/community/{page}")
     public ExistListDataSuccessResponse CommunityList(@PathVariable("page") int page) {
@@ -73,11 +64,9 @@ public class PostUserApiController {
                 page + "페이지의 글이 조회되었습니다.", postTestPaperRepository.testpaperHasRow(), list);
     }
 
-    /////////////////////////////////////////파일 이름이랑 링크 전달해주기
-
     /** 커뮤니티 특정 글 조회 */ //파일 이름도 같이 넘겨주기
     @GetMapping("/community/id/{post_id}")
-    public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) {
+    public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) throws IOException {
         PostSingleContentDTO dto = postTestPaperService.communityFindById(id);
         List<FileIdName> userfileDTOList = userFileService.userFileFindByPostId(id);
         log.debug("\n---- 사용자 커뮤니티 글 조회 [ID : " + id + "] ----\n");
