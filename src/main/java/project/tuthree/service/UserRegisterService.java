@@ -38,6 +38,20 @@ public class UserRegisterService {
             result = TRUE;
         }
         return result;
+        //throw new IllegalStateException("이미 존재하는 회원입니다.");
+    }
+
+    public void validId(String id){
+        boolean parent = userRepository.existsById(id);
+        boolean student = studentRepository.existsById(id);
+        boolean teacher = teacherRepository.existsById(id);
+
+        if(!parent&&!student&&!teacher){
+        }
+        else{
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        }
+
     }
 
         /*if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
@@ -57,21 +71,21 @@ public class UserRegisterService {
     //학부모 회원가입
     @Transactional
     public String createParent(UserRegisterDTO registerDTO){
+        //validId(registerDTO.getId());
+        //return userRepository.save(registerDTO.toEntity()).getId();
         //boolean result = checkId(registerDTO.getId());
         try{
             if(!checkId(registerDTO.getId())){
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
             else{
-                return "redirect:/";
+                return "중복";
             }
 
         }catch(Exception e){
             throw new RuntimeException();
         }
-
         //return "redirect:/";
-
         //return userRepository.save(registerDTO.toEntity()).getId();
     }
 
@@ -83,7 +97,7 @@ public class UserRegisterService {
                 return studentRepository.save(registerDTO.toEntity()).getId();
             }
             else{
-                return "redirect";
+                return "중복";
             }
 
         }catch(Exception e){
@@ -99,7 +113,7 @@ public class UserRegisterService {
                 return teacherRepository.save(registerDTO.toEntity()).getId();
             }
             else{
-                return "redirect";
+                return "중복";
             }
 
         }catch(Exception e){
