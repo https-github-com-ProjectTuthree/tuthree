@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.post.PostfaqDTO;
 import project.tuthree.dto.post.PostnoticeDTO;
+import project.tuthree.exception.NotFoundRequestData;
 import project.tuthree.repository.PostFaqRepository;
 import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.service.PostFaqService;
@@ -57,7 +58,7 @@ public class PostAdminApiController {
 
     /** faq 삭제 */
     @DeleteMapping("/faq/admin/id/{faq_id}")
-    public NotExistDataResultResponse faqDelete(@PathVariable("faq_id") Long id) {
+    public NotExistDataResultResponse faqDelete(@PathVariable("faq_id") Long id) throws NotFoundRequestData {
         Long deleteId = postFaqRepository.deleteFaq(id);
         log.debug("\n---- 관리자 FAQ 삭제 [ID : " + deleteId + " ] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deleteId + "번 FAQ가 삭제되었습니다.");

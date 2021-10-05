@@ -40,5 +40,11 @@ public class UserFileService {
 
     }
 
+//    public List<FileIdName> userFileResponseByPostId(Long postId) {
+//        List<UserFile> fileList = userFileRepository.userFileFindByPostId(postId);
+//
+//
+//    }
+
 
 }
