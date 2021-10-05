@@ -42,6 +42,14 @@ public class EmbeddedResponse {
         String Message;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class NotExistBadDataResultResponse {
+        private final Boolean Success = false;
+        int StatusCode;
+        String Message;
+    }
+
 
 
 }

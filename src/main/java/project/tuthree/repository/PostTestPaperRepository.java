@@ -72,10 +72,10 @@ public class PostTestPaperRepository {
     }
 
     /** 커뮤니티 수정 */
-    public Long updateTestPaper(Long id, PostTestPaper postTestPaper) {
+    public PostTestPaper updateTestPaper(Long id, PostTestPaper postTestPaper) {
         PostTestPaper post = em.find(PostTestPaper.class, id);
         post.updateTestPaper(postTestPaper);
-        return id;
+        return post;
     }
 
     /**

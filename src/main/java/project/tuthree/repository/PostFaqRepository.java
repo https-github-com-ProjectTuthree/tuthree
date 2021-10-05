@@ -1,9 +1,14 @@
 package project.tuthree.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.ApiController.EmbeddedResponse;
+import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.StatusCode;
 import project.tuthree.domain.post.PostFaq;
+import project.tuthree.exception.NotFoundRequestData;
 import project.tuthree.mapper.PostFaqMapper;
 
 import javax.persistence.EntityManager;
@@ -15,7 +20,7 @@ import java.util.List;
 public class PostFaqRepository {
     /** faq_repository */
     private final EntityManager em;
-    private final PostFaqMapper postFaqMapper;
+    private final JPAQueryFactory jpaQueryFactory;
 
     /** faq 목록 출력 */
     public List<PostFaq> findByPage(int page) {
@@ -46,13 +51,13 @@ public class PostFaqRepository {
     /**
      * faq 삭제
      */
-    public Long deleteFaq(Long id) {
+    public Long deleteFaq(Long id) throws NotFoundRequestData{
         try {
             em.remove(em.find(PostFaq.class, id));
             return id;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0L;
+            throw new NotFoundRequestData();
         }
     }
 

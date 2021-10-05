@@ -32,7 +32,7 @@ public class PostNoticeService {
         if (list.isEmpty()) throw new NullPointerException();
 
         return list.stream()
-                .map(m -> new PostListTypeDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getWriteAt(), m.getType().getKorType()))
+                .map(m -> new PostListTypeDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getWriteAt(), m.getType().getKorType(), m.getView()))
                 .collect(Collectors.toList());
     }
 

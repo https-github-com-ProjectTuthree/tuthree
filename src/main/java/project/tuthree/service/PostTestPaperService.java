@@ -55,6 +55,7 @@ public class PostTestPaperService {
         String title;
         @NotNull
         String content;
+        Status secret;
         List<MultipartFile> file;
     }
 
@@ -64,7 +65,7 @@ public class PostTestPaperService {
         if (list.isEmpty()) throw new NullPointerException();
 
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(),m.getWriteAt()))
+                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(),m.getWriteAt(), m.getView()))
                 .collect(Collectors.toList());
     }
 
@@ -87,7 +88,7 @@ public class PostTestPaperService {
         List<PostTestPaper> list =testPaperRepository.findByKeyword(keyword, page);
         if(list.isEmpty()) throw new NullPointerException();
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), m.getWriteAt()))
+                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), m.getWriteAt(), m.getView()))
                 .collect(Collectors.toList());
     }
 
@@ -96,7 +97,7 @@ public class PostTestPaperService {
      */
     public Long writeCommunity(PaperForm form) throws NoSuchAlgorithmException, IOException {
         Teacher teacher = teacherRepository.findById(form.getUserId());
-        PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, Status.OPEN);
+        PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
         log.info("======================" + teacher.getId());
 
         PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
@@ -116,7 +117,9 @@ public class PostTestPaperService {
         List<Long> fileList = em.createQuery("select f.id from UserFile f where f.testpaperId.id = :id")
                 .setParameter("id", testPaperId)
                 .getResultList();
-        fileList.stream().map(m -> userFileRepository.deleteUserFile(m));
+        for (int i = 0; i < fileList.size(); i++) {
+            userFileRepository.deleteUserFile(fileList.get(i));
+        }
         return testPaperRepository.deleteTestPaper(testPaperId);
     }
 
@@ -125,12 +128,38 @@ public class PostTestPaperService {
      * 커뮤니티 글 수정
      */
 
-    public Long updateCommunity(Long id, PostSingleContentDTO postListDTO) {
-        Teacher teacher = teacherRepository.findById(postListDTO.getUserId());
-        PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(postListDTO.getId(),
-                teacher, postListDTO.getTitle(), postListDTO.getContent(), null,
-                null, null, null);
-        PostTestPaper postTestPaper = testPaperMapper.toEntity(postTestPaperDTO);
-        return testPaperRepository.updateTestPaper(id, postTestPaper);
+    public Long updateCommunity(Long id, PaperForm form) throws NoSuchAlgorithmException, IOException {
+        List<Long> list = em.createQuery("select f.id from UserFile f where f.testpaperId.id = :id")
+                .setParameter("id", id)
+                .getResultList();
+        for (int i = 0; i < list.size(); i++) {
+            userFileRepository.deleteUserFile(list.get(i));
+        }
+        Teacher teacher = teacherRepository.findById(form.getUserId());
+        PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(id, teacher, form.getTitle(),
+                form.getContent(), null, null, null, form.getSecret());
+        PostTestPaper postTestPaper = testPaperRepository.updateTestPaper(id, testPaperMapper.toEntity(postTestPaperDTO));
+        List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
+
+        for (int i = 0; i < saveNames.size(); i++) {
+            UserfileDTO userfileDTO = new UserfileDTO(null, null, postTestPaper, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
+            userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
+        }
+        return postTestPaper.getId();
     }
+
+//
+//    Teacher teacher = teacherRepository.findById(form.getUserId());
+//    PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
+//        log.info("======================" + teacher.getId());
+//
+//    PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
+//    List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
+//
+//        for (int i = 0; i < saveNames.size(); i++) {
+//        UserfileDTO userfileDTO = new UserfileDTO(null, null, post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
+//        userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
+//
+//    }
+//        return post.getId();
 }
