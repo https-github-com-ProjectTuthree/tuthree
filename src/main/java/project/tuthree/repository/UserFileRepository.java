@@ -1,17 +1,18 @@
 package project.tuthree.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.file.UserFile;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static project.tuthree.domain.file.QUserFile.userFile;
+
 @Getter
 @Repository
 @Slf4j
@@ -27,6 +30,7 @@ import java.util.List;
 public class UserFileRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Getter
     public enum FileType{
@@ -151,6 +155,27 @@ public class UserFileRepository {
         response.getOutputStream().write(fileByte);
         response.getOutputStream().flush();
         response.getOutputStream().close();
+    }
+
+    /** 파일 전송 */
+    public byte[] transferUserFile(HttpServletResponse response, Long post_id) throws IOException {
+
+        List<String> origin = jpaQueryFactory.select(userFile.realTitle)
+                .from(userFile)
+                .where(userFile.testpaperId.id.eq(post_id))
+                .fetch();
+
+        List<String> path = jpaQueryFactory.select(userFile.saveTitle)
+            .from(userFile)
+            .where(userFile.testpaperId.id.eq(post_id))
+            .fetch();
+        List<MultipartFile> list = new ArrayList<>();
+
+
+        FileInputStream in = new FileInputStream(new File(path.get(0)));
+        return IOUtils.toByteArray(in);
+
+
     }
 
 }
