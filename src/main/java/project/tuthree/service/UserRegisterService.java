@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 
+import java.util.Optional;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -17,6 +19,7 @@ public class UserRegisterService {
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+
 
 
     //아이디 중복확인
@@ -65,6 +68,10 @@ public class UserRegisterService {
     public boolean checkId(String id){
         return userRepository.existsById(id);
     }*/
+//로그인
+    public Optional<User> userLogin(String id){
+        return userRepository.findById(id);
+    }
 
 
 
