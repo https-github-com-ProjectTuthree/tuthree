@@ -56,6 +56,8 @@ public class TeacherRegisterDTO {
     private String school;
     private SchoolStatus status;
     private String major;
+
+    @ColumnDefault("FALSE")
     private String certification;
 
     @ColumnDefault("FALSE")

@@ -2,7 +2,6 @@ package project.tuthree;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Status;
@@ -24,10 +23,10 @@ public class InitDatabase {
         log.info("\n---------------------\n" +
                 "intiDatabase executing -- tuthree" +
                 "\n---------------------");
-//        initService.init1();
-//        initService.init2();
-//        initService.init3();
-//        initService.init4();
+        initService.init1();
+        initService.init2();
+        initService.init3();
+        initService.init4();
     }
     @Component
     @Transactional
