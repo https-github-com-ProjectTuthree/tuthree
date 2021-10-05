@@ -13,8 +13,8 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     boolean existsById(String id);
 
     //로그인
-    //@EntityGraph(attributePaths = "authorities")
-    //Optional<Student> findById(String id);
+    @EntityGraph(attributePaths = "authorities")
+    Optional<Student> findById(String id);
 
     Optional<Student> findByName(String name);
 
