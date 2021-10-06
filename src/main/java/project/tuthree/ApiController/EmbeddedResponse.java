@@ -50,6 +50,14 @@ public class EmbeddedResponse {
         String Message;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class NonValueNotExistDataResultResponse {
+        private Boolean Success;
+        int StatusCode;
+        String Message;
+    }
+
 
 
 }

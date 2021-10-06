@@ -3,9 +3,11 @@ package project.tuthree.dto.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
@@ -16,6 +18,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class StudentRegisterDTO {
 
@@ -69,6 +72,7 @@ public class StudentRegisterDTO {
     private Sex sex;
     private Integer birth;
     private String post;
+    private MultipartFile file;
 
     @ColumnDefault("OPEN")
     private Status notification= Status.OPEN;
@@ -105,6 +109,10 @@ public class StudentRegisterDTO {
                 .school(school)
                 .detail(detail)
                 .build();
+    }
+
+    public void updatePost(String post) {
+        this.post = post;
     }
 
 }

@@ -3,9 +3,11 @@ package project.tuthree.dto.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
@@ -20,7 +22,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
-//@AllArgsConstructor
+@Setter
 @NoArgsConstructor
 public class UserRegisterDTO {
     @NotBlank(message = "아이디를 입력해주세요")
@@ -45,6 +47,7 @@ public class UserRegisterDTO {
     private Sex sex;
     private Integer birth;
     private String post;
+    private MultipartFile file;
 
     @ColumnDefault("OPEN")
     private Status notification = Status.OPEN;
@@ -56,22 +59,23 @@ public class UserRegisterDTO {
 
 
    @Builder
-    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date){
+    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, MultipartFile file, Status notification, Grade grade, Date create_date){
        Assert.notNull(id, "id must not be blank");
        Assert.notNull(pwd, "pwd must not be blank");
        Assert.notNull(name, "name must not be blank");
        Assert.notNull(tel, "tel must not be blank");
        this.id = id;
-        this.pwd = pwd;
-        this.name = name;
-        this.email = email;
-        this.tel = tel;
-        this.sex = sex;
-        this.birth = birth;
-        this.post = post;
-        this.notification = Status.OPEN;
-        this.grade = grade.PARENT;
-        this.create_date = new Date();
+       this.pwd = pwd;
+       this.name = name;
+       this.email = email;
+       this.tel = tel;
+       this.sex = sex;
+       this.birth = birth;
+       this.post = post;
+       this.file = file;
+       this.notification = Status.OPEN;
+       this.grade = grade.PARENT;
+       this.create_date = new Date();
     }
 
     public User toEntity(){
@@ -88,6 +92,10 @@ public class UserRegisterDTO {
                 .grade(grade)
                 .create_date(create_date)
                 .build();
+    }
+
+    public void updatePost(String post) {
+       this.post = post;
     }
 
 }
