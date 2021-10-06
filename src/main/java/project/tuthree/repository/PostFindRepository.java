@@ -1,14 +1,14 @@
 package project.tuthree.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.user.Category;
+import project.tuthree.domain.post.PostFind;
+import project.tuthree.domain.post.QPostFind;
 import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -16,7 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostFindRepository {
 
-    private EntityManager em;
+    private final EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
+
     /**
      * 선생님 목록 조회
      */
@@ -29,11 +31,19 @@ public class PostFindRepository {
     }
 
     /**
-     * 특정 선생님 조회
+     * id로 특정 게시글 조회
      */
-//    public Teacher findById(Long postId) {
-//        Teacher
-//
-//    }
+    public PostFind findById(Long postId) {
+        return em.find(PostFind.class, postId);
+    }
+
+    /** 선생님 id로 특정 게시글 조회 */
+    public PostFind findByUserTeacherId(String userId) {
+        return jpaQueryFactory.selectFrom(QPostFind.postFind)
+                .where(QPostFind.postFind.teacherId.id.eq(userId))
+                .fetchOne();
+    }
+
+    /** 선생님 id로 */
 
 }
