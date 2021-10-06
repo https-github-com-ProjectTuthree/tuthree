@@ -38,6 +38,7 @@ public class JwtController {
     private final Long EXPIRATION_TIME = 15 * 60 * 4 * 1000L;
 
 
+
     public String makeJwtToken(String userId, String strGrade) {
         Date now = new Date();
 

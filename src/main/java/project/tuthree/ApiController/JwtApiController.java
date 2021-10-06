@@ -32,7 +32,12 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JwtApiController {
-    /** api 테스트를 위해 token 로직은 잠시 종료 해 둠 */
+    /**
+     * api 테스트를 위해 token 로직은 잠시 종료 해 둠
+     */
+
+    private final String AUTHORIZATION = "Authorization";
+    private final String BEARER = "Bearer";
 
     private final JwtController jwtController;
     private final AdminRepository adminRepository;
@@ -71,8 +76,8 @@ public class JwtApiController {
     public Object CheckAdminJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
         //관리자 작성, 수정, 삭제 - admin 계정이 하나 밖에 없어서 어차피 다른 계정으로 로그인도 못함
         //올바른 토큰인가?
-        String[] requestToken = request.getHeader("Authorization").split(" ");
-        if(!requestToken[0].equals("Barer")){
+        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+        if(!requestToken[0].equals(BEARER)){
             throw new MalformedJwtException("잘못된 토큰정보입니다.");
         }
 
@@ -88,7 +93,7 @@ public class JwtApiController {
         Object result = joinPoint.proceed();
 
         String responseToken = jwtController.makeJwtToken(userId, grade);
-        response.setHeader("Authorization", "Barer " + responseToken);
+        response.setHeader(AUTHORIZATION, BEARER + " " + responseToken);
         log.info("CheckAdminWriteJwtToken");
         return result;
     }
@@ -98,8 +103,8 @@ public class JwtApiController {
     public Object CheckTeacherJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
         //선생님 작성
         //올바른 토큰인가?
-        String[] requestToken = request.getHeader("Authorization").split(" ");
-        if(!requestToken[0].equals("Barer")){
+        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+        if(!requestToken[0].equals(BEARER)){
             throw new MalformedJwtException("잘못된 토큰정보입니다.");
         }
         Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
@@ -113,7 +118,7 @@ public class JwtApiController {
         Object result = joinPoint.proceed();
 
         String responseToken = jwtController.makeJwtToken(userId, grade);
-        response.setHeader("Authorization", "Barer " + responseToken);
+        response.setHeader(AUTHORIZATION, BEARER + " " + responseToken);
         log.info("CheckTeacherJwtToken");
         return result;
     }
@@ -124,8 +129,8 @@ public class JwtApiController {
     public Object CheckTeacherAlterJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
         //선생님 작성
         //올바른 토큰인가?
-        String[] requestToken = request.getHeader("Authorization").split(" ");
-        if(!requestToken[0].equals("Barer")){
+        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+        if(!requestToken[0].equals(BEARER)){
             throw new MalformedJwtException("잘못된 토큰정보입니다.");
         }
         Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
@@ -147,7 +152,7 @@ public class JwtApiController {
         Object result = joinPoint.proceed();
 
         String responseToken = jwtController.makeJwtToken(userId, grade);
-        response.setHeader("Authorization", "Barer " + responseToken);
+        response.setHeader(AUTHORIZATION, BEARER + " " + responseToken);
         log.info("CheckTeacherAlterJwtToken");
         return result;
     }
@@ -198,9 +203,9 @@ public class JwtApiController {
                 grade = Grade.TEACHER.getStrType();
             }
             String Token = jwtController.makeJwtToken(id, grade);
-            String BarerToken = "Barer " + Token;
+            String BearerToken = BEARER + " " + Token;
             Map<String, String> token = new HashMap<>();
-            token.put("Authorization", BarerToken);
+            token.put(AUTHORIZATION, BearerToken);
             log.info(jwtController.decryptValidJwtToken(Token).toString());
             return token;
         }
@@ -210,9 +215,9 @@ public class JwtApiController {
             String grade = pathGrade;
 
             String Token = jwtController.makeJwtToken(id, grade);
-            String BarerToken = "Barer " + Token;
+            String BearerToken = BEARER + " " + Token;
             Map<String, String> token = new HashMap<>();
-            token.put("Authorization", BarerToken);
+            token.put(AUTHORIZATION, BearerToken);
             log.info(jwtController.decryptValidJwtToken(Token).toString());
             return token;
         }
