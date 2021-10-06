@@ -36,7 +36,7 @@ public class UserApiController {
         log.debug("\n---- 학부모 회원 가입 ----\n");
         String id = userRegisterService.createParent(registerDTO);
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.OK.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
 
@@ -48,7 +48,7 @@ public class UserApiController {
         log.debug("\n---- 학생 회원 가입 ----\n");
         String id = userRegisterService.createStudent(registerDTO);
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.OK.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
@@ -59,7 +59,7 @@ public class UserApiController {
         log.debug("\n---- 선생님 회원 가입 ----\n");
         String id = userRegisterService.createTeacher(registerDTO);
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.OK.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
@@ -111,7 +111,7 @@ public class UserApiController {
      * 사용자 로그인
      */
     @PostMapping("/login")
-    public NonValueNotExistDataResultResponse UserLogin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+    public NonValueNotExistDataResultResponse UserLogin(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response) {
         log.debug("\n---- 로그인 ----\n");
         String str = userRegisterService.userLogin(loginDTO);
         if (!str.equals(" ")) {
@@ -119,7 +119,7 @@ public class UserApiController {
             return new NonValueNotExistDataResultResponse(true, StatusCode.OK.getCode(),
                     "ID " + loginDTO.getId() + "(으)로 로그인되었습니다.");
         }
-        return new NonValueNotExistDataResultResponse(false, StatusCode.FORBIDDEN.getCode(),
+        return new NonValueNotExistDataResultResponse(false, StatusCode.CONFLICT.getCode(),
                 "일치하는 계정 정보가 존재하지 않습니다.");
     }
 
@@ -127,7 +127,8 @@ public class UserApiController {
      * 사용자 로그아웃
      */
     @GetMapping("/logout")
-    public NotExistDataResultResponse UserLogout() {
+    public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
+        response.setHeader("Authorization", "Barer ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
 

@@ -15,7 +15,7 @@ import project.tuthree.dto.user.TeacherDTO;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-10-04T20:39:14+0900",
+    date = "2021-10-06T23:35:02+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -83,7 +83,9 @@ public class TeacherMapperImpl implements TeacherMapper {
         email = teacher.getEmail();
         tel = teacher.getTel();
         sex = teacher.getSex();
-        birth = teacher.getBirth();
+        if ( teacher.getBirth() != null ) {
+            birth = teacher.getBirth();
+        }
         post = teacher.getPost();
         notification = teacher.getNotification();
         grade = teacher.getGrade();
@@ -91,7 +93,9 @@ public class TeacherMapperImpl implements TeacherMapper {
         region = teacher.getRegion();
         registration = teacher.getRegistration();
         subject = teacher.getSubject();
-        cost = teacher.getCost();
+        if ( teacher.getCost() != null ) {
+            cost = teacher.getCost();
+        }
         school = teacher.getSchool();
         status = teacher.getStatus();
         major = teacher.getMajor();
