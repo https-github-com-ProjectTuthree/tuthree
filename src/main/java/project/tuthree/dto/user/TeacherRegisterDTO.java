@@ -2,6 +2,10 @@ package project.tuthree.dto.user;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -50,9 +55,13 @@ public class TeacherRegisterDTO {
     private Grade grade = Grade.TEACHER;
     private Date create_date = new Date();
     private String region; ///json
+    private List<String> regionL;
+
     @ColumnDefault("OPEN")
     private Status registration = Status.OPEN;
     private String subject;
+    private List<String> subjectL;
+
     private Integer cost;
     private String school;
     private SchoolStatus status;
@@ -68,7 +77,7 @@ public class TeacherRegisterDTO {
 
     @Builder
     public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
-                              String post, MultipartFile file, Status notification, Grade grade, String region, Status registration, String subject,
+                              String post, MultipartFile file, Status notification, Grade grade, List<String> regionL, Status registration, List<String> subjectL,
                               Integer cost, String school, SchoolStatus status, String major, String certification, MultipartFile authFile, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
@@ -87,9 +96,9 @@ public class TeacherRegisterDTO {
         this.notification = notification;
         this.grade = grade;
         this.create_date = new Date();
-        this.region = region;
+        this.region = jsonp(regionL);
         this.registration = registration;
-        this.subject = subject;
+        this.subject = jsonp(subjectL);
         this.cost = cost;
         this.school = school;
         this.status = status;
@@ -98,6 +107,18 @@ public class TeacherRegisterDTO {
         this.authFile = authFile;
         this.certifyStatus = false;
         this.detail = detail;
+    }
+
+/*    @Override
+    public void setSubject(String subject){
+        this.subject=jsonp(subjectL);
+    }*/
+    public String jsonp(List<String> subjectL)  {
+        String subjectS = null;
+        for(int i=0; i<subjectL.size(); i++){
+            subjectS = subjectS+","+subjectL.get(i);
+        }
+        return subjectS;
     }
 
 /*    public User toEntity() {
