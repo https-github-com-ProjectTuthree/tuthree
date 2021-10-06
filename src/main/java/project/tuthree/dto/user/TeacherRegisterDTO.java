@@ -1,11 +1,10 @@
 package project.tuthree.dto.user;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
@@ -16,6 +15,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class TeacherRegisterDTO {
 
@@ -41,6 +41,7 @@ public class TeacherRegisterDTO {
     private Sex sex;
     private Integer birth;
     private String post;
+    private MultipartFile file;
 
     @ColumnDefault("OPEN")
     private Status notification = Status.OPEN;
@@ -59,6 +60,7 @@ public class TeacherRegisterDTO {
 
     @ColumnDefault("FALSE")
     private String certification;
+    private MultipartFile authFile;
 
     @ColumnDefault("FALSE")
     private boolean certifyStatus;
@@ -66,8 +68,8 @@ public class TeacherRegisterDTO {
 
     @Builder
     public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
-                              String post, Status notification, Grade grade, String region, Status registration, String subject,
-                              Integer cost, String school, SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
+                              String post, MultipartFile file, Status notification, Grade grade, String region, Status registration, String subject,
+                              Integer cost, String school, SchoolStatus status, String major, String certification, MultipartFile authFile, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
@@ -81,6 +83,7 @@ public class TeacherRegisterDTO {
         this.sex = sex;
         this.birth = birth;
         this.post = post;
+        this.file = file;
         this.notification = notification;
         this.grade = grade;
         this.create_date = new Date();
@@ -92,6 +95,7 @@ public class TeacherRegisterDTO {
         this.status = status;
         this.major = major;
         this.certification = certification;
+        this.authFile = authFile;
         this.certifyStatus = false;
         this.detail = detail;
     }
@@ -123,6 +127,15 @@ public class TeacherRegisterDTO {
                 .certifyStatus(certifyStatus)
                 .detail(detail)
                 .build();
+    }
+
+    public void updatePost(String post) {
+
+        this.post = post;
+    }
+
+    public void updateAuthPost(String post) {
+        this.certification = post;
     }
 
 }
