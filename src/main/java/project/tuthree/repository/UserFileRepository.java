@@ -64,7 +64,7 @@ public class UserFileRepository {
         savePath += "/" + saveName;
         file.transferTo(new File(savePath));
 
-        return saveName;
+        return savePath;
     }
 
     /** 파일을 서버에 저장 */

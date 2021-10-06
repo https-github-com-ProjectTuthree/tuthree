@@ -64,156 +64,158 @@ public class JwtApiController {
     //권한이 관리자인가?
     //토큰의 아이디가 원글의 아이디와 동일한가?
 
-//    /** 관리자 작성 - 관리자 권한인지 확인 */
-//    @Around("execution(* PostAdminApiController.*(..))")
-//    public Object CheckAdminJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
-//        //관리자 작성, 수정, 삭제 - admin 계정이 하나 밖에 없어서 어차피 다른 계정으로 로그인도 못함
-//        //올바른 토큰인가?
-//        String[] requestToken = request.getHeader("Authorization").split(" ");
-//        if(!requestToken[0].equals("Barer")){
-//            throw new MalformedJwtException("잘못된 토큰정보입니다.");
-//        }
-//
-//        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
-//        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
-//
-//        String userId = String.valueOf(map.get("userId"));
-//        String grade = String.valueOf(map.get("Grade"));
-//
-//        Assert.assertEquals(Grade.ADMIN.getStrType(), grade);//권한이 관리자인가?
-////        adminRepository.findById(userId); -> 사용자 아이디가 존재하는가 외래키가 알아서 할 것
-//
-//        Object result = joinPoint.proceed();
-//
-//        String responseToken = jwtController.makeJwtToken(userId, grade);
-//        response.setHeader("Authorization", "Barer " + responseToken);
-//        log.info("CheckAdminWriteJwtToken");
-//        return result;
-//    }
-//
-//    /** 선생님 작성 - 선생님 권한인지 확인 */
-//    @Around("execution(* PostUserApiController.writeCommunity(..))")
-//    public Object CheckTeacherJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
-//        //선생님 작성
-//        //올바른 토큰인가?
-//        String[] requestToken = request.getHeader("Authorization").split(" ");
-//        if(!requestToken[0].equals("Barer")){
-//            throw new MalformedJwtException("잘못된 토큰정보입니다.");
-//        }
-//        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
-//        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
-//
-//        String userId = String.valueOf(map.get("userId"));
-//        String grade = String.valueOf(map.get("Grade"));
-//
-//        Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
-//
-//        Object result = joinPoint.proceed();
-//
-//        String responseToken = jwtController.makeJwtToken(userId, grade);
-//        response.setHeader("Authorization", "Barer " + responseToken);
-//        log.info("CheckTeacherJwtToken");
-//        return result;
-//    }
-//
-//    /** 선생님 수정, 삭제 - 선생님 권한인지 확인, 원글의 작성자와 일치하는지 확인 */
-//    @Around("execution(* PostUserApiController.CommunityDelete(..)) ||" +
-//            "execution(* PostUserApiController.CommunityUpdate(..))")
-//    public Object CheckTeacherAlterJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
-//        //선생님 작성
-//        //올바른 토큰인가?
-//        String[] requestToken = request.getHeader("Authorization").split(" ");
-//        if(!requestToken[0].equals("Barer")){
-//            throw new MalformedJwtException("잘못된 토큰정보입니다.");
-//        }
-//        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
-//        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
-//
-//        String userId = String.valueOf(map.get("userId"));
-//        String grade = String.valueOf(map.get("Grade"));
-//
-//        Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
-//
-//        String pathvariable = String.valueOf(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
-//        pathvariable = pathvariable.replaceAll("\\{", "").replaceAll("}", "");
-//        Long id = Long.parseLong(pathvariable.split("=")[1]);
-//
-//        if (!postTestPaperRepository.findById(id).getUserId().getId().equals(userId)) {
-//            throw new NotEnoughUserException();
-//        }//토큰의 아이디가 원글의 아이디와 동일한가?
-//
-//        Object result = joinPoint.proceed();
-//
-//        String responseToken = jwtController.makeJwtToken(userId, grade);
-//        response.setHeader("Authorization", "Barer " + responseToken);
-//        log.info("CheckTeacherAlterJwtToken");
-//        return result;
-//    }
-///**
-//    //종료 시 값 실어서 보내는 로직으로 만들기
-//    @After("execution(* PostAdminApiController.*(..))")
-//    public void createRefreshJwtToken() {
-//        String userId = "";
-//        String grade = Grade.PARENT.getStrType();
-//        String Token = jwtController.makeJwtToken(userId, grade);
-//        String BarerToken = "Barer " + Token;
-//        response.setHeader("Authorization", BarerToken);
-//    }
-//
-//
-//    @Before("execution(* PostAdminApiController.*(..))")
-//    public void checkAdminValidToken() throws JsonParseException {
-//
-//        String[] token = request.getHeader("Authorization").split(" ");
-//
-//
-//        //관리자 로그인, 로그아웃
-//        //관리자 faq 조회, 수정, 삭제, 특정 글 조회 - 공지사항도 마찬가지  =>  faq에 전달된 아이디랑 비교해서 알아야 하나...
-//        Map<String, Object> map = jwtController.decryptValidJwtToken(token[1]);
-//        log.info("\nmap : " + map.toString());
-//        Assert.assertEquals(Grade.ADMIN.getStrType(), map.get("Grade"));
-//        adminRepository.findById(String.valueOf(map.get("userId")));
-//
-//    }
-//*/
-//
-//    class TokenTemp{
-//        String userId;
-//        String grade;
-//    }
-//
-//    @RestController
-//    class example {
-//        @GetMapping("/token/{grade}")
-//        public Map<String, String> exampleToken(@PathVariable("grade") String pathGrade) {
-//            String id = "";
-//            String grade = "";
-//            if(pathGrade.equals("admin")){
-//                id = "admin1";
-//                grade = Grade.ADMIN.getStrType();
-//            } else if(pathGrade.equals("teacher")){
-//                id = "teacher1";
-//                grade = Grade.TEACHER.getStrType();
-//            }
-//            String Token = jwtController.makeJwtToken(id, grade);
-//            String BarerToken = "Barer " + Token;
-//            Map<String, String> token = new HashMap<>();
-//            token.put("Authorization", BarerToken);
-//            log.info(jwtController.decryptValidJwtToken(Token).toString());
-//            return token;
-//        }
-//        @GetMapping("/token/{grade}/{userId}")
-//        public Map<String, String> exampleToken(@PathVariable("userId") String userId, @PathVariable("grade") String pathGrade) {
-//            String id = userId;
-//            String grade = pathGrade;
-//
-//            String Token = jwtController.makeJwtToken(id, grade);
-//            String BarerToken = "Barer " + Token;
-//            Map<String, String> token = new HashMap<>();
-//            token.put("Authorization", BarerToken);
-//            log.info(jwtController.decryptValidJwtToken(Token).toString());
-//            return token;
-//        }
-//    }
+
+
+    /** 관리자 작성 - 관리자 권한인지 확인 */
+    @Around("execution(* PostAdminApiController.*(..))")
+    public Object CheckAdminJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
+        //관리자 작성, 수정, 삭제 - admin 계정이 하나 밖에 없어서 어차피 다른 계정으로 로그인도 못함
+        //올바른 토큰인가?
+        String[] requestToken = request.getHeader("Authorization").split(" ");
+        if(!requestToken[0].equals("Barer")){
+            throw new MalformedJwtException("잘못된 토큰정보입니다.");
+        }
+
+        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
+        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
+
+        String userId = String.valueOf(map.get("userId"));
+        String grade = String.valueOf(map.get("Grade"));
+
+        Assert.assertEquals(Grade.ADMIN.getStrType(), grade);//권한이 관리자인가?
+//        adminRepository.findById(userId); -> 사용자 아이디가 존재하는가 외래키가 알아서 할 것
+
+        Object result = joinPoint.proceed();
+
+        String responseToken = jwtController.makeJwtToken(userId, grade);
+        response.setHeader("Authorization", "Barer " + responseToken);
+        log.info("CheckAdminWriteJwtToken");
+        return result;
+    }
+
+    /** 선생님 작성 - 선생님 권한인지 확인 */
+    @Around("execution(* PostUserApiController.writeCommunity(..))")
+    public Object CheckTeacherJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
+        //선생님 작성
+        //올바른 토큰인가?
+        String[] requestToken = request.getHeader("Authorization").split(" ");
+        if(!requestToken[0].equals("Barer")){
+            throw new MalformedJwtException("잘못된 토큰정보입니다.");
+        }
+        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
+        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
+
+        String userId = String.valueOf(map.get("userId"));
+        String grade = String.valueOf(map.get("Grade"));
+
+        Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
+
+        Object result = joinPoint.proceed();
+
+        String responseToken = jwtController.makeJwtToken(userId, grade);
+        response.setHeader("Authorization", "Barer " + responseToken);
+        log.info("CheckTeacherJwtToken");
+        return result;
+    }
+
+    /** 선생님 수정, 삭제 - 선생님 권한인지 확인, 원글의 작성자와 일치하는지 확인 */
+    @Around("execution(* PostUserApiController.CommunityDelete(..)) ||" +
+            "execution(* PostUserApiController.CommunityUpdate(..))")
+    public Object CheckTeacherAlterJwtToken(final ProceedingJoinPoint joinPoint) throws Throwable {
+        //선생님 작성
+        //올바른 토큰인가?
+        String[] requestToken = request.getHeader("Authorization").split(" ");
+        if(!requestToken[0].equals("Barer")){
+            throw new MalformedJwtException("잘못된 토큰정보입니다.");
+        }
+        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
+        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
+
+        String userId = String.valueOf(map.get("userId"));
+        String grade = String.valueOf(map.get("Grade"));
+
+        Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
+
+        String pathvariable = String.valueOf(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
+        pathvariable = pathvariable.replaceAll("\\{", "").replaceAll("}", "");
+        Long id = Long.parseLong(pathvariable.split("=")[1]);
+
+        if (!postTestPaperRepository.findById(id).getUserId().getId().equals(userId)) {
+            throw new NotEnoughUserException();
+        }//토큰의 아이디가 원글의 아이디와 동일한가?
+
+        Object result = joinPoint.proceed();
+
+        String responseToken = jwtController.makeJwtToken(userId, grade);
+        response.setHeader("Authorization", "Barer " + responseToken);
+        log.info("CheckTeacherAlterJwtToken");
+        return result;
+    }
+/**
+    //종료 시 값 실어서 보내는 로직으로 만들기
+    @After("execution(* PostAdminApiController.*(..))")
+    public void createRefreshJwtToken() {
+        String userId = "";
+        String grade = Grade.PARENT.getStrType();
+        String Token = jwtController.makeJwtToken(userId, grade);
+        String BarerToken = "Barer " + Token;
+        response.setHeader("Authorization", BarerToken);
+    }
+
+
+    @Before("execution(* PostAdminApiController.*(..))")
+    public void checkAdminValidToken() throws JsonParseException {
+
+        String[] token = request.getHeader("Authorization").split(" ");
+
+
+        //관리자 로그인, 로그아웃
+        //관리자 faq 조회, 수정, 삭제, 특정 글 조회 - 공지사항도 마찬가지  =>  faq에 전달된 아이디랑 비교해서 알아야 하나...
+        Map<String, Object> map = jwtController.decryptValidJwtToken(token[1]);
+        log.info("\nmap : " + map.toString());
+        Assert.assertEquals(Grade.ADMIN.getStrType(), map.get("Grade"));
+        adminRepository.findById(String.valueOf(map.get("userId")));
+
+    }
+*/
+
+    class TokenTemp{
+        String userId;
+        String grade;
+    }
+
+    @RestController
+    class example {
+        @GetMapping("/token/{grade}")
+        public Map<String, String> exampleToken(@PathVariable("grade") String pathGrade) {
+            String id = "";
+            String grade = "";
+            if(pathGrade.equals("admin")){
+                id = "admin1";
+                grade = Grade.ADMIN.getStrType();
+            } else if(pathGrade.equals("teacher")){
+                id = "teacher1";
+                grade = Grade.TEACHER.getStrType();
+            }
+            String Token = jwtController.makeJwtToken(id, grade);
+            String BarerToken = "Barer " + Token;
+            Map<String, String> token = new HashMap<>();
+            token.put("Authorization", BarerToken);
+            log.info(jwtController.decryptValidJwtToken(Token).toString());
+            return token;
+        }
+        @GetMapping("/token/{grade}/{userId}")
+        public Map<String, String> exampleToken(@PathVariable("userId") String userId, @PathVariable("grade") String pathGrade) {
+            String id = userId;
+            String grade = pathGrade;
+
+            String Token = jwtController.makeJwtToken(id, grade);
+            String BarerToken = "Barer " + Token;
+            Map<String, String> token = new HashMap<>();
+            token.put("Authorization", BarerToken);
+            log.info(jwtController.decryptValidJwtToken(Token).toString());
+            return token;
+        }
+    }
 }
 

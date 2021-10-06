@@ -18,7 +18,7 @@ import project.tuthree.dto.file.UserfileDTO;
 import project.tuthree.mapper.PostTestPaperMapper;
 import project.tuthree.mapper.UserFileMapper;
 import project.tuthree.repository.PostTestPaperRepository;
-import project.tuthree.repository.TeacherEntityRepository;
+import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
 
@@ -41,7 +41,7 @@ public class PostTestPaperService {
     private final EntityManager em;
     private final PostTestPaperRepository testPaperRepository;
     private final PostTestPaperMapper testPaperMapper;
-    private final TeacherEntityRepository teacherRepository;
+    private final UserEntityRepository userEntityRepository;
     private final UserFileMapper userFileMapper;
     private final UserFileRepository userFileRepository;
 
@@ -96,7 +96,7 @@ public class PostTestPaperService {
      * 커뮤니티 글 작성 --  코드가 너무 깔끔하지가 않다...
      */
     public Long writeCommunity(PaperForm form) throws NoSuchAlgorithmException, IOException {
-        Teacher teacher = teacherRepository.findById(form.getUserId());
+        Teacher teacher = userEntityRepository.teacherFindById(form.getUserId());
         PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
         log.info("======================" + teacher.getId());
 
@@ -135,7 +135,7 @@ public class PostTestPaperService {
         for (int i = 0; i < list.size(); i++) {
             userFileRepository.deleteUserFile(list.get(i));
         }
-        Teacher teacher = teacherRepository.findById(form.getUserId());
+        Teacher teacher = userEntityRepository.teacherFindById(form.getUserId());
         PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(id, teacher, form.getTitle(),
                 form.getContent(), null, null, null, form.getSecret());
         PostTestPaper postTestPaper = testPaperRepository.updateTestPaper(id, testPaperMapper.toEntity(postTestPaperDTO));

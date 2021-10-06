@@ -1,17 +1,24 @@
 package project.tuthree.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
+import project.tuthree.repository.UserEntityRepository;
+import project.tuthree.repository.UserFileRepository;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static project.tuthree.repository.UserFileRepository.FileType.*;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserRegisterService {
@@ -19,10 +26,12 @@ public class UserRegisterService {
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final UserEntityRepository userEntityRepository;
+    private final UserFileRepository userFileRepository;
 
 
 
-    //아이디 중복확인
+    /** 아이디 중복 확인 */
     public boolean checkId(String id){
         boolean parent = userRepository.existsById(id);
         boolean student = studentRepository.existsById(id);
@@ -57,6 +66,24 @@ public class UserRegisterService {
 
     }
 
+    /** 로그인 */
+    public String userLogin(LoginDTO loginDTO) {
+        String id = loginDTO.getId();
+        String pwd = loginDTO.getPwd();
+        String str = userEntityRepository.studentFindByIdPwd(id, pwd);
+        if(str.equals(" ")){
+            str = userEntityRepository.teacherFindByIdPwd(id, pwd);
+            if(str.equals(" ")){
+                str = userEntityRepository.parentFindByIdPwd(id, pwd);
+                if(str.equals(" ")){
+                    return " ";
+                }
+            }
+        }
+        return str;
+
+    }
+
         /*if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
             return true;
         }
@@ -69,9 +96,9 @@ public class UserRegisterService {
         return userRepository.existsById(id);
     }*/
 //로그인
-    public Optional<User> userLogin(String id){
-        return userRepository.findById(id);
-    }
+//    public Optional<User> userLogin(String id){
+//        return userRepository.findById(id);
+//    }
 
 
 
@@ -83,6 +110,10 @@ public class UserRegisterService {
         //boolean result = checkId(registerDTO.getId());
         try{
             if(!checkId(registerDTO.getId())){
+                if (!registerDTO.getFile().isEmpty()) {
+                    String post = userFileRepository.saveFile(registerDTO.getFile(), PARENT);
+                    registerDTO.updatePost(post);
+                }
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
             else{
@@ -101,6 +132,10 @@ public class UserRegisterService {
     public String createStudent(StudentRegisterDTO registerDTO){
         try{
             if(!checkId(registerDTO.getId())){
+                if (!registerDTO.getFile().isEmpty()) {
+                    String post = userFileRepository.saveFile(registerDTO.getFile(), STUDENT);
+                    registerDTO.updatePost(post);
+                }
                 return studentRepository.save(registerDTO.toEntity()).getId();
             }
             else{
@@ -114,18 +149,26 @@ public class UserRegisterService {
 
     //선생님 회원가입
     @Transactional
-    public String createTeacher(TeacherRegisterDTO registerDTO){
+    public String createTeacher(TeacherRegisterDTO registerDTO) {
         try{
             if(!checkId(registerDTO.getId())){
+                if (!registerDTO.getFile().isEmpty()) {
+                    String post = userFileRepository.saveFile(registerDTO.getFile(), TEACHER);
+                    registerDTO.updatePost(post);
+                }
+                if (!registerDTO.getAuthFile().isEmpty()) {
+                    String certification = userFileRepository.saveFile(registerDTO.getAuthFile(), TEACHER);
+                    registerDTO.updateAuthPost(certification);
+                }
                 return teacherRepository.save(registerDTO.toEntity()).getId();
             }
             else{
                 return "중복";
             }
-
         }catch(Exception e){
             throw new RuntimeException();
         }
+
     }
 
     //기본정보 조회
