@@ -9,6 +9,8 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
+import java.util.Optional;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static project.tuthree.repository.UserFileRepository.FileType.*;
@@ -27,7 +29,7 @@ public class UserRegisterService {
 
     private final PostFindService postFindService;
 
-    //private final JsonParsing jsonParsing;
+
 
 
 
@@ -108,9 +110,9 @@ public class UserRegisterService {
             if(!checkId(registerDTO.getId())){
 
                 if (!registerDTO.getFile().isEmpty()) {
+
                     String post = userFileRepository.saveFile(registerDTO.getFile(), PARENT);
                     registerDTO.updatePost(post);
-                    //userFileRepository.jsonPParse(registerDTO);
                 }
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
@@ -230,6 +232,43 @@ public class UserRegisterService {
         Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         teacher.update(updateDTO.getRegion(),updateDTO.getRegistration(), updateDTO.getSubject(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
+
+        return id;
+    }
+
+    @Transactional
+    public String findId(FindIdDTO findIdDTO, String method){
+        String id;
+        String name = findIdDTO.getName();
+        String tel = findIdDTO.getTel();
+        String email = findIdDTO.getEmail();
+        //if (method == "email") {
+            id = userRepository.findByNameAndEmail(name, email).getId();
+            if(id.equals(" ")){
+                id = studentRepository.findByNameAndEmail(name, email).getId();
+                if(id.equals(" ")){
+                    id = teacherRepository.findByNameAndEmail(name, email).getId();
+                    if(id.equals(" ")){
+                        return " ";
+                    }
+                }
+            }
+        //}
+        /*else if(method == "tel"){
+            id = userRepository.findByNameAndTel(name, tel).getId();
+            if(id.equals(" ")){
+                id = studentRepository.findByNameAndTel(name, tel).getId();
+                if(id.equals(" ")){
+                    id = teacherRepository.findByNameAndTel(name, tel).getId();
+                    if(id.equals(" ")){
+                        return " ";
+                    }
+                }
+            }
+        }
+        else{
+            return "no";
+        }*/
 
         return id;
     }

@@ -72,7 +72,7 @@ public class JsonParsing {
 
     //학생 json
     public String jsonSParse(StudentRegisterDTO registerDTO){
-        String savePath = "C:\\Users\\LG\\Desktop\\새 폴더 (2)\\";
+        String savePath = "C:/Users/LG/Desktop/새 폴더 (2)/";
         String jFileName=savePath+registerDTO.getId()+"json";
 
         //TeacherRegisterDTO teacherDTO;
@@ -123,7 +123,7 @@ public class JsonParsing {
 
     //부모님 json
     public String jsonPParse(UserRegisterDTO registerDTO){
-        String savePath = "C:\\Users\\LG\\Desktop\\새 폴더 (2)\\";
+        String savePath = "C:/Users\\LG\\Desktop\\새 폴더 (2)\\";
         String jFileName=savePath+registerDTO.getId()+"json";
 
         //TeacherRegisterDTO teacherDTO;
