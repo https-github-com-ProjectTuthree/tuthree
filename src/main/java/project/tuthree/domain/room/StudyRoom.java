@@ -1,7 +1,10 @@
 package project.tuthree.domain.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Student;
 import project.tuthree.domain.user.Teacher;
@@ -16,6 +19,7 @@ import static javax.persistence.FetchType.*;
 @Getter
 //@IdClass(StudyRoomId.class)
 @Table(name = "study_room")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyRoom implements Serializable {
     @Id
     @ManyToOne
@@ -39,5 +43,20 @@ public class StudyRoom implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
+    }
+
+    @Builder
+    public StudyRoom(Teacher teacherId, Student studentId, project.tuthree.domain.Status status) {
+        this.teacherId = teacherId;
+        this.studentId = studentId;
+        Status = status;
+    }
+
+    public void openStudyRoom() {
+        this.Status = Status.OPEN;
+    }
+
+    public void closeStudyRoom() {
+        this.Status = Status.CLOSE;
     }
 }

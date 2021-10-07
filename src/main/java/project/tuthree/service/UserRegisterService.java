@@ -81,7 +81,6 @@ public class UserRegisterService {
             }
         }
         return str;
-
     }
 
         /*if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){

@@ -55,6 +55,8 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final EnumPath<Sex> sex = createEnum("sex", Sex.class);
 
+    public final NumberPath<Double> star = createNumber("star", Double.class);
+
     public final EnumPath<SchoolStatus> status = createEnum("status", SchoolStatus.class);
 
     public final StringPath subject = createString("subject");

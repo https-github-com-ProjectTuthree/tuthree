@@ -1,6 +1,9 @@
 package project.tuthree.domain.post;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomId;
 import project.tuthree.domain.user.Teacher;
@@ -15,6 +18,7 @@ import static javax.persistence.FetchType.*;
 @Getter
 @IdClass(StudyRoomId.class)
 @Table(name = "post_review")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostReview implements Serializable {
     /**
      * 복합키 식별 관계 매핑
@@ -46,5 +50,13 @@ public class PostReview implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
+    }
+
+    @Builder
+    public PostReview(StudyRoom id, int star, String content, Date writeAt) {
+        this.id = id;
+        this.star = star;
+        this.content = content;
+        this.writeAt = writeAt;
     }
 }

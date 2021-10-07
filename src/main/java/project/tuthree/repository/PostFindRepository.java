@@ -24,9 +24,7 @@ public class PostFindRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
-    /**
-     * 선생님 목록 조회
-     */
+    /** 선생님 목록 조회 */
     public List<Teacher> findByPage(int page) {
         return em.createQuery("select t from Teacher t", Teacher.class)
                 .setFirstResult(setPage * (page - 1))
@@ -34,11 +32,17 @@ public class PostFindRepository {
                 .getResultList();
     }
 
-    /**
-     * id로 특정 게시글 조회
-     */
+    /** id로 특정 게시글 조회 */
     public PostFind findById(Long postId) {
         return em.find(PostFind.class, postId);
+    }
+
+    /** id로 선생님 id 찾기 */
+    public String findTeacherById(Long postId) {
+        String teacherId = jpaQueryFactory.select(postFind.teacherId.id).from(postFind)
+                .where(postFind.id.eq(postId))
+                .fetchOne();
+        return teacherId;
     }
 
     /** 선생님 게시글 갯수 */
