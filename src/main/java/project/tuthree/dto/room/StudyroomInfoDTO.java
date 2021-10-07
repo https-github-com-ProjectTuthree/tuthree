@@ -38,7 +38,9 @@ public class StudyroomInfoDTO {
         this.status = status;
     }
 
-    public void updateInfo() {
-
+    public void updateId(StudyRoom studyRoom) {
+        this.id = studyRoom;
+        this.checkDate = new Date();
+        this.status = false;
     }
 }

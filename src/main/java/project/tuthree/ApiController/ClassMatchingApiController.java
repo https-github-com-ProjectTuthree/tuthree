@@ -8,12 +8,15 @@ import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessRespon
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.PostFindRepository;
+import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.service.PostFindService;
 import project.tuthree.service.PostFindService.PostFindStudentDTO;
 import project.tuthree.service.PostFindService.PostFindStudentListDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherListDTO;
 import project.tuthree.service.StudyRoomService;
+import project.tuthree.service.StudyRoomService.InfoListDTO;
+import project.tuthree.service.StudyRoomService.ReviewListDTO;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -27,6 +30,7 @@ public class ClassMatchingApiController {
     private final PostFindService postFindService;
     private final PostFindRepository postFindRepository;
     private final StudyRoomService studyRoomService;
+    private final StudyRoomRepository studyRoomRepository;
 
     /** 선생님 과외 구하는 글 목록 조회 */
     @GetMapping("/tutor/list/{page}")
@@ -53,6 +57,14 @@ public class ClassMatchingApiController {
                 teacherDTO.getName() + " 선생님을 조회했습니다.", teacherDTO);
     }
 
+    /** 특정 선생님 리뷰 조회 */
+    @GetMapping("/tutor/review/{post_id}")
+    public ExistDataSuccessResponse findTutorReviewList(@PathVariable("post_id") Long id) {
+        List<ReviewListDTO> review = studyRoomService.findReviewByPostId(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                id + "번 게시글의 리뷰가 조회되었습니다.", review);
+    }
+
     /** 특정 학생 조회 */
     @GetMapping("/tutee/{post_id}")
     public ExistDataSuccessResponse findTutee(@PathVariable("post_id") Long id) throws IOException {
@@ -61,21 +73,39 @@ public class ClassMatchingApiController {
                 studentDTO.getName() + " 학생을 조회했습니다.", studentDTO);
     }
 
-    /**
-     * 수업 계획서 등록하기
-     */
-    @PostMapping("/room")
+    /** 수업 계획서 등록하기 */
+    @PostMapping("/room/create")
     public NotExistDataResultResponse createStudyRoomInfo(@RequestParam("teacherId") String teacherId,
-                                                                           @RequestParam("studentId") String studentId,
-                                                                           @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) {
-        /** 반환값 다시 생각해보기 */
-        //방 만들기
-        studyRoomService.roomRegister(teacherId, studentId);
-        //방에 대한 info 넣기
-        studyRoomService.infoRegister(studyroomInfoDTO);
-
+                                                                           @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) {
+        studyRoomService.roomRegister(teacherId, studentId, studyroomInfoDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 생성과 계획서 작성이 완료되었습니다.");
     }
 
+    /** 수업 계획서 수정하기 */
+    @PutMapping("/room/alter")
+    public NotExistDataResultResponse alterStudyRoomInfo(@RequestParam("teacherId") String teacherId,
+                                   @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) {
+        studyRoomService.roomUpdate(teacherId, studentId, studyroomInfoDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 계획서 수정이 완료되었습니다.");
+    }
 
+    /** 학생 - 수락하기 누르면 수업 계획서 불러오기 */
+    @GetMapping("/room/info")
+    public ExistDataSuccessResponse findStudyRoomInfo(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
+        InfoListDTO infoListDTO = studyRoomService.findStudyRoomInfo(teacherId, studentId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "수업 계획서를 불러왔습니다.", infoListDTO);
+    }
+
+    @GetMapping("/room/info/accept")
+    public NotExistDataResultResponse StudyRoomAccept(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
+        studyRoomRepository.acceptInfo(teacherId, studentId);
+        studyRoomRepository.openStudyRoom(teacherId, studentId);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "수업이 성사되었습니다.");
+    }
+
+    @GetMapping("/room/close")
+    public NotExistDataResultResponse StudyRoomClose(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
+        studyRoomRepository.clostStudyRoom(teacherId, studentId);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "수업이 종료되었습니다.");
+    }
 }
