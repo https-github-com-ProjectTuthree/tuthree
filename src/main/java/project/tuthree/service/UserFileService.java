@@ -38,18 +38,10 @@ public class UserFileService {
         List<UserFile> fileList = userFileRepository.userFileFindByPostId(postId);
         List<FileIdName> list = new ArrayList<>();
 
-        for (int i = 0; i < fileList.size(); i++) {
-            UserFile file = fileList.get(i);
+        for (UserFile file : fileList) {
             list.add(new FileIdName(file.getId(), file.getRealTitle(), userFileRepository.transferUserFile(file.getId())));
         }
         return list;
     }
-
-//    public List<FileIdName> userFileResponseByPostId(Long postId) {
-//        List<UserFile> fileList = userFileRepository.userFileFindByPostId(postId);
-//
-//
-//    }
-
 
 }

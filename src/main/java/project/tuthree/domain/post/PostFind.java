@@ -1,6 +1,9 @@
 package project.tuthree.domain.post;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Student;
 import project.tuthree.domain.user.Teacher;
@@ -19,6 +22,7 @@ import static javax.persistence.FetchType.*;
         sequenceName = "POSTFIND_SEQ",
         allocationSize = 1
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "post_find")
 public class PostFind implements Serializable {
 
@@ -46,4 +50,13 @@ public class PostFind implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date alterAt;
 
+
+    @Builder
+    public PostFind(Teacher teacherId, Student studentId, Long view, Date writeAt, Date alterAt) {
+        this.teacherId = teacherId;
+        this.studentId = studentId;
+        this.view = view;
+        this.writeAt = writeAt;
+        this.alterAt = alterAt;
+    }
 }

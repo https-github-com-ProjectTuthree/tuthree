@@ -68,6 +68,9 @@ public class Teacher implements Persistable<String>{
 
     private String major;
 
+    @Column(name = "user_star")
+    private double star;
+
     private String certification;
 
     @Column(name = "certify_status") //converter 적용하기
@@ -83,7 +86,7 @@ public class Teacher implements Persistable<String>{
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
                    Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, String school,
-                   SchoolStatus status, String major, String certification, boolean certifyStatus, String detail) {
+                   SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
         this.id = id;
         this.pwd = pwd;
@@ -103,6 +106,7 @@ public class Teacher implements Persistable<String>{
         this.school = school;
         this.status = status;
         this.major = major;
+        this.star = star;
         this.certification = certification;
         this.certifyStatus = certifyStatus;
         this.detail = detail;
@@ -119,6 +123,5 @@ public class Teacher implements Persistable<String>{
         this.major = major;
         this.detail = detail;
     }
-
 }
 
