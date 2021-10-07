@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -82,8 +83,10 @@ public class StudentRegisterDTO {
 
     private Date create_date = new Date();
     private String region; ///json
+    private List<String> regionL;
     private Status registration;
     private String subject;
+    private List<String> subjectL;
     private Integer cost;
     private School school;
     private String detail;

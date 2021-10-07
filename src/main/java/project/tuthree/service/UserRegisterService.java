@@ -9,10 +9,6 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
-
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static project.tuthree.repository.UserFileRepository.FileType.*;
@@ -28,7 +24,11 @@ public class UserRegisterService {
     private final TeacherRepository teacherRepository;
     private final UserEntityRepository userEntityRepository;
     private final UserFileRepository userFileRepository;
+
     private final PostFindService postFindService;
+
+    //private final JsonParsing jsonParsing;
+
 
 
 
@@ -107,6 +107,12 @@ public class UserRegisterService {
     public String createParent(UserRegisterDTO registerDTO){
         try{
             if(!checkId(registerDTO.getId())){
+
+                if (!registerDTO.getFile().isEmpty()) {
+                    String post = userFileRepository.saveFile(registerDTO.getFile(), PARENT);
+                    registerDTO.updatePost(post);
+                    //userFileRepository.jsonPParse(registerDTO);
+                }
                 return userRepository.save(registerDTO.toEntity()).getId();
             }
             else{
