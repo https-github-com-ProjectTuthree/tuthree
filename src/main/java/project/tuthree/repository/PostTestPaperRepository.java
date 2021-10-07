@@ -19,15 +19,15 @@ import static project.tuthree.domain.post.QPostTestPaper.postTestPaper;
 @RequiredArgsConstructor
 public class PostTestPaperRepository {
 
+    private final int setPage = 10;
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
     /** 커뮤니티 페이지 목록 조회 */
     public List<PostTestPaper> findByPage(int page) {
-        int setpage = 10;
         return em.createQuery("select p from PostTestPaper p order by p.id desc", PostTestPaper.class)
-                .setFirstResult(setpage * (page - 1))
-                .setMaxResults(setpage)
+                .setFirstResult(setPage * (page - 1))
+                .setMaxResults(setPage)
                 .getResultList();
     }
 
@@ -42,13 +42,12 @@ public class PostTestPaperRepository {
      * 커뮤니티 글 검색
      */
     public List<PostTestPaper> findByKeyword(String keyword, int page) {
-        int setpage = 10;
         List<PostTestPaper> list = jpaQueryFactory.selectFrom(postTestPaper)
                 .where(postTestPaper.title.contains(keyword)
                         .and(postTestPaper.secret.eq(Status.OPEN)))
                 .orderBy(postTestPaper.id.desc())
-                .offset(setpage * (page - 1))
-                .limit(setpage)
+                .offset(setPage * (page - 1))
+                .limit(setPage)
                 .fetch();
         return list;
     }

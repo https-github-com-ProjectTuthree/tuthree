@@ -157,15 +157,33 @@ public class UserFileRepository {
         response.getOutputStream().close();
     }
 
-    /** 파일 전송 - byte */
+    /** file_id 파일 전송 - byte */
     public byte[] transferUserFile(Long file_id) throws IOException {
 
-        String origin = em.find(UserFile.class, file_id).getRealTitle();
-        String path = em.find(UserFile.class, file_id).getSaveTitle();
+        try {
+            String path = em.find(UserFile.class, file_id).getSaveTitle();
+            FileInputStream in = new FileInputStream(new File(path));
+            return IOUtils.toByteArray(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-        List<byte []> list = new ArrayList<>();
-        FileInputStream in = new FileInputStream(new File(path));
-
-        return IOUtils.toByteArray(in);
+    /** file_path 파일 전송 - byte */
+    public byte[] transferUserFile(String path) throws IOException {
+        try {
+            FileInputStream in = new FileInputStream(new File(path));
+            return IOUtils.toByteArray(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
