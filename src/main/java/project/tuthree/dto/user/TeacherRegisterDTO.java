@@ -57,6 +57,7 @@ public class TeacherRegisterDTO {
     private String school;
     private SchoolStatus status;
     private String major;
+    private double star;
 
     @ColumnDefault("FALSE")
     private String certification;
@@ -69,7 +70,7 @@ public class TeacherRegisterDTO {
     @Builder
     public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
                               String post, MultipartFile file, Status notification, Grade grade, String region, Status registration, String subject,
-                              Integer cost, String school, SchoolStatus status, String major, String certification, MultipartFile authFile, boolean certifyStatus, String detail) {
+                              Integer cost, String school, SchoolStatus status, String major, double star, String certification, MultipartFile authFile, boolean certifyStatus, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
@@ -94,6 +95,7 @@ public class TeacherRegisterDTO {
         this.school = school;
         this.status = status;
         this.major = major;
+        this.star = 0.0;
         this.certification = certification;
         this.authFile = authFile;
         this.certifyStatus = false;
@@ -123,6 +125,7 @@ public class TeacherRegisterDTO {
                 .school(school)
                 .status(status)
                 .major(major)
+                .star(star)
                 .certification(certification)
                 .certifyStatus(certifyStatus)
                 .detail(detail)
@@ -130,7 +133,6 @@ public class TeacherRegisterDTO {
     }
 
     public void updatePost(String post) {
-
         this.post = post;
     }
 

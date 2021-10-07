@@ -1,10 +1,7 @@
 package project.tuthree.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.SchoolStatus;
@@ -15,8 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
-@AllArgsConstructor
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeacherDTO {
 
     @NotNull
@@ -70,6 +66,8 @@ public class TeacherDTO {
 
     private String major;
 
+    private double star;
+
     @NotNull
     private String certification;
 
@@ -78,4 +76,30 @@ public class TeacherDTO {
 
     @NotNull
     private String detail;
+
+    @Builder
+    public TeacherDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date create_date, String region, Status registration, String subject, int cost, String school, SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
+        this.id = id;
+        this.pwd = pwd;
+        this.name = name;
+        this.email = email;
+        this.tel = tel;
+        this.sex = sex;
+        this.birth = birth;
+        this.post = post;
+        this.notification = notification;
+        this.grade = grade;
+        this.create_date = create_date;
+        this.region = region;
+        this.registration = registration;
+        this.subject = subject;
+        this.cost = cost;
+        this.school = school;
+        this.status = status;
+        this.major = major;
+        this.star = star;
+        this.certification = certification;
+        this.certifyStatus = certifyStatus;
+        this.detail = detail;
+    }
 }

@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.dto.user.*;
+import project.tuthree.service.PostFindService;
 import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
@@ -23,6 +25,7 @@ public class UserApiController {
 
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
+    private final PostFindService postFindService;
 
     //id체크
     @GetMapping("/register/{id}/checkid")
@@ -39,7 +42,6 @@ public class UserApiController {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
-
     }
 
     //학생 회원가입
