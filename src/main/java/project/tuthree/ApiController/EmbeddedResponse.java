@@ -2,6 +2,7 @@ package project.tuthree.ApiController;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import project.tuthree.domain.user.Category;
 
 public class EmbeddedResponse {
 
@@ -58,6 +59,15 @@ public class EmbeddedResponse {
         String Message;
     }
 
+    @Getter
+    public static class RestResponse {
+        private boolean success;
+        private Category data;
+        public RestResponse(boolean success, Category data) {
+            this.success = success;
+            this.data = data;
+        }
+    }
 
 
 }
