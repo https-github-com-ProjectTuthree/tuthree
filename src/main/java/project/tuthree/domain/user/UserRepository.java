@@ -22,9 +22,17 @@ public interface UserRepository extends JpaRepository<User, String> {
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findById(String id);
 
-    Optional<User> findByName(String name);
+    /** 이메일로 아이디 찾기**/
+    User findByNameAndEmail(String email, String name);
 
-    Optional<User> findByTel(String tel);
+    /** 번호로 아이디 찾기**/
+    User findByNameAndTel(String tel, String name);
+
+    /**이메일로 비밀번호**/
+    String findByIdAndNameAndEmail(String id, String email, String name);
+
+    /**번호로 비밀번호**/
+    String findByIdAndNameAndTel(String id, String tel, String name);
 
     List<User> findAll();
 
