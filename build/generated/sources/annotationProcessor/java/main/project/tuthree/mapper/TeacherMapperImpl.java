@@ -1,21 +1,17 @@
 package project.tuthree.mapper;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
-import project.tuthree.domain.Status;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.SchoolStatus;
-import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.Teacher.TeacherBuilder;
 import project.tuthree.dto.user.TeacherDTO;
+import project.tuthree.dto.user.TeacherDTO.TeacherDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-10-05T15:16:40+0900",
+    date = "2021-10-07T18:19:10+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -55,57 +51,36 @@ public class TeacherMapperImpl implements TeacherMapper {
             return null;
         }
 
-        String id = null;
-        String pwd = null;
-        String name = null;
-        String email = null;
-        String tel = null;
-        Sex sex = null;
-        int birth = 0;
-        String post = null;
-        Status notification = null;
-        Grade grade = null;
-        Date create_date = null;
-        String region = null;
-        Status registration = null;
-        String subject = null;
-        int cost = 0;
-        String school = null;
-        SchoolStatus status = null;
-        String major = null;
-        String certification = null;
-        boolean certifyStatus = false;
-        String detail = null;
+        TeacherDTOBuilder teacherDTO = TeacherDTO.builder();
 
-        id = teacher.getId();
-        pwd = teacher.getPwd();
-        name = teacher.getName();
-        email = teacher.getEmail();
-        tel = teacher.getTel();
-        sex = teacher.getSex();
+        teacherDTO.id( teacher.getId() );
+        teacherDTO.pwd( teacher.getPwd() );
+        teacherDTO.name( teacher.getName() );
+        teacherDTO.email( teacher.getEmail() );
+        teacherDTO.tel( teacher.getTel() );
+        teacherDTO.sex( teacher.getSex() );
         if ( teacher.getBirth() != null ) {
-            birth = teacher.getBirth();
+            teacherDTO.birth( teacher.getBirth() );
         }
-        post = teacher.getPost();
-        notification = teacher.getNotification();
-        grade = teacher.getGrade();
-        create_date = teacher.getCreate_date();
-        region = teacher.getRegion();
-        registration = teacher.getRegistration();
-        subject = teacher.getSubject();
+        teacherDTO.post( teacher.getPost() );
+        teacherDTO.notification( teacher.getNotification() );
+        teacherDTO.grade( teacher.getGrade() );
+        teacherDTO.create_date( teacher.getCreate_date() );
+        teacherDTO.region( teacher.getRegion() );
+        teacherDTO.registration( teacher.getRegistration() );
+        teacherDTO.subject( teacher.getSubject() );
         if ( teacher.getCost() != null ) {
-            cost = teacher.getCost();
+            teacherDTO.cost( teacher.getCost() );
         }
-        school = teacher.getSchool();
-        status = teacher.getStatus();
-        major = teacher.getMajor();
-        certification = teacher.getCertification();
-        certifyStatus = teacher.isCertifyStatus();
-        detail = teacher.getDetail();
+        teacherDTO.school( teacher.getSchool() );
+        teacherDTO.status( teacher.getStatus() );
+        teacherDTO.major( teacher.getMajor() );
+        teacherDTO.star( teacher.getStar() );
+        teacherDTO.certification( teacher.getCertification() );
+        teacherDTO.certifyStatus( teacher.isCertifyStatus() );
+        teacherDTO.detail( teacher.getDetail() );
 
-        TeacherDTO teacherDTO = new TeacherDTO( id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date, region, registration, subject, cost, school, status, major, certification, certifyStatus, detail );
-
-        return teacherDTO;
+        return teacherDTO.build();
     }
 
     @Override
@@ -134,6 +109,7 @@ public class TeacherMapperImpl implements TeacherMapper {
         teacher.school( teacherDTO.getSchool() );
         teacher.status( teacherDTO.getStatus() );
         teacher.major( teacherDTO.getMajor() );
+        teacher.star( teacherDTO.getStar() );
         teacher.certification( teacherDTO.getCertification() );
         teacher.certifyStatus( teacherDTO.isCertifyStatus() );
         teacher.detail( teacherDTO.getDetail() );

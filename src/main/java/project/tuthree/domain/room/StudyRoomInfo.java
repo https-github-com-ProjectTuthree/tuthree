@@ -1,5 +1,6 @@
 package project.tuthree.domain.room;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import project.tuthree.domain.Status;
@@ -62,5 +63,32 @@ public class StudyRoomInfo implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
+    }
+
+    @Builder
+    public StudyRoomInfo(StudyRoom id, String subject, int cost, String day, String start, String end, String detail, Date checkDate, boolean status) {
+        this.id = id;
+        this.subject = subject;
+        this.cost = cost;
+        this.day = day;
+        this.start = start;
+        this.end = end;
+        this.detail = detail;
+        this.checkDate = checkDate;
+        this.status = status;
+    }
+
+    public void infoUpdate(StudyRoomInfo studyRoomInfo) {
+        this.subject = studyRoomInfo.getSubject();
+        this.cost = studyRoomInfo.getCost();
+        this.day = studyRoomInfo.getDay();
+        this.start = studyRoomInfo.getStart();
+        this.end = studyRoomInfo.getEnd();
+        this.detail = studyRoomInfo.getDetail();
+        this.status = studyRoomInfo.isStatus();
+    }
+
+    public void acceptInfo(){
+        this.status = true;
     }
 }
