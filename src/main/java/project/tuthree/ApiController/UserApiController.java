@@ -23,9 +23,11 @@ import java.security.NoSuchAlgorithmException;
 @RequiredArgsConstructor
 public class UserApiController {
 
+    private final String AUTHORIZATION = "Authorization";
+    private final String BEARER = "Bearer";
+
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
-    private final PostFindService postFindService;
 
     //id체크
     @GetMapping("/register/{id}/checkid")
@@ -117,7 +119,7 @@ public class UserApiController {
         log.debug("\n---- 로그인 ----\n");
         String str = userRegisterService.userLogin(loginDTO);
         if (!str.equals(" ")) {
-            response.setHeader("Authorization", "Barer " + jwtController.makeJwtToken(loginDTO.getId(), str));
+            response.setHeader(AUTHORIZATION, BEARER + " " + jwtController.makeJwtToken(loginDTO.getId(), str));
             return new NonValueNotExistDataResultResponse(true, StatusCode.OK.getCode(),
                     "ID " + loginDTO.getId() + "(으)로 로그인되었습니다.");
         }
@@ -130,7 +132,7 @@ public class UserApiController {
      */
     @GetMapping("/logout")
     public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
-        response.setHeader("Authorization", "Barer ");
+        response.setHeader(AUTHORIZATION, BEARER + " ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
 

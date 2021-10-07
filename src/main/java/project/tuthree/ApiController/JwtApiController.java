@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -40,9 +41,6 @@ public class JwtApiController {
     private final String BEARER = "Bearer";
 
     private final JwtController jwtController;
-    private final AdminRepository adminRepository;
-    private final PostFaqRepository postFaqRepository;
-    private final PostNoticeRepository postNoticeRepository;
     private final PostTestPaperRepository postTestPaperRepository;
 
     private final HttpServletResponse response;
@@ -51,11 +49,11 @@ public class JwtApiController {
     /**
      * 글 조회 : 올바른 토큰인가? 올바른 권한을 가졌는가? -> 모든 권한에 적용(채팅은 잘 모르겠다.).
      * 글 작성 : 올바른 토큰인가? 올바른 권한을 가졌는가? 글의 작성자와 토큰의 아이디가 일치하는가?-> 선생님, 관리자 , 학생
-     *          => 전송된 글의 정보 중 아이디가 토큰의 아이디와 일치하는가?
+     * => 전송된 글의 정보 중 아이디가 토큰의 아이디와 일치하는가?
      * 글 삭제 : 올바른 토큰인가? 올바른 권한을 가졌는가? 글의 작성자와 토큰의 아이디가 일치하는가? -> 선생님, 관리자 , 학생
-     *          => 들어온 아이디의 글과 사용자가 일치하는가?
+     * => 들어온 아이디의 글과 사용자가 일치하는가?
      * 글 수정 : 올바른 토큰인가? 올바른 권한을 가졌는가? 글의 작성자와 토큰의 아이디가 일치하는가? -> 선생님, 관리자 , 학생
-     *          => 들어온 아이디의 글과 사용자가 일치하는가?
+     * => 들어온 아이디의 글과 사용자가 일치하는가?
      */
 
     //관리자 작성
@@ -68,7 +66,6 @@ public class JwtApiController {
     //올바른 토큰인가?
     //권한이 관리자인가?
     //토큰의 아이디가 원글의 아이디와 동일한가?
-
 
 
     /** 관리자 작성 - 관리자 권한인지 확인 */
