@@ -24,7 +24,11 @@ public class UserRegisterService {
     private final TeacherRepository teacherRepository;
     private final UserEntityRepository userEntityRepository;
     private final UserFileRepository userFileRepository;
+
+    private final PostFindService postFindService;
+
     //private final JsonParsing jsonParsing;
+
 
 
 
@@ -60,7 +64,6 @@ public class UserRegisterService {
         else{
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
-
     }
 
     /** 로그인 */
@@ -102,11 +105,9 @@ public class UserRegisterService {
     //학부모 회원가입
     @Transactional
     public String createParent(UserRegisterDTO registerDTO){
-        //validId(registerDTO.getId());
-        //return userRepository.save(registerDTO.toEntity()).getId();
-        //boolean result = checkId(registerDTO.getId());
         try{
             if(!checkId(registerDTO.getId())){
+
                 if (!registerDTO.getFile().isEmpty()) {
                     String post = userFileRepository.saveFile(registerDTO.getFile(), PARENT);
                     registerDTO.updatePost(post);
@@ -130,11 +131,14 @@ public class UserRegisterService {
     public String createStudent(StudentRegisterDTO registerDTO){
         try{
             if(!checkId(registerDTO.getId())){
+                /** 마이페이지 이미지 수정 기능이 만들고 나서 빼기 */
                 if (!registerDTO.getFile().isEmpty()) {
                     String post = userFileRepository.saveFile(registerDTO.getFile(), STUDENT);
                     registerDTO.updatePost(post);
                 }
-                return studentRepository.save(registerDTO.toEntity()).getId();
+                String id = studentRepository.save(registerDTO.toEntity()).getId();
+                postFindService.studentPostFindRegister(id);
+                return id;
             }
             else{
                 return "중복";
@@ -150,6 +154,7 @@ public class UserRegisterService {
     public String createTeacher(TeacherRegisterDTO registerDTO) {
         try{
             if(!checkId(registerDTO.getId())){
+                /** 마이페이지 이미지 수정 기능이 만들고 나서 빼기 */
                 if (!registerDTO.getFile().isEmpty()) {
                     String post = userFileRepository.saveFile(registerDTO.getFile(), TEACHER);
                     registerDTO.updatePost(post);
@@ -158,7 +163,10 @@ public class UserRegisterService {
                     String certification = userFileRepository.saveFile(registerDTO.getAuthFile(), TEACHER);
                     registerDTO.updateAuthPost(certification);
                 }
-                return teacherRepository.save(registerDTO.toEntity()).getId();
+                String id = teacherRepository.save(registerDTO.toEntity()).getId();
+                postFindService.teacherPostFindRegister(id);
+                return id;
+
             }
             else{
                 return "중복";

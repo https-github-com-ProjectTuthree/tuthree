@@ -19,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostFaqRepository {
     /** faq_repository */
+    private final int setPage =  10;
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
     /** faq 목록 출력 */
     public List<PostFaq> findByPage(int page) {
-        int setPage = 10;
         return em.createQuery("select p from PostFaq p order by p.id desc", PostFaq.class)
                 .setFirstResult(setPage*(page-1))
                 .setMaxResults(setPage)

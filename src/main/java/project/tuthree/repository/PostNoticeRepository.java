@@ -24,15 +24,14 @@ public class PostNoticeRepository {
      * api : 외부 form을 dto 리스트로 반환
      */
 
+    private final int setPage = 10;
     private final EntityManager em;
-    private final PostNoticeMapper postNoticeMapper;
 
     /** 공지사항 페이지 목록 조회 */
     public List<PostNotice> findByPage(int page) {
-        int setpage = 10;
         return em.createQuery("select p from PostNotice p order by p.id desc", PostNotice.class)
-                .setFirstResult(setpage * (page - 1))
-                .setMaxResults(setpage)
+                .setFirstResult(setPage * (page - 1))
+                .setMaxResults(setPage)
                 .getResultList();
     }
 
