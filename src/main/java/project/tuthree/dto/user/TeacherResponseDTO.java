@@ -32,9 +32,7 @@ public class TeacherResponseDTO {
 
     public TeacherResponseDTO(Teacher entity) {
         this.id = entity.getId();
-        this.region = entity.getRegion();
         this.registration = entity.getRegistration();
-        this.subject = entity.getSubject();
         this.cost = entity.getCost();
         this.school = entity.getSchool();
         this.status = entity.getStatus();

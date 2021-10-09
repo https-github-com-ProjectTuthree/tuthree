@@ -24,9 +24,7 @@ public class StudentResponseDTO {
 
     public StudentResponseDTO(Student entity) {
         this.id = entity.getId();
-        this.region = entity.getRegion();
         this.registration = entity.getRegistration();
-        this.subject = entity.getSubject();
         this.cost = entity.getCost();
         this.school = entity.getSchool();
         this.detail = entity.getDetail();

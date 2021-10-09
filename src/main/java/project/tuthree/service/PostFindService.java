@@ -62,8 +62,7 @@ public class PostFindService {
             byte[] file = userFileRepository.transferUserFile(f.getTeacherId().getPost());
 
             PostFindTeacherListDTO dto = new PostFindTeacherListDTO(f.getId(), f.getTeacherId().getName(), f.getTeacherId().getSchool(),
-                    f.getTeacherId().getMajor(), f.getTeacherId().getStar(), f.getTeacherId().getSubject(), f.getTeacherId().getRegion(),
-                    f.getTeacherId().getCost(), f.getTeacherId().getRegistration(), file);
+                    f.getTeacherId().getMajor(), f.getTeacherId().getStar(), f.getTeacherId().getCost(), f.getTeacherId().getRegistration(), file);
             list.add(dto);
 
         }
@@ -83,8 +82,8 @@ public class PostFindService {
 
         for (PostFind f : findList) {
             byte[] file = userFileRepository.transferUserFile(f.getStudentId().getPost());
-            PostFindStudentListDTO dto = new PostFindStudentListDTO(f.getId(), f.getStudentId().getName(), f.getStudentId().getSubject(),
-                    f.getStudentId().getRegion(), f.getStudentId().getCost(), f.getStudentId().getRegistration(), file);
+            PostFindStudentListDTO dto = new PostFindStudentListDTO(f.getId(), f.getStudentId().getName(),
+                    f.getStudentId().getCost(), f.getStudentId().getRegistration(), file);
             list.add(dto);
 
         }
@@ -99,7 +98,7 @@ public class PostFindService {
         byte[] file = userFileRepository.transferUserFile(teacher.getPost());
 
         return new PostFindTeacherDTO(postId, teacher.getName(), teacher.getSex(), teacher.getBirth(), teacher.getSchool(),
-                teacher.getMajor(), teacher.getStatus(), teacher.getStar(), teacher.getSubject(), teacher.getRegion(), teacher.getCost(),
+                teacher.getMajor(), teacher.getStatus(), teacher.getStar(), teacher.getCost(),
                 teacher.getRegistration(), teacher.getDetail(), file);
     }
 
@@ -110,8 +109,8 @@ public class PostFindService {
         Student student = userEntityRepository.studentFindById(userId);
         byte[] file = userFileRepository.transferUserFile(student.getPost());
 
-        return new PostFindStudentDTO(postId, student.getName(), student.getSex(), student.getBirth(), student.getSubject(),
-                student.getRegion(), student.getCost(), student.getSchool(), student.getRegistration(), student.getDetail(), file);
+        return new PostFindStudentDTO(postId, student.getName(), student.getSex(), student.getBirth(),
+                student.getCost(), student.getSchool(), student.getRegistration(), student.getDetail(), file);
     }
 
     /** 과외 구하는 글 올리기 */
@@ -140,8 +139,6 @@ public class PostFindService {
         String school;
         String major;
         double star;
-        String subject;
-        String region;
         Integer cost;
         Status registration;
         byte[] post;
@@ -156,8 +153,6 @@ public class PostFindService {
          */
         Long postId;
         String name;
-        String subject;
-        String region;
         Integer cost;
         Status registration;
         byte[] post;
@@ -178,8 +173,6 @@ public class PostFindService {
         String major;
         SchoolStatus status;
         double star;
-        String subject;
-        String region;
         Integer cost;
         Status registration;
         String detail;
@@ -197,8 +190,6 @@ public class PostFindService {
         String name;
         Sex sex;
         Integer birth;
-        String subject;
-        String region;
         Integer cost;
         School school;
         Status registration;
