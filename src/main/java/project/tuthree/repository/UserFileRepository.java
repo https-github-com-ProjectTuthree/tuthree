@@ -6,9 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.file.UserFile;
+import project.tuthree.dto.user.StudentRegisterDTO;
+import project.tuthree.dto.user.TeacherRegisterDTO;
+import project.tuthree.dto.user.UserRegisterDTO;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
@@ -186,4 +191,166 @@ public class UserFileRepository {
             return null;
         }
     }
+
+    public void jsonPParse(UserRegisterDTO registerDTO){
+        String savePath = "/home/seojaehui/tuthree/var/parent";
+
+        if (!new File(savePath).exists()) {
+            new File(savePath).mkdir();
+        }
+        //String savePath = "C:/Users/LG/Desktop/새 폴더 (2)/";
+        String jFileName=savePath+"/"+registerDTO.getId()+".json";
+
+        //TeacherRegisterDTO teacherDTO;
+        JSONObject obj = new JSONObject();
+        obj.put("id", registerDTO.getId());
+        obj.put("pwd", registerDTO.getPwd());
+        obj.put("name", registerDTO.getName());
+        obj.put("email", registerDTO.getEmail());
+        obj.put("tel", registerDTO.getTel());
+        obj.put("sex", (registerDTO.getSex()).toString());
+        obj.put("birth", registerDTO.getBirth());
+        obj.put("grade", (registerDTO.getGrade()).toString());
+        obj.put("post", registerDTO.getPost());
+        obj.put("file", registerDTO.getFile());
+
+        try {
+            FileWriter file = new FileWriter(jFileName);
+            file.write(obj.toJSONString());
+            file.flush();
+            file.close();
+
+
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    //선생님 json
+    public void jsonTParse(TeacherRegisterDTO registerDTO){
+        String savePath = "/home/seojaehui/tuthree/var/teacher";
+
+        if (!new File(savePath).exists()) {
+            new File(savePath).mkdir();
+        }
+        String jFileName=savePath+"/"+registerDTO.getId()+".json";
+
+        //TeacherRegisterDTO teacherDTO;
+        JSONObject obj = new JSONObject();
+        obj.put("id", registerDTO.getId());
+        obj.put("pwd", registerDTO.getPwd());
+        obj.put("name", registerDTO.getName());
+        obj.put("email", registerDTO.getEmail());
+        obj.put("tel", registerDTO.getTel());
+        obj.put("sex", (registerDTO.getSex()).toString());
+        obj.put("birth", registerDTO.getBirth());
+        obj.put("post", registerDTO.getPost());
+        obj.put("grade", (registerDTO.getGrade()).toString());
+
+        JSONArray listRegion = new JSONArray();
+        String region= registerDTO.getRegion();
+        String[] regionA = region.split(",");
+        for(int i=0; i<regionA.length; i++){
+            JSONObject tmpR = new JSONObject();
+            tmpR.put("region", regionA[i]);
+            listRegion.add(tmpR);
+        }
+        obj.put("region", listRegion);
+        obj.put("registeration", (registerDTO.getRegistration()).toString());
+
+        JSONArray listSubject = new JSONArray();
+
+        String subject= registerDTO.getSubject();
+        String[] subjectA = subject.split(",");
+        for(int i=0; i<subjectA.length; i++){
+            JSONObject tmpS = new JSONObject();
+            tmpS.put("subject", subjectA[i]);
+            listSubject.add(tmpS);
+        }
+        obj.put("subject", listSubject);
+        obj.put("cost", registerDTO.getCost());
+        obj.put("school", registerDTO.getSchool());
+        obj.put("major", registerDTO.getMajor());
+        obj.put("detail", registerDTO.getDetail());
+        obj.put("certification", registerDTO.getCertification());
+        obj.put("file", registerDTO.getFile());
+        obj.put("authFile", registerDTO.getAuthFile());
+
+        try {
+            FileWriter file = new FileWriter(jFileName);
+            file.write(obj.toJSONString());
+            file.flush();
+            file.close();
+
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //학생 json
+    public void jsonSParse(StudentRegisterDTO registerDTO){
+        String savePath = "/home/seojaehui/tuthree/var/student";
+
+        if (!new File(savePath).exists()) {
+            new File(savePath).mkdir();
+        }
+        String jFileName=savePath+"/"+registerDTO.getId()+".json";
+
+        //TeacherRegisterDTO teacherDTO;
+        JSONObject obj = new JSONObject();
+        obj.put("id", registerDTO.getId());
+        obj.put("pwd", registerDTO.getPwd());
+        obj.put("name", registerDTO.getName());
+        obj.put("email", registerDTO.getEmail());
+        obj.put("tel", registerDTO.getTel());
+        obj.put("sex", registerDTO.getSex());
+        obj.put("birth", registerDTO.getBirth());
+        obj.put("grade", (registerDTO.getGrade()).toString());
+        obj.put("post", registerDTO.getPost());
+
+        JSONArray listRegion = new JSONArray();
+        String region= registerDTO.getRegion();
+        String[] regionA = region.split(",");
+        for(int i=0; i<regionA.length; i++){
+            JSONObject tmpR = new JSONObject();
+            tmpR.put("region", regionA[i]);
+            listRegion.add(tmpR);
+        }
+        obj.put("region", listRegion);
+        obj.put("registeration", (registerDTO.getRegistration()).toString());
+
+        JSONArray listSubject = new JSONArray();
+        String subject= registerDTO.getSubject();
+        String[] subjectA = subject.split(",");
+        for(int i=0; i<subjectA.length; i++){
+            JSONObject tmpS = new JSONObject();
+            tmpS.put("subject", subjectA[i]);
+            listSubject.add(tmpS);
+        }
+        obj.put("subject", listSubject);
+        obj.put("cost", registerDTO.getCost());
+        obj.put("school", (registerDTO.getSchool()).toString());
+        obj.put("detail", registerDTO.getDetail());
+        obj.put("file", registerDTO.getFile());
+
+        try {
+            FileWriter file = new FileWriter(jFileName);
+            file.write(obj.toJSONString());
+            file.flush();
+            file.close();
+
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
+
+
 }

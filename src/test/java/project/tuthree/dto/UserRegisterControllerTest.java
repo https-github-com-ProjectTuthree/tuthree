@@ -10,6 +10,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.User;
 import project.tuthree.domain.user.UserRepository;
@@ -45,8 +46,9 @@ public class UserRegisterControllerTest {
        String name = "user";
        String email = "user@user.com";
        String tel = "010-1234-1234";
+       Grade grade = Grade.PARENT;
        Sex sex = Sex.FEMALE;
-       int birth = 1999;
+       Integer birth = 1999;
        String post = "post/user";
        UserRegisterDTO registerDto = UserRegisterDTO.builder()
                .id(id)
@@ -56,6 +58,7 @@ public class UserRegisterControllerTest {
                .tel(tel)
                .sex(sex)
                .birth(birth)
+               .grade(grade)
                .post(post)
                .build();
 
