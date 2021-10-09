@@ -16,9 +16,17 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     @EntityGraph(attributePaths = "authorities")
     Optional<Student> findById(String id);
 
-    Optional<Student> findByName(String name);
+    /** 이메일로 아이디 찾기**/
+    Student findByNameAndEmail(String email, String name);
 
-    Optional<Student> findByTel(String tel);
+    /** 번호로 아이디 찾기**/
+    Student findByNameAndTel(String tel, String name);
+
+    /**이메일로 비밀번호**/
+    String findByIdAndNameAndEmail(String id, String email, String name);
+
+    /**번호로 비밀번호**/
+    String findByIdAndNameAndTel(String id, String tel, String name);
 
     List<Student> findAll();
 }
