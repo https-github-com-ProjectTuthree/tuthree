@@ -50,12 +50,8 @@ public class Teacher implements Persistable<String>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
-    private String region; ///json
-
     @Enumerated(EnumType.STRING)
     private Status registration;
-
-    private String subject;
 
     @Column(name = "user_cost")
     private Integer cost;
@@ -83,11 +79,11 @@ public class Teacher implements Persistable<String>{
         return create_date == null;
     }
 
+
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
-                   Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, String school,
-                   SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
-        //super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
+                   Grade grade, Date create_date, Status registration, Integer cost, String school, SchoolStatus status, String major,
+                   double star, String certification, boolean certifyStatus, String detail) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -99,9 +95,7 @@ public class Teacher implements Persistable<String>{
         this.notification = notification;
         this.grade = grade;
         this.create_date = create_date;
-        this.region = region;
         this.registration = registration;
-        this.subject = subject;
         this.cost = cost;
         this.school = school;
         this.status = status;
@@ -112,11 +106,9 @@ public class Teacher implements Persistable<String>{
         this.detail = detail;
     }
 
-    public void update(String region, Status registration, String subject, Integer cost, String school,
+    public void update(Status registration, Integer cost, String school,
                        SchoolStatus status, String major, String detail){
-        this.region = region;
         this.registration = registration;
-        this.subject = subject;
         this.cost = cost;
         this.school = school;
         this.status = status;

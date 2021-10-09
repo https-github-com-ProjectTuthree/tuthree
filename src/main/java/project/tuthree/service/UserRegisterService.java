@@ -29,11 +29,6 @@ public class UserRegisterService {
 
     private final PostFindService postFindService;
 
-
-
-
-
-
     /** 아이디 중복 확인 */
     public boolean checkId(String id){
         boolean parent = userRepository.existsById(id);
@@ -222,7 +217,7 @@ public class UserRegisterService {
     public String studentUpdate(String id, StudentUpdateDTO updateDTO){
         Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
-        student.update(updateDTO.getRegion(),updateDTO.getRegistration(), updateDTO.getSubject(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
+        student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
 
         return id;
     }
@@ -231,7 +226,7 @@ public class UserRegisterService {
     public String teacherUpdate(String id, TeacherUpdateDTO updateDTO){
         Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
-        teacher.update(updateDTO.getRegion(),updateDTO.getRegistration(), updateDTO.getSubject(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
+        teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
 
         return id;
     }
