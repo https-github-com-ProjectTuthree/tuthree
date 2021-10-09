@@ -18,9 +18,8 @@ import java.util.Date;
 public class Student implements Persistable<String>{
 
     @Builder
-    public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
-                   Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, School school, String detail, User user) {
-        //super(id, pwd, name, email, tel, sex, birth, post, notification, grade, create_date);
+    public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post,
+                   Status notification, Grade grade, Date create_date, Status registration, Integer cost, School school, String detail, User user) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -32,14 +31,13 @@ public class Student implements Persistable<String>{
         this.notification = notification;
         this.grade = grade;
         this.create_date = create_date;
-        this.region = region;
         this.registration = registration;
-        this.subject = subject;
         this.cost = cost;
         this.school = school;
         this.detail = detail;
         this.user = user;
     }
+
     @Id
     @Column(name = "user_id")
     private String id;
@@ -73,12 +71,12 @@ public class Student implements Persistable<String>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date create_date;
 
-    private String region; ///json
+//    private String region; ///json
 
     @Enumerated(EnumType.STRING)
     private Status registration;
 
-    private String subject;
+//    private String subject;
 
     @Column(name ="user_cost")
     private Integer cost;
@@ -97,10 +95,8 @@ public class Student implements Persistable<String>{
         return create_date == null;
     }
 
-    public void update(String region, Status registration, String subject, Integer cost, School school, String detail) {
-        this.region = region;
+    public void update(Status registration, Integer cost, School school, String detail) {
         this.registration = registration;
-        this.subject = subject;
         this.cost = cost;
         this.school = school;
         this.detail = detail;
