@@ -3,16 +3,20 @@ package project.tuthree.ApiController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
-import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
+import project.tuthree.domain.user.*;
+import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.user.AdminDTO;
 import project.tuthree.service.AdminService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +26,9 @@ public class AdminApiController {
 
     private final AdminService adminService;
     private final JwtController jwtController;
+    private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
 
     @PostMapping("/admin/in")
     public NonValueNotExistDataResultResponse adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
@@ -40,4 +47,12 @@ public class AdminApiController {
         response.setHeader(AUTHORIZATION, BEARER + " ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
+
+/*    @GetMapping("/admin/userlist/{page}")//조회방법 물어보기>page
+    public ExistListDataSuccessResponse UserList(@PathVariable("page") long page){
+        adminService.userList(page);
+
+        return new ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                page + "의 회원정보가 조회되었습니다.", );
+    }*/
 }

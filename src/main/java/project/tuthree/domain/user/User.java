@@ -3,7 +3,9 @@ package project.tuthree.domain.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.Date;
 @Entity
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
+@DynamicUpdate
 @Table(name = "parent")
 //@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -75,6 +78,10 @@ public class User implements Persistable<String>{
         this.notification = notification;
         this.grade = grade;
         this.create_date = create_date;
+    }
+
+    public void updateP(String pwd){
+        this.pwd = new BCryptPasswordEncoder().encode(pwd);
     }
 }
 
