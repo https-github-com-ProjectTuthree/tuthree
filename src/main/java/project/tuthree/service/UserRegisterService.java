@@ -9,6 +9,7 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.Boolean.FALSE;
@@ -175,12 +176,12 @@ public class UserRegisterService {
 
     //기본정보 조회
     @Transactional(readOnly = true)
-    public UserResponseDTO findByInfo (String id, Grade grade){
-        if(grade == grade.PARENT){
+    public UserResponseDTO findByInfo (String id, String grade){
+        if(grade == "PARENT"){
             User entity = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
             return new UserResponseDTO(entity);
         }
-        else if(grade == grade.TEACHER) {
+        else if(grade == "TEACHER") {
             Teacher entity = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
             return new UserResponseDTO(entity);
         }
@@ -237,7 +238,8 @@ public class UserRegisterService {
         String name = findIdDTO.getName();
         String tel = findIdDTO.getTel();
         String email = findIdDTO.getEmail();
-        //if (method == "email") {
+
+        if (Objects.equals(method, "email")) {
             id = userRepository.findByNameAndEmail(name, email).getId();
             if(id.equals(" ")){
                 id = studentRepository.findByNameAndEmail(name, email).getId();
@@ -248,8 +250,8 @@ public class UserRegisterService {
                     }
                 }
             }
-        //}
-        /*else if(method == "tel"){
+        }
+        else if(Objects.equals(method, "tel")){
             id = userRepository.findByNameAndTel(name, tel).getId();
             if(id.equals(" ")){
                 id = studentRepository.findByNameAndTel(name, tel).getId();
@@ -263,9 +265,73 @@ public class UserRegisterService {
         }
         else{
             return "no";
-        }*/
+        }
 
         return id;
+    }
+
+    @Transactional
+    public String findPwd(FindIdDTO findIdDTO, String method){
+        String str;
+        String id = findIdDTO.getId();
+        String name = findIdDTO.getName();
+        String tel = findIdDTO.getTel();
+        String email = findIdDTO.getEmail();
+
+        if (Objects.equals(method, "email")) {
+            str = userRepository.findByIdAndNameAndEmail(id, name, email).getGrade().getStrType();
+            if(str.equals(" ")){
+                str = studentRepository.findByIdAndNameAndEmail(id, name, email).getGrade().getStrType();
+                if(str.equals(" ")){
+                    str = teacherRepository.findByIdAndNameAndEmail(id, name, email).getGrade().getStrType();
+                    if(str.equals(" ")){
+                        return " ";
+                    }
+                }
+            }
+        }
+        else if(Objects.equals(method, "tel")){
+            str = userRepository.findByIdAndNameAndTel(id, name, tel).getGrade().getStrType();
+            if(str.equals(" ")){
+                str = studentRepository.findByIdAndNameAndTel(id, name, tel).getGrade().getStrType();
+                if(str.equals(" ")){
+                    str = teacherRepository.findByIdAndNameAndTel(id, name, tel).getGrade().getStrType();
+                    if(str.equals(" ")){
+                        return " ";
+                    }
+                }
+            }
+        }
+        else{
+            return "no";
+        }
+
+        return str;
+    }
+
+    @Transactional
+    public void changePwd(ChangePwdDTO pwdDTO, String id, String grade){
+
+        if(grade == "PARENT"){
+            User user = userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            user.updateP(pwdDTO.getPwd());
+        }
+        else if(grade == "TEACHER") {
+            Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            teacher.updateP(pwdDTO.getPwd());
+        }
+        else {
+            Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            student.updateP(pwdDTO.getPwd());
+        }
+
+
+
+
+
+
+
+
     }
 
 
