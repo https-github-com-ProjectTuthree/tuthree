@@ -12,7 +12,11 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-
+  rabbitmq:
+    host: localhost
+    username: tuthree1234
+    password: tuthree1234
+    port: 5672
 
   jpa:
     hibernate:
