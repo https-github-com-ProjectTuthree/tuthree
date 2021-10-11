@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import project.tuthree.domain.Status;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @Entity
 @Getter
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "teacher")
 public class Teacher implements Persistable<String>{
@@ -114,6 +116,10 @@ public class Teacher implements Persistable<String>{
         this.status = status;
         this.major = major;
         this.detail = detail;
+    }
+
+    public void updateP(String pwd){
+        this.pwd = pwd;
     }
 }
 

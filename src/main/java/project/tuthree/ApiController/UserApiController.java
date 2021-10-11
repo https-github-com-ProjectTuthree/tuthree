@@ -1,8 +1,11 @@
 package project.tuthree.ApiController;
 
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
@@ -14,10 +17,12 @@ import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -78,15 +83,19 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
-/*    //기본정보조회
+    //기본정보조회
     @GetMapping("/user/mypage/{id}")
-    public UserResponseDTO findUserInfo(HttpServletResponse response){
+    public UserResponseDTO findUserInfo(HttpServletRequest request){
+
+        String id = CheckUserI(request).getId();
+        String grade = CheckUserI(request).getGrade();
         return userRegisterService.findByInfo(id, grade);
-    }*/
+    }
 
     //튜터 과외정보조회
     @GetMapping("/user/tutorclass/{id}") //토큰값으로 조회하게 바꾸기
-    public ExistDataSuccessResponse findTutorInfo(@PathVariable String id, HttpServletResponse response) {
+    public ExistDataSuccessResponse findTutorInfo(@PathVariable String id, HttpServletRequest request) {
+
         TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
         log.debug("\n---- 과외정보조회 ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
@@ -147,9 +156,8 @@ public class UserApiController {
     }
 
     /**아이디 찾기**/
-    @PostMapping("/user/findid/email") //method로 바꾸고 싶은데 왜 안되지,,
-    public NotExistDataResultResponse FindId(@RequestBody FindIdDTO findIdDTO){
-        String method = "b";
+    @PostMapping("/user/findid/{method}")
+    public NotExistDataResultResponse FindId(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method){
         String id = userRegisterService.findId(findIdDTO, method);
         if (!id.equals(" ")) {
             return new NotExistDataResultResponse(StatusCode.OK.getCode(), "id는"+id+"입니다.");
@@ -158,6 +166,49 @@ public class UserApiController {
                 "일치하는 계정 정보가 존재하지 않습니다.");
     }
 
+    /**비밀번호 찾기**/
+    @PostMapping("/user/findpwd/{method}") //여기서 그다음 어떻게 넘겨주지.. 토큰을 줘야되나
+    public NotExistDataResultResponse FindPwd(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method){
+        String str;
+        str = userRegisterService.findPwd(findIdDTO, method);
+        if(!str.equals(" ")){
+            return new NotExistDataResultResponse(StatusCode.OK.getCode(),
+                    findIdDTO.getId()+"의 비밀번호를 변경합니다.");
+        }
+        return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(),
+                "일치하는 계정 정보가 존재하지 않습니다.");
+    }
+
+    /**비밀번호 변경**/
+    @PutMapping("/user/changepwd") //권한을 일시적으로 줘도 되나,,,
+    public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, HttpServletRequest request){
+
+        String userId = CheckUserI(request).getId();
+        String grade = CheckUserI(request).getGrade();
+
+
+        userRegisterService.changePwd(pwdDTO, userId, grade);
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
+
+    }
+
+    /**헤더에서 사용자 정보 확인**/
+    public CheckUser CheckUserI(HttpServletRequest request){
+        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+        if(!requestToken[0].equals(BEARER)){
+            throw new MalformedJwtException("잘못된 토큰정보입니다.");
+        }
+        Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
+        log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
+
+        String userId = String.valueOf(map.get("userId"));
+        String grade = String.valueOf(map.get("Grade"));
+        CheckUser checkUser = new CheckUser();
+        checkUser.setId(userId);
+        checkUser.setGrade(grade);
+
+        return checkUser;
+    }
 
 
 }
