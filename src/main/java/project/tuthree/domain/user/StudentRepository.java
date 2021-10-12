@@ -12,9 +12,6 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     //아이디중복체크
     boolean existsById(String id);
 
-    //로그인
-    @EntityGraph(attributePaths = "authorities")
-    Optional<Student> findById(String id);
 
     /** 이메일로 아이디 찾기**/
     Student findByNameAndEmail(String email, String name);
