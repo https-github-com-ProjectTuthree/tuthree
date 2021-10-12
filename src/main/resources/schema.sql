@@ -36,7 +36,7 @@ CREATE TABLE student
     region       VARCHAR2(30) NOT NULL,
     registration VARCHAR2(5) NOT NULL,
     subject      VARCHAR2(15) NOT NULL,
-    cost         NUMBER  NOT NULL,
+    cost         VARCHAR2(20)  NOT NULL,
     school       VARCHAR2(20) NOT NULL,
     detail       VARCHAR2(4000) NOT NULL,
     PRIMARY KEY (user_id),
@@ -58,7 +58,7 @@ CREATE TABLE teacher (
     region  VARCHAR2(30)  NOT NULL,
     registration  VARCHAR2(5)  NOT NULL,
     subject  VARCHAR2(15)  NOT NULL,
-    cost  NUMBER  NOT NULL,
+    cost  VARCHAR2(20)  NOT NULL,
     school  VARCHAR2(20)  NOT NULL,
     school_status  VARCHAR2(20)  NOT NULL,
     major  VARCHAR2(20)  NOT NULL,
@@ -66,6 +66,15 @@ CREATE TABLE teacher (
     certify_status  VARCHAR2(5)  NOT NULL,
     detail  VARCHAR2(4000)  NOT NULL,
     PRIMARY KEY (user_id)
+);
+
+CREATE TABLE child(
+    id NUMBER NOT NULL,
+    parent_id VARCHAR2(20) NOT NULL,
+    student_id VARCHAR2(20) NOT NULL,
+    student_name VARCHAR2(20) NOT NULL,
+    status VARCHAR2(5) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE log (
@@ -96,6 +105,19 @@ CREATE TABLE calendar (
     FOREIGN KEY (room_id) REFERENCES study_room(room_id)
 );
 
+CREATE TABLE post_testpaper (
+                                post_id  VARCHAR2(20)  NOT NULL,
+                                user_id  VARCHAR2(20)  NOT NULL,
+                                title  VARCHAR2(100)  NOT NULL,
+                                content  VARCHAR2(4000)  NOT NULL,
+                                view  NUMBER  NOT NULL,
+                                write_at  DATE  NOT NULL,
+                                alter_at  DATE,
+                                secret  VARCHAR2(5)  NOT NULL,
+                                PRIMARY KEY (post_id),
+                                FOREIGN KEY (user_id) REFERENCES teacher(user_id)
+);
+
 CREATE TABLE file (
     file_id  NUMBER  NOT NULL,
     teacher_id  VARCHAR2(20),
@@ -112,7 +134,7 @@ CREATE TABLE study_room_info (
     teacher_id  VARCHAR2(20)  NOT NULL,
     student_id  VARCHAR2(20)  NOT NULL,
     subject  VARCHAR2(20)  NOT NULL,
-    cost  NUMBER  NOT NULL,
+    cost  VARCHAR2(20)  NOT NULL,
     day  VARCHAR2(10)  NOT NULL,
     start  VARCHAR2(10)  NOT NULL,
     end  VARCHAR2(10)  NOT NULL,
@@ -135,18 +157,7 @@ CREATE TABLE post_find (
     FOREIGN KEY (student_id) REFERENCES student(user_id)
 );
 
-CREATE TABLE post_testpaper (
-    post_id  VARCHAR2(20)  NOT NULL,
-    user_id  VARCHAR2(20)  NOT NULL,
-    title  VARCHAR2(100)  NOT NULL,
-    content  VARCHAR2(4000)  NOT NULL,
-    view  NUMBER  NOT NULL,
-    write_at  DATE  NOT NULL,
-    alter_at  DATE,
-    secret  VARCHAR2(5)  NOT NULL,
-    PRIMARY KEY (post_id),
-    FOREIGN KEY (user_id) REFERENCES teacher(user_id)
-);
+
 
 CREATE TABLE post_faq (
     post_id  VARCHAR2(20)  NOT NULL,

@@ -13,13 +13,13 @@ public class StudentUpdateDTO {
     private String region; ///json
     private Status registration;
     private String subject;
-    private Integer cost;
+    private String cost;
     private School school;
     private String detail;
 
     @Builder
     public StudentUpdateDTO(String region, Status registration, String subject,
-                            Integer cost, School school, String detail) {
+                            String cost, School school, String detail) {
         this.region = region;
         this.registration = registration;
         this.subject = subject;

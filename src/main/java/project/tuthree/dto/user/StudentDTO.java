@@ -27,13 +27,13 @@ public class StudentDTO {
     private String region;
     private Status registration;
     private String subject;
-    private Integer cost;
+    private String cost;
     private School school;
     private String detail;
     private User user;
 
     @Builder
-    public StudentDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date, String region, Status registration, String subject, Integer cost, School school, String detail, User user) {
+    public StudentDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date, String region, Status registration, String subject, String cost, School school, String detail, User user) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;

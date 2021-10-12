@@ -23,7 +23,7 @@ public class TeacherResponseDTO {
     private String region; ///json
     private Status registration;
     private String subject;
-    private Integer cost;
+    private String cost;
     private String school;
     private SchoolStatus status;
     private String major;
