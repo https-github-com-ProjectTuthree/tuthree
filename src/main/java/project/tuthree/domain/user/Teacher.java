@@ -56,7 +56,7 @@ public class Teacher implements Persistable<String>{
     private Status registration;
 
     @Column(name = "user_cost")
-    private Integer cost;
+    private String cost;
 
     private String school;
 
@@ -84,7 +84,7 @@ public class Teacher implements Persistable<String>{
 
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
-                   Grade grade, Date create_date, Status registration, Integer cost, String school, SchoolStatus status, String major,
+                   Grade grade, Date create_date, Status registration, String cost, String school, SchoolStatus status, String major,
                    double star, String certification, boolean certifyStatus, String detail) {
         this.id = id;
         this.pwd = pwd;
@@ -108,7 +108,7 @@ public class Teacher implements Persistable<String>{
         this.detail = detail;
     }
 
-    public void update(Status registration, Integer cost, String school,
+    public void update(Status registration, String cost, String school,
                        SchoolStatus status, String major, String detail){
         this.registration = registration;
         this.cost = cost;
