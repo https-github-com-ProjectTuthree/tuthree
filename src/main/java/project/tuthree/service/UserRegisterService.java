@@ -27,6 +27,7 @@ public class UserRegisterService {
     private final TeacherRepository teacherRepository;
     private final UserEntityRepository userEntityRepository;
     private final UserFileRepository userFileRepository;
+    private final ChildRepository childRepository;
 
     private final PostFindService postFindService;
 
@@ -123,7 +124,7 @@ public class UserRegisterService {
         //return userRepository.save(registerDTO.toEntity()).getId();
     }
 
-    //학생 회원가입
+    /**학생 회원가입**/
     @Transactional
     public String createStudent(StudentRegisterDTO registerDTO){
         try{
@@ -146,7 +147,7 @@ public class UserRegisterService {
         }
     }
 
-    //선생님 회원가입
+    /**선생님 회원가입**/
     @Transactional
     public String createTeacher(TeacherRegisterDTO registerDTO) {
         try{
@@ -232,6 +233,7 @@ public class UserRegisterService {
         return id;
     }
 
+    /**아이디 찾기**/
     @Transactional
     public String findId(FindIdDTO findIdDTO, String method){
         String id;
@@ -270,6 +272,7 @@ public class UserRegisterService {
         return id;
     }
 
+    /**비밀번호 찾기**/
     @Transactional
     public String findPwd(FindIdDTO findIdDTO, String method){
         String str;
@@ -309,6 +312,7 @@ public class UserRegisterService {
         return str;
     }
 
+    /**비밀번호 변경**/
     @Transactional
     public void changePwd(ChangePwdDTO pwdDTO, String id, String grade){
 
@@ -324,16 +328,33 @@ public class UserRegisterService {
             Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
             student.updateP(pwdDTO.getPwd());
         }
-
-
-
-
-
-
-
-
     }
 
+    /**자녀 추가**/
+    @Transactional
+    public String plusChild(String parentId, ChildDTO childDTO){
+        childDTO.setParentId(parentId);
+        return childRepository.save(childDTO.toEntity()).getStudentId();
+    }
+
+    /**자녀수락**/
+    @Transactional
+    public String acceptChild(String parentId, String studentId){
+        Child child = childRepository.findByParentIdAndStudentId(parentId, studentId);
+        child.accept();
+        User user = userRepository.findById(parentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ parentId));
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ studentId));;
+        student.accept(user);
+        return child.getParentId();
+    }
+
+    /**요청보기**/
+    @Transactional
+    public ChildDTO checkChild(String studentId){
+        Long id = childRepository.findByStudentId(studentId).getId();
+        Child child = childRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 내용이 없습니다. id="+ id));
+        return new ChildDTO(child.getParentId(), child.getStudentId(), child.getStudentName(), child.isStatus());
+    }
 
 
 

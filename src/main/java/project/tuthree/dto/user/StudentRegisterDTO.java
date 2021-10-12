@@ -26,7 +26,7 @@ public class StudentRegisterDTO {
 
     @Builder
     public StudentRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
-                   String post, Grade grade, Status notification, String region, Status registration, String subject, Integer cost, School school, String detail) {
+                   String post, Grade grade, Status notification, String region, Status registration, String subject, String cost, School school, String detail) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
@@ -87,7 +87,7 @@ public class StudentRegisterDTO {
     private Status registration;
     private String subject;
     private List<String> subjectL;
-    private Integer cost;
+    private String cost;
     private School school;
     private String detail;
 
