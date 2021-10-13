@@ -21,7 +21,7 @@ public class QBookMark extends EntityPathBase<BookMark> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath user = createString("user");
+    public final StringPath user1 = createString("user1");
 
     public final StringPath user2 = createString("user2");
 

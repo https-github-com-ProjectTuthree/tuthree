@@ -24,7 +24,7 @@ public class QStudent extends EntityPathBase<Student> {
 
     public final NumberPath<Integer> birth = createNumber("birth", Integer.class);
 
-    public final NumberPath<Integer> cost = createNumber("cost", Integer.class);
+    public final StringPath cost = createString("cost");
 
     public final DateTimePath<java.util.Date> create_date = createDateTime("create_date", java.util.Date.class);
 
@@ -44,15 +44,11 @@ public class QStudent extends EntityPathBase<Student> {
 
     public final StringPath pwd = createString("pwd");
 
-    public final StringPath region = createString("region");
-
     public final EnumPath<project.tuthree.domain.Status> registration = createEnum("registration", project.tuthree.domain.Status.class);
 
     public final EnumPath<School> school = createEnum("school", School.class);
 
     public final EnumPath<Sex> sex = createEnum("sex", Sex.class);
-
-    public final StringPath subject = createString("subject");
 
     public final StringPath tel = createString("tel");
 

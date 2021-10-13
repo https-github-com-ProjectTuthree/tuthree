@@ -93,8 +93,7 @@ public class PostUserApiController {
     public void DownloadFile(HttpServletResponse response, @PathVariable("file_id") Long id) throws IOException {
         userFileRepository.downloadUserFile(response, id);
     }
-
-
+    
     /** 커뮤니티 게시글 작성 -> post_testpaper & user_file*/
     @PostMapping("/community/write")
     public NotExistDataResultResponse writeCommunity(@ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {

@@ -1,11 +1,9 @@
 package project.tuthree.ApiController;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,9 +16,6 @@ import org.springframework.web.servlet.HandlerMapping;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.exception.NotEnoughUserException;
-import project.tuthree.repository.AdminRepository;
-import project.tuthree.repository.PostFaqRepository;
-import project.tuthree.repository.PostNoticeRepository;
 import project.tuthree.repository.PostTestPaperRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -136,16 +131,18 @@ public class JwtApiController {
         String userId = String.valueOf(map.get("userId"));
         String grade = String.valueOf(map.get("Grade"));
 
-        Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
+        if(grade.equals(Grade.TEACHER.getStrType())){
+            //선생님 권한??
+            String pathvariable = String.valueOf(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
+            pathvariable = pathvariable.replaceAll("\\{", "").replaceAll("}", "");
+            Long id = Long.parseLong(pathvariable.split("=")[1]);
 
-        String pathvariable = String.valueOf(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
-        pathvariable = pathvariable.replaceAll("\\{", "").replaceAll("}", "");
-        Long id = Long.parseLong(pathvariable.split("=")[1]);
-
-        if (!postTestPaperRepository.findById(id).getUserId().getId().equals(userId)) {
+            if (!postTestPaperRepository.findById(id).getUserId().getId().equals(userId)) {
+                throw new NotEnoughUserException();
+            }//토큰의 아이디가 원글의 아이디와 동일한가?
+        } else if(!grade.equals(Grade.ADMIN.getStrType())){
             throw new NotEnoughUserException();
-        }//토큰의 아이디가 원글의 아이디와 동일한가?
-
+        }
         Object result = joinPoint.proceed();
 
         String responseToken = jwtController.makeJwtToken(userId, grade);
