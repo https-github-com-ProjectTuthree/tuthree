@@ -28,7 +28,6 @@ public enum School {
         for (School school : School.values()) {
             map.put("학력", school);
         }
-
         return map;
     }
 }

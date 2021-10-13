@@ -21,7 +21,7 @@ public class Student implements Persistable<String>{
 
     @Builder
     public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post,
-                   Status notification, Grade grade, Date create_date, Status registration, Integer cost, School school, String detail, User user) {
+                   Status notification, Grade grade, Date create_date, Status registration, String cost, School school, String detail, User user) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -81,7 +81,7 @@ public class Student implements Persistable<String>{
 //    private String subject;
 
     @Column(name ="user_cost")
-    private Integer cost;
+    private String cost;
 
     @Enumerated(EnumType.STRING)
     private School school;
@@ -97,7 +97,7 @@ public class Student implements Persistable<String>{
         return create_date == null;
     }
 
-    public void update(Status registration, Integer cost, School school, String detail) {
+    public void update(Status registration, String cost, School school, String detail) {
         this.registration = registration;
         this.cost = cost;
         this.school = school;

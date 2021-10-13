@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
+import project.tuthree.dto.EmbeddedDTO;
+import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.PostFindService;
@@ -134,16 +136,14 @@ public class UserApiController {
      * 사용자 로그인
      */
     @PostMapping("/login")
-    public NonValueNotExistDataResultResponse UserLogin(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response) {
+    public Object UserLogin(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response) {
         log.debug("\n---- 로그인 ----\n");
         String str = userRegisterService.userLogin(loginDTO);
         if (!str.equals(" ")) {
             response.setHeader(AUTHORIZATION, BEARER + " " + jwtController.makeJwtToken(loginDTO.getId(), str));
-            return new NonValueNotExistDataResultResponse(true, StatusCode.OK.getCode(),
-                    "ID " + loginDTO.getId() + "(으)로 로그인되었습니다.");
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "로그인되었습니다.",  new LoginReturnDTO(loginDTO.getId(), str));
         }
-        return new NonValueNotExistDataResultResponse(false, StatusCode.CONFLICT.getCode(),
-                "일치하는 계정 정보가 존재하지 않습니다.");
+        return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(),"일치하는 계정 정보가 존재하지 않습니다.");
     }
 
     /**
