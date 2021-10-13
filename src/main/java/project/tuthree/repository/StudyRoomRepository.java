@@ -1,19 +1,24 @@
 package project.tuthree.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.post.PostReview;
 import project.tuthree.domain.room.QStudyRoom;
 import project.tuthree.domain.room.QStudyRoomInfo;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
+import project.tuthree.dto.post.PostExamDTO;
 
 import javax.persistence.EntityManager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static project.tuthree.domain.post.QPostReview.postReview;
@@ -48,7 +53,7 @@ public class StudyRoomRepository {
 
         log.info("===============" + studyRoomInfo.getId().getStudentId().getId());
         StudyRoomInfo info = em.find(StudyRoomInfo.class, studyRoomInfo.getId());
-        info.infoUpdate(studyRoomInfo);
+//        info.infoUpdate(studyRoomInfo);
     }
 
     /** 수업 계획서 조회하기 */
@@ -67,6 +72,16 @@ public class StudyRoomRepository {
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
         return studyRoom;
+    }
+
+    /** 아이디 하나로 스터디룸 찾기 */
+    public List<StudyRoom> findStudyRoomByOneId(String id, Status status) {
+        return jpaQueryFactory.selectFrom(studyRoom)
+                .where((studyRoom.teacherId.id.eq(id)
+                        .or(studyRoom.studentId.id.eq(id)))
+                        .and(studyRoom.Status.eq(status))
+                )
+                .fetch();
     }
 
     /** 선생님 아이디로 리뷰 조회 */
@@ -100,4 +115,12 @@ public class StudyRoomRepository {
         StudyRoom studyRoom = findStudyRoomById(teacherId, studentId);
         studyRoom.closeStudyRoom();
     }
+
+    /** 시험지 등록 - 스터디룸 아이디와 함께 user_file에 저장 */
+
+    /** 시험지 답안 등록 - 아래 함수랑 합치기 */
+
+    /** 시험지 학생 답안 등록 */
+
+    /** 정답 비교 확인 -> json 둘다 객체로 바꿔서 값 비교하고 o, x json으로 변환해서 내보내기 */
 }

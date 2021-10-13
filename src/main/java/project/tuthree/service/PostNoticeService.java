@@ -29,7 +29,6 @@ public class PostNoticeService {
      */
     public List<PostListTypeDTO> noticeByPage(int page) {
         List<PostNotice> list = postNoticeRepository.findByPage(page);
-        if (list.isEmpty()) throw new NullPointerException();
 
         return list.stream()
                 .map(m -> new PostListTypeDTO(m.getId(), m.getAdmin().getId(), m.getTitle(), m.getWriteAt(), m.getType().getKorType(), m.getView()))

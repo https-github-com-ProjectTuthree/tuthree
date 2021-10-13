@@ -49,7 +49,7 @@ public class Teacher implements Persistable<String>{
     private Grade grade;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date create_date;
 
     @Enumerated(EnumType.STRING)
@@ -80,7 +80,6 @@ public class Teacher implements Persistable<String>{
     public boolean isNew(){
         return create_date == null;
     }
-
 
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,

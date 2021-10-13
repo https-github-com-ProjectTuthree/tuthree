@@ -62,8 +62,6 @@ public class PostTestPaperService {
     /** 커뮤니티 페이지 목록 조회하기 */
     public List<PostListDTO> communityFindByPage(int page) {
         List<PostTestPaper> list = testPaperRepository.findByPage(page);
-        if (list.isEmpty()) throw new NullPointerException();
-
         return list.stream()
                 .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(),m.getWriteAt(), m.getView()))
                 .collect(Collectors.toList());
