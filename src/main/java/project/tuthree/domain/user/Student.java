@@ -104,6 +104,10 @@ public class Student implements Persistable<String>{
         this.detail = detail;
     }
 
+    public void accept(User user){
+        this.user = user;
+    }
+
     public void updateP(String pwd){
         this.pwd = pwd;
     }

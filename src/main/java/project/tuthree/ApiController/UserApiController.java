@@ -54,7 +54,7 @@ public class UserApiController {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         /**json파일 저장**/
-        userFileRepository.jsonPParse(registerDTO);
+        //userFileRepository.jsonPParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
@@ -67,7 +67,7 @@ public class UserApiController {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         /**json파일 저장**/
-        userFileRepository.jsonSParse(registerDTO);
+        //userFileRepository.jsonSParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
@@ -81,7 +81,7 @@ public class UserApiController {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
         /**json파일 저장**/
-        userFileRepository.jsonTParse(registerDTO);
+        //userFileRepository.jsonTParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
@@ -191,6 +191,31 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
 
     }
+
+    /**자녀추가**/
+    @PostMapping("/user/parent") //requestparam을 해도 될지...
+    public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, ChildDTO childDTO){
+        String id = userRegisterService.plusChild(parentId, childDTO);
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
+    }
+
+    /**자녀수락**/
+    @PostMapping("/user/myclass")
+    public NotExistDataResultResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId){
+        String id = userRegisterService.acceptChild(parentId, studentId);
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(), id+"가 부모로 등록되었습니다.");
+    }
+
+    /**요청보기**/
+    @GetMapping("/user/myclass")
+    public ExistDataSuccessResponse AcceptChild(HttpServletRequest request){
+        String studentId = CheckUserI(request).getId();
+        ChildDTO childDTO = userRegisterService.checkChild(studentId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO);
+
+    }
+
+
 
     /**헤더에서 사용자 정보 확인**/
     public CheckUser CheckUserI(HttpServletRequest request){
