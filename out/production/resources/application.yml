@@ -28,7 +28,6 @@ spring:
     user:
       password: 542ced02-3ec0-40cd-a5b7-0dbdeca9bcf1
 
-
 #---
 #spring:
 #  profiles:

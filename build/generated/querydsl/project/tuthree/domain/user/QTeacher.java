@@ -25,9 +25,9 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final BooleanPath certifyStatus = createBoolean("certifyStatus");
 
-    public final NumberPath<Integer> cost = createNumber("cost", Integer.class);
+    public final StringPath cost = createString("cost");
 
-    public final DateTimePath<java.util.Date> create_date = createDateTime("create_date", java.util.Date.class);
+    public final DatePath<java.util.Date> create_date = createDate("create_date", java.util.Date.class);
 
     public final StringPath detail = createString("detail");
 
@@ -47,8 +47,6 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final StringPath pwd = createString("pwd");
 
-    public final StringPath region = createString("region");
-
     public final EnumPath<project.tuthree.domain.Status> registration = createEnum("registration", project.tuthree.domain.Status.class);
 
     public final StringPath school = createString("school");
@@ -58,8 +56,6 @@ public class QTeacher extends EntityPathBase<Teacher> {
     public final NumberPath<Double> star = createNumber("star", Double.class);
 
     public final EnumPath<SchoolStatus> status = createEnum("status", SchoolStatus.class);
-
-    public final StringPath subject = createString("subject");
 
     public final StringPath tel = createString("tel");
 

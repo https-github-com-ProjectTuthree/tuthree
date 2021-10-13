@@ -1,7 +1,10 @@
 package project.tuthree.domain.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,6 +20,7 @@ import static javax.persistence.FetchType.*;
         allocationSize = 1
 )
 @Table(name = "calendar")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Calendar {
     /**
      * 복합키 식별 관계 매핑... 하나도 모르겠다..
@@ -36,9 +40,20 @@ public class Calendar {
     private StudyRoom studyRoomId;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "dateat")
     private Date dateAt;
 
     private String schedule;
 
+    @Builder
+    public Calendar(StudyRoom studyRoomId, Date dateAt, String schedule) {
+        this.studyRoomId = studyRoomId;
+        this.dateAt = dateAt;
+        this.schedule = schedule;
+    }
 
+    public void updateCalendar(Calendar calendar) {
+        this.dateAt = calendar.getDateAt();
+        this.schedule = calendar.getSchedule();
+    }
 }

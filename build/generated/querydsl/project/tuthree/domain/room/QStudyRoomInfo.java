@@ -24,7 +24,7 @@ public class QStudyRoomInfo extends EntityPathBase<StudyRoomInfo> {
 
     public final DateTimePath<java.util.Date> checkDate = createDateTime("checkDate", java.util.Date.class);
 
-    public final NumberPath<Integer> cost = createNumber("cost", Integer.class);
+    public final StringPath cost = createString("cost");
 
     public final StringPath day = createString("day");
 

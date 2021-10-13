@@ -51,6 +51,7 @@ public class PostFaq {
     private Date alterAt;
 
     @Column(name = "post_secret")
+    @Enumerated(EnumType.STRING)
     private Status secret;
 
     @Builder

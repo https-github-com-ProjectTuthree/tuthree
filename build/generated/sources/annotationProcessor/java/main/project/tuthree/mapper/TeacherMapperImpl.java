@@ -11,7 +11,7 @@ import project.tuthree.dto.user.TeacherDTO.TeacherDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-10-07T18:19:10+0900",
+    date = "2021-10-11T23:13:47+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -66,11 +66,9 @@ public class TeacherMapperImpl implements TeacherMapper {
         teacherDTO.notification( teacher.getNotification() );
         teacherDTO.grade( teacher.getGrade() );
         teacherDTO.create_date( teacher.getCreate_date() );
-        teacherDTO.region( teacher.getRegion() );
         teacherDTO.registration( teacher.getRegistration() );
-        teacherDTO.subject( teacher.getSubject() );
         if ( teacher.getCost() != null ) {
-            teacherDTO.cost( teacher.getCost() );
+            teacherDTO.cost( Integer.parseInt( teacher.getCost() ) );
         }
         teacherDTO.school( teacher.getSchool() );
         teacherDTO.status( teacher.getStatus() );
@@ -102,10 +100,8 @@ public class TeacherMapperImpl implements TeacherMapper {
         teacher.notification( teacherDTO.getNotification() );
         teacher.grade( teacherDTO.getGrade() );
         teacher.create_date( teacherDTO.getCreate_date() );
-        teacher.region( teacherDTO.getRegion() );
         teacher.registration( teacherDTO.getRegistration() );
-        teacher.subject( teacherDTO.getSubject() );
-        teacher.cost( teacherDTO.getCost() );
+        teacher.cost( String.valueOf( teacherDTO.getCost() ) );
         teacher.school( teacherDTO.getSchool() );
         teacher.status( teacherDTO.getStatus() );
         teacher.major( teacherDTO.getMajor() );

@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
+import java.util.List;
+
 import static project.tuthree.domain.user.QStudent.student;
 import static project.tuthree.domain.user.QTeacher.teacher;
 import static project.tuthree.domain.user.QUser.user;
+import static project.tuthree.domain.user.QUserInfo.userInfo;
 
 @Repository
 @Slf4j
@@ -49,7 +52,9 @@ public class UserEntityRepository {
     }
 
     public String parentFindByIdPwd(String id, String pwd) {
+        log.info("=================1  " + id);
         if(userRepository.existsById(id)){
+            log.info("=================2  " + id);
             String s_pwd = jpaQueryFactory.select(user.pwd).from(user)
                     .where(user.id.eq(id)).fetchOne();
             if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.PARENT.getStrType();
@@ -59,7 +64,9 @@ public class UserEntityRepository {
     }
 
     public String teacherFindByIdPwd(String id, String pwd) {
+        log.info("=================1  " + id);
         if(teacherRepository.existsById(id)){
+            log.info("=================2  " + id);
             String s_pwd = jpaQueryFactory.select(teacher.pwd).from(teacher)
                     .where(teacher.id.eq(id)).fetchOne();
             if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.TEACHER.getStrType();
@@ -67,5 +74,21 @@ public class UserEntityRepository {
         }
         return " ";
     }
+
+    public List<String> userFindRegion(String id) {
+        return jpaQueryFactory.select(userInfo.region)
+                .from(userInfo)
+                .where(userInfo.userId.eq(id))
+                .fetch();
+    }
+
+    public List<String> userFindSubject(String id) {
+        return jpaQueryFactory.select(userInfo.subject)
+                .from(userInfo)
+                .where(userInfo.userId.eq(id))
+                .fetch();
+    }
+
+
 
 }

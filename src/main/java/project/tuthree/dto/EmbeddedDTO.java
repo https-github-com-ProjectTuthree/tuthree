@@ -10,6 +10,13 @@ public class EmbeddedDTO {
 
     @Getter
     @AllArgsConstructor
+    public static class LoginReturnDTO{
+        String id;
+        String grade;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public static class PostListDTO {
         Long id;
         String userId;

@@ -84,7 +84,7 @@ public class UserEntityRepositoryTest {
         String region="경기도 수원시";
         Status registration = Status.OPEN;
         String subject = "수학";
-        int cost = 20000;
+        String cost = "20000";
         String school = "경기대";
         SchoolStatus status = SchoolStatus.ABSENCE_OF_SCHOOL;
         String major = "컴공";
@@ -104,9 +104,7 @@ public class UserEntityRepositoryTest {
                 .post(post)
                 .grade(grade)
                 .create_date(new Date())
-                .region(region)
                 .registration(registration)
-                .subject(subject)
                 .cost(cost)
                 .school(school)
                 .status(status)
@@ -127,9 +125,7 @@ public class UserEntityRepositoryTest {
         assertThat(teacher.getBirth()).isEqualTo(birth);
         assertThat(teacher.getPost()).isEqualTo(post);
         assertThat(teacher.getGrade()).isEqualTo(grade);
-        assertThat(teacher.getRegion()).isEqualTo(region);
         assertThat(teacher.getRegistration()).isEqualTo(registration);
-        assertThat(teacher.getSubject()).isEqualTo(subject);
         assertThat(teacher.getCost()).isEqualTo(cost);
         assertThat(teacher.getSchool()).isEqualTo(school);
         assertThat(teacher.getStatus()).isEqualTo(status);
