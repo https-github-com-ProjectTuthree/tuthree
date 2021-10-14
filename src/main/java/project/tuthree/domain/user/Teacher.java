@@ -117,6 +117,11 @@ public class Teacher implements Persistable<String>{
         this.detail = detail;
     }
 
+    public void updateStar(Long num, int star) {
+        double newStar=(this.star * num + star) / num;
+        this.star = (double) Math.round(newStar * 10) / 10;
+    }
+
     public void updateP(String pwd){
         this.pwd = pwd;
     }

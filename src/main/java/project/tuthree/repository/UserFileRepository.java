@@ -1,5 +1,6 @@
 package project.tuthree.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.file.UserFile;
 import project.tuthree.dto.user.StudentRegisterDTO;
@@ -22,6 +24,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,13 +33,15 @@ import java.util.List;
 import static project.tuthree.domain.file.QUserFile.userFile;
 
 @Getter
-@Repository
 @Slf4j
+@Repository
+@Transactional
 @RequiredArgsConstructor
 public class UserFileRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
+    private final ObjectMapper objectMapper;
 
     @Getter
     public enum FileType{
@@ -51,8 +57,49 @@ public class UserFileRepository {
         }
     }
 
-    public void userFileSave(UserFile userFile) {
+    /** 시험지 답안지 등 모든 파일 저장 */
+    public Long userFileSave(UserFile userFile) {
         em.persist(userFile);
+        return userFile.getId();
+    }
+
+
+    /** 파일 삭제  */
+    public Long deleteUserFile(Long fileId) {
+        em.remove(em.find(UserFile.class, fileId));
+        return fileId;
+    }
+
+    /** 파일 찾기 */
+    public UserFile userFileFindById(Long id) {
+        return em.find(UserFile.class, id);
+    }
+
+    /**
+     * post_id로 파일 찾기
+     */
+    public List<UserFile> userFileFindByPostId(Long id) {
+        List<UserFile> fileList = em.createQuery("select f from UserFile f where f.testpaperId.id = :id")
+                .setParameter("id", id)
+                .getResultList();
+        return fileList;
+    }
+
+    public String saveJsonFile(Object object, String real, FileType type) throws NoSuchAlgorithmException, IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        String savePath = "/home/seojaehui/tuthree/var" + type.getKortype();
+
+        if (!new File(savePath).exists()) {
+            new File(savePath).mkdir();
+        }
+
+        String saveName = saveFileNameToHash(real + new Date());
+        savePath += "/" + saveName;
+
+        mapper.writeValue(new File(savePath), object);
+
+        return savePath;
     }
 
     /** multipartfile을 저장하는 로직 */
@@ -116,28 +163,7 @@ public class UserFileRepository {
         return hashBuilder.toString();
     }
 
-    /**
-     * 파일 삭제
-     */
-    public Long deleteUserFile(Long fileId) {
-        em.remove(em.find(UserFile.class, fileId));
-        return fileId;
-    }
 
-    /** 파일 찾기 */
-    public UserFile userFileFindById(Long id) {
-        return em.find(UserFile.class, id);
-    }
-
-    /**
-     * post_id로 파일 찾기
-     */
-    public List<UserFile> userFileFindByPostId(Long id) {
-        List<UserFile> fileList = em.createQuery("select f from UserFile f where f.testpaperId.id = :id")
-                .setParameter("id", id)
-                .getResultList();
-        return fileList;
-    }
 
 
     /** 파일 다운로드 */
@@ -189,6 +215,12 @@ public class UserFileRepository {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /** unix time -> Date */
+    public String unixToDate(Date unix) throws ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return transFormat.format(unix);
     }
 //
 //    /** file_id 파일 전송 - byte */

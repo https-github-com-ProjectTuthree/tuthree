@@ -72,6 +72,15 @@ public class UserEntityRepository {
         return " ";
     }
 
+    /** 지역 정보 저장 */
+    public void userSaveRegion(String userId, List<String> region) {
+        for (String r : region) {
+            UserInfo userInfo = new UserInfo(userId, r, null);
+            em.persist(userInfo);
+        }
+    }
+
+    /** 지역 정보 찾기 */
     public List<String> userFindRegion(String id) {
         return jpaQueryFactory.select(userInfo.region)
                 .from(userInfo)
@@ -80,6 +89,15 @@ public class UserEntityRepository {
                 .fetch();
     }
 
+    /** 과목 정보 저장 */
+    public void userSaveSubject(String userId, List<String> subject) {
+        for(String s : subject) {
+            UserInfo userInfo = new UserInfo(userId, null, s);
+            em.persist(userInfo);
+        }
+    }
+
+    /** 과목 정보 찾기 */
     public List<String> userFindSubject(String id) {
 
         return jpaQueryFactory.select(userInfo.subject)

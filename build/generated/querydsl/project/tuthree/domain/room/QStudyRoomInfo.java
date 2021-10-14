@@ -30,11 +30,9 @@ public class QStudyRoomInfo extends EntityPathBase<StudyRoomInfo> {
 
     public final QStudyRoom id;
 
-    public final ArrayPath<byte[], Byte> schedule = createArray("schedule", byte[].class);
+    public final ArrayPath<byte[], Byte> info = createArray("info", byte[].class);
 
     public final BooleanPath status = createBoolean("status");
-
-    public final StringPath subject = createString("subject");
 
     public QStudyRoomInfo(String variable) {
         this(StudyRoomInfo.class, forVariable(variable), INITS);

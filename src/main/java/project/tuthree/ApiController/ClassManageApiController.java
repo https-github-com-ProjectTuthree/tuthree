@@ -1,5 +1,6 @@
 package project.tuthree.ApiController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,18 @@ import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.CalendarRepository;
 import project.tuthree.repository.PostStudyRepository;
 import project.tuthree.repository.PostStudyRepository.StudyListDTO;
+import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.CalendarService;
 import project.tuthree.service.CalendarService.CalendarListDTO;
+import project.tuthree.service.CalendarService.calendarFullListDTO;
 import project.tuthree.service.PostStudyService;
 import project.tuthree.service.StudyRoomService;
+import project.tuthree.service.StudyRoomService.StudyRoomListDTO;
 import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,57 +45,49 @@ public class ClassManageApiController {
     private final CalendarRepository calendarRepository;
     private final PostStudyService postStudyService;
     private final PostStudyRepository postStudyRepository;
+    private final UserFileRepository userFileRepository;
 
-    /** 404 not found가 뜨는 에러 - 동작은 잘하고 터미널에도 오류가 안 뜬다.. */
+
     @PostMapping("/room/review")
-    public NotExistDataResultResponse WriteStudyRoomReview(@RequestBody @Valid PostreviewDTO postreviewDTO) {
-        String teacherName = studyRoomService.writeReviewByStudyRoom(postreviewDTO);
+    public NotExistDataResultResponse WriteStudyRoomReview(@RequestParam("teacherId") String teacherId,
+                                                           @RequestParam("studentId") String studentId, @RequestBody @Valid PostreviewDTO postreviewDTO) {
+        String teacherName = studyRoomService.writeReviewByStudyRoom(teacherId, studentId, postreviewDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),
                 teacherName + " 선생님에 대한 리뷰가 작성되었습니다.");
     }
 
     /** 계정별 스터디룸 찾기 - status : open, close */
     @GetMapping("/room")
-    public ExistDataSuccessResponse FindStudyRoomByOne(@RequestParam("id") String id, @RequestParam("status") Status status) {
-        List<StudyroomDTO> studyroomDTOList = studyRoomService.findStudyRoomByOneId(id, status);
+    public ExistDataSuccessResponse FindStudyRoomByOne(@RequestParam("id") String id, @RequestParam("status") String status) throws JsonProcessingException {
+        List<StudyRoomListDTO> studyroomDTOList = studyRoomService.findStudyRoomByOneId(id, Status.valueOf(status));
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 "회원님의 수업 목록을 조회했습니다.", studyroomDTOList);
     }
 
-    @GetMapping("/room/find")
     /** 특정 스터디룸 찾기 */
+    @GetMapping("/room/find")
     public ExistDataSuccessResponse FindStudyRoomByIds(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
         StudyroomDTO studyroomDTO = studyRoomService.findStudyRoomByIds(teacherId, studentId);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                "스터디룸을 조회했습니다.", studyroomDTO);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "스터디룸을 조회했습니다.", studyroomDTO);
     }
 
     /** 캘린더 전체 보기 (수업 보고서랑 전부 포함) -> 데이터 두개 반환하기 */
     @GetMapping("/room/calendar")
-    public ExistDoubleDataSuccessResponse ListCalendarByStudyRoom(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
+    public ExistDataSuccessResponse ListCalendarByStudyRoom(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) throws ParseException {
         //일정
-        List<CalendarDTO> calendarDTOList = calendarService.findByStudyroomIds(teacherId, studentId);
-        //보고서
-        List<StudyListDTO> postStudy = postStudyService.findPostByStudyRoom(teacherId, studentId);
-        return new ExistDoubleDataSuccessResponse(StatusCode.OK.getCode(),
-                "해당 스터디룸의 일정을 조회했습니다.", calendarDTOList, postStudy);
+        List<calendarFullListDTO> listDTO = calendarService.findByStudyroomIds(teacherId, studentId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"해당 스터디룸의 일정을 조회했습니다.", listDTO);
     }
 
     /** 특정 날짜 일정 전체 보기 */
     @GetMapping("/room/calendar/date")
     public ExistDataSuccessResponse ListCalendarByDate(@RequestParam("teacherId") String teacherId,
                                                        @RequestParam("studentId") String studentId,@RequestParam("date") String date) throws ParseException {
-
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date to = transFormat.parse(date);
-        List<CalendarListDTO> dateList = calendarService.findByDate(teacherId, studentId, to);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                date + "의 일정을 조회했습니다.", dateList);
+        List<CalendarListDTO> dateList = calendarService.findByDate(teacherId, studentId, date);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),date + "의 일정을 조회했습니다.", dateList);
     }
 
-    /**
-     * 일정 등록
-     */
+    /** 일정 등록 */
     @PostMapping("/room/calendar")
     public NotExistDataResultResponse RegisterCalendarByStudyRoom(@RequestParam("teacherId") String teacherId,
                                                                   @RequestParam("studentId") String studentId, @RequestBody CalendarDTO calendarDTO) {
@@ -142,19 +139,39 @@ public class ClassManageApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deletedId + "번 보고서가 삭제되었습니다.");
     }
 
+    /** 시험지 목록 불러오기 */
+    @GetMapping("/room/exam")
+    public ExistDataSuccessResponse ListExamByStudyRoom(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) throws IOException {
+        List<StudyRoomService.examListDTO> listDto = studyRoomService.listTestPaper(teacherId, studentId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "스터디룸 시험지 목록을 불러왔습니다.", listDto);
+    }
+
     /** 시험지 등록 */ //form-data
     @PostMapping("/room/exam")
-    public void RegisterExamByStudyRoom(@RequestParam("teacherId") String teacherId,
-                                        @RequestParam("studentId") String studentId, @ModelAttribute MultipartFile file) {
+    public NotExistDataResultResponse RegisterExamByStudyRoom(@RequestParam("teacherId") String teacherId,
+                                        @RequestParam("studentId") String studentId, @ModelAttribute MultipartFile file) throws NoSuchAlgorithmException, IOException {
+        Long savedId = studyRoomService.saveTestPaper(teacherId, studentId, file);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), savedId + "번 문제지가 등록되었습니다.");
+    }
 
+    /** 시험지 삭제 */
+    @DeleteMapping("/room/exam/{post_id}")
+    public NotExistDataResultResponse DeleteTestPaper(@PathVariable("post_id") Long id) {
+        Long deletedId = userFileRepository.deleteUserFile(id);
+        /** 관련 답변 삭제하는 로직 추가하기 */
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deletedId + "번 문제지가 삭제되었습니다.");
     }
 
     /** 시험지 답안 등록 */
-    /** 시험지 학생 답안 등록 */
     @PostMapping("/room/exam/{post_id}")
-    public void RegisterAnswerById(@PathVariable("post_id") Long id, @RequestParam("grade") String grade,  @RequestBody PostExamDTO postExamDTO) {
-
+    public NotExistDataResultResponse RegisterAnswerById(@PathVariable("post_id") Long id,@RequestBody PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
+        studyRoomService.saveRealAnswer(id, postExamDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지에 대한 답안이 입력되었습니다.");
     }
+
+
+    /** 시험지 학생 답안 등록 */
+
 
     /** 정답 비교 확인 */
     @GetMapping("/room/exam/{post_id}")
