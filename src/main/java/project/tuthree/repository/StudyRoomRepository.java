@@ -53,7 +53,7 @@ public class StudyRoomRepository {
 
         log.info("===============" + studyRoomInfo.getId().getStudentId().getId());
         StudyRoomInfo info = em.find(StudyRoomInfo.class, studyRoomInfo.getId());
-//        info.infoUpdate(studyRoomInfo);
+        info.infoUpdate(studyRoomInfo);
     }
 
     /** 수업 계획서 조회하기 */

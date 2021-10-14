@@ -22,19 +22,15 @@ public class QStudyRoomInfo extends EntityPathBase<StudyRoomInfo> {
 
     public static final QStudyRoomInfo studyRoomInfo = new QStudyRoomInfo("studyRoomInfo");
 
-    public final DateTimePath<java.util.Date> checkDate = createDateTime("checkDate", java.util.Date.class);
+    public final DatePath<java.util.Date> checkDate = createDate("checkDate", java.util.Date.class);
 
     public final StringPath cost = createString("cost");
 
-    public final StringPath day = createString("day");
-
     public final StringPath detail = createString("detail");
-
-    public final StringPath end = createString("end");
 
     public final QStudyRoom id;
 
-    public final StringPath start = createString("start");
+    public final ArrayPath<byte[], Byte> schedule = createArray("schedule", byte[].class);
 
     public final BooleanPath status = createBoolean("status");
 
