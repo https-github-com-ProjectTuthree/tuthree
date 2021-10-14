@@ -28,7 +28,7 @@ public class StudyroomInfoDTO {
     /** entity로 변환되지 않는 정보 */
     private List<String> subject;
 
-    private Map<String, Map<String, String>> schedule;
+    private Map<String, List<Map<String, String>>> schedule;
 
     private String detail;
 
@@ -47,7 +47,7 @@ public class StudyroomInfoDTO {
     }
 
     //정보 입력 받는 부분 나중에 byte 변환해야함
-    public StudyroomInfoDTO(StudyRoom id, String cost, List<String> subject, Map<String, Map<String, String>> schedule, String detail, Date checkDate, boolean status) {
+    public StudyroomInfoDTO(StudyRoom id, String cost, List<String> subject, Map<String, List<Map<String, String>>> schedule, String detail, Date checkDate, boolean status) {
         this.id = id;
         this.cost = cost;
         this.subject = subject;
