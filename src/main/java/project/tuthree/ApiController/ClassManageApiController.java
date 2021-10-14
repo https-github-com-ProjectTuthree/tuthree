@@ -14,6 +14,7 @@ import project.tuthree.dto.post.PostreviewDTO;
 import project.tuthree.dto.post.PoststudyDTO;
 import project.tuthree.dto.room.CalendarDTO;
 import project.tuthree.dto.room.StudyroomDTO;
+import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.CalendarRepository;
 import project.tuthree.repository.PostStudyRepository;
 import project.tuthree.repository.PostStudyRepository.StudyListDTO;
@@ -21,12 +22,13 @@ import project.tuthree.service.CalendarService;
 import project.tuthree.service.CalendarService.CalendarListDTO;
 import project.tuthree.service.PostStudyService;
 import project.tuthree.service.StudyRoomService;
+import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -159,4 +161,6 @@ public class ClassManageApiController {
     public void CheckAnswer(@PathVariable("post_id") Long id) {
 
     }
+
+
 }

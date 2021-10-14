@@ -1,5 +1,6 @@
 package project.tuthree.ApiController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,14 @@ import project.tuthree.service.PostFindService.PostFindTeacherListDTO;
 import project.tuthree.service.StudyRoomService;
 import project.tuthree.service.StudyRoomService.InfoListDTO;
 import project.tuthree.service.StudyRoomService.ReviewListDTO;
+import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -77,7 +82,7 @@ public class ClassMatchingApiController {
     /** -수업 계획서 등록하기 */
     @PostMapping("/room/create")
     public NotExistDataResultResponse createStudyRoomInfo(@RequestParam("teacherId") String teacherId,
-                                                                           @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) {
+                                                                           @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
         studyRoomService.roomRegister(teacherId, studentId, studyroomInfoDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 생성과 계획서 작성이 완료되었습니다.");
     }
@@ -85,16 +90,16 @@ public class ClassMatchingApiController {
     /** -수업 계획서 수정하기 */
     @PutMapping("/room/alter")
     public NotExistDataResultResponse alterStudyRoomInfo(@RequestParam("teacherId") String teacherId,
-                                   @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) {
+                                   @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
         studyRoomService.roomUpdate(teacherId, studentId, studyroomInfoDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 계획서 수정이 완료되었습니다.");
     }
 
     /** - 학생 - 수락하기 누르면 수업 계획서 불러오기 */
     @GetMapping("/room/info")
-    public void findStudyRoomInfo(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
-//        InfoListDTO infoListDTO = studyRoomService.findStudyRoomInfo(teacherId, studentId);
-//        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "수업 계획서를 불러왔습니다.", infoListDTO);
+    public ExistDataSuccessResponse findStudyRoomInfo(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) throws JsonProcessingException {
+        InfoListDTO infoListDTO = studyRoomService.findStudyRoomInfo(teacherId, studentId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "수업 계획서를 불러왔습니다.", infoListDTO);
     }
 
     /** - 학생 - 최종 수락 */
@@ -132,5 +137,46 @@ public class ClassMatchingApiController {
         List<BookmarkDTO> bookmarkDTO = postFindService.listBookMark(userId);
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 "북마크 목록을 불러왔습니다.", bookmarkDTO);
+    }
+
+
+    @GetMapping("/test/roominfo")
+    public Object test_info() {
+        List<String> subject = new ArrayList<>();
+        subject.add("math");
+        subject.add("kor");
+        subject.add("eng");
+        //list
+
+        Map<String, Map<String, String>> map = new HashMap<>();
+        Map<String, String> time1 = new HashMap<>();
+        //hash<hash>
+        time1.put("start", "17:00");
+        time1.put("end", "20:00");
+        map.put("mon", time1);
+        Map<String, String> time2 = new HashMap<>();
+
+        time2.put("start", "20:00");
+        time2.put("end", "24:00");
+        map.put("tue", time2);
+        Map<String, Object> info = new HashMap<>();
+
+        info.put("subject", subject);
+        info.put("schedule", map);
+
+        return info;
+    }
+
+    @PostMapping("/test/roomtest")
+    public Object test_test(@RequestBody StudyroomInfoDTO studyroomInfoDTO) throws IOException {
+        ArrayToJson arrayToJson = new ArrayToJson();
+
+        Map<Object, Object> info = new HashMap<>();
+        info.put("subject", studyroomInfoDTO.getSubject());
+        info.put("schedule", studyroomInfoDTO.getSchedule());
+
+        byte[] bytes = studyRoomService.objectToByte(info);
+        return studyRoomService.byteToObject(bytes);
+
     }
 }
