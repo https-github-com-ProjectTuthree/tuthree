@@ -1,16 +1,18 @@
 package project.tuthree.dto.post;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class PostExamDTO {
 
     private Long prob;
 
-    private List<ProblemDTO> Problem;
+    private List<ProblemDTO> problem;
 
     public static class ProblemDTO {
         private Long question;
@@ -22,6 +24,6 @@ public class PostExamDTO {
     @Builder
     public PostExamDTO(Long prob, List<ProblemDTO> problem) {
         this.prob = prob;
-        Problem = problem;
+        this.problem = problem;
     }
 }

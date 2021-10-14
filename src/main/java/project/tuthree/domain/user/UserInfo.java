@@ -1,6 +1,7 @@
 package project.tuthree.domain.user;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,11 @@ public class UserInfo {
     String region;
 
     String subject;
+
+    @Builder
+    public UserInfo(String userId, String region, String subject) {
+        this.userId = userId;
+        this.region = region;
+        this.subject = subject;
+    }
 }

@@ -71,8 +71,9 @@ public class StudyRoomInfo implements Serializable {
         this.status = status;
     }
 
-    public void acceptInfo(){
+    public boolean acceptInfo(){
         this.status = true;
+        return this.status;
     }
 
     public void infoUpdate(StudyRoomInfo studyRoomInfo) {
