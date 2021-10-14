@@ -85,43 +85,45 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
     }
 
-    //기본정보조회
-    @GetMapping("/user/mypage/{id}")
-    public UserResponseDTO findUserInfo(HttpServletRequest request){
-
-        String id = CheckUserI(request).getId();
-        String grade = CheckUserI(request).getGrade();
+    /**기본정보조회**/
+    @GetMapping("/user/mypage")
+    public UserResponseDTO findUserInfo(@RequestHeader(value="Authorization") String AUTHORIZATION){
+        String id = CheckUserI(AUTHORIZATION).getId();
+        String grade = CheckUserI(AUTHORIZATION).getGrade();
         return userRegisterService.findByInfo(id, grade);
     }
 
-    //튜터 과외정보조회
-    @GetMapping("/user/tutorclass/{id}") //토큰값으로 조회하게 바꾸기
-    public ExistDataSuccessResponse findTutorInfo(@PathVariable String id, HttpServletRequest request) {
-
+    /**튜터 과외정보조회**/
+    @GetMapping("/user/tutorclass") //토큰값으로 조회하게 바꾸기
+    public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) {
+        String id = CheckUserI(AUTHORIZATION).getId();
         TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
         log.debug("\n---- 과외정보조회 ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
 
     }
 
-    //튜티
-    @GetMapping("/user/tuteeclass/{id}")
-    public ExistDataSuccessResponse findTuteeInfo(@PathVariable String id, HttpServletResponse response ) {
+    /**튜티 과외정보조회**/
+    @GetMapping("/user/tuteeclass")
+    public ExistDataSuccessResponse findTuteeInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) {
+        String id = CheckUserI(AUTHORIZATION).getId();
         StudentResponseDTO responseDTO = userRegisterService.findTuTeeId(id);
         log.debug("\n---- 과외정보조회 ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
     }
 
 
-    //정보 수정
-    @PutMapping("/user/tutorclass/{id}")
-    public String teacherUpdate(@PathVariable String id, @RequestBody TeacherUpdateDTO updateDTO) {
+    /**튜터 정보 수정**/
+    @PutMapping("/user/tutorclass")
+    public String teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) {
+        String id = CheckUserI(AUTHORIZATION).getId();
         return userRegisterService.teacherUpdate(id, updateDTO);
     }
 
-    //정보 수정
-    @PutMapping("/user/tuteeclass/{id}")
-    public String studentUpdate(@PathVariable String id, @RequestBody StudentUpdateDTO updateDTO) {
+    /**튜티 정보 수정**/
+    @PutMapping("/user/tuteeclass")
+    public String studentUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody StudentUpdateDTO updateDTO) {
+        String id = CheckUserI(AUTHORIZATION).getId();
         return userRegisterService.studentUpdate(id, updateDTO);
     }
 
@@ -168,10 +170,12 @@ public class UserApiController {
 
     /**비밀번호 찾기**/
     @PostMapping("/user/findpwd/{method}") //여기서 그다음 어떻게 넘겨주지.. 토큰을 줘야되나
-    public NotExistDataResultResponse FindPwd(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method){
+    public NotExistDataResultResponse FindPwd(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method, HttpServletResponse response){
         String str;
         str = userRegisterService.findPwd(findIdDTO, method);
         if(!str.equals(" ")){
+            response.addHeader("Id", findIdDTO.getId());
+            response.addHeader("Grade", str);
             return new NotExistDataResultResponse(StatusCode.OK.getCode(),
                     findIdDTO.getId()+"의 비밀번호를 변경합니다.");
         }
@@ -181,19 +185,16 @@ public class UserApiController {
 
     /**비밀번호 변경**/
     @PutMapping("/user/changepwd") //권한을 일시적으로 줘도 되나,,,
-    public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, HttpServletRequest request){
-
-        String userId = CheckUserI(request).getId();
-        String grade = CheckUserI(request).getGrade();
-
-
-        userRegisterService.changePwd(pwdDTO, userId, grade);
+    public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, @RequestHeader(value="Id") String Id, @RequestHeader(value="Grade") String grade){
+        //String userId = CheckUserI(request).getId();
+        //String grade = CheckUserI(request).getGrade();
+        userRegisterService.changePwd(pwdDTO, Id, grade);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
 
     }
 
     /**자녀추가**/
-    @PostMapping("/user/parent") //requestparam을 해도 될지...
+    @PostMapping("/user/parent")
     public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, ChildDTO childDTO){
         String id = userRegisterService.plusChild(parentId, childDTO);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
@@ -208,8 +209,8 @@ public class UserApiController {
 
     /**요청보기**/
     @GetMapping("/user/myclass")
-    public ExistDataSuccessResponse AcceptChild(HttpServletRequest request){
-        String studentId = CheckUserI(request).getId();
+    public ExistDataSuccessResponse AcceptChild(@RequestHeader(value="Authorization") String AUTHORIZATION){
+        String studentId = CheckUserI(AUTHORIZATION).getId();
         ChildDTO childDTO = userRegisterService.checkChild(studentId);
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO);
 
@@ -218,8 +219,8 @@ public class UserApiController {
 
 
     /**헤더에서 사용자 정보 확인**/
-    public CheckUser CheckUserI(HttpServletRequest request){
-        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+    public CheckUser CheckUserI(String AUTHORIZATION){
+        String[] requestToken = AUTHORIZATION.split(" ");
         if(!requestToken[0].equals(BEARER)){
             throw new MalformedJwtException("잘못된 토큰정보입니다.");
         }
