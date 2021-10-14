@@ -1,5 +1,6 @@
 package project.tuthree.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,8 +26,11 @@ import project.tuthree.repository.UserEntityRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,6 +43,7 @@ public class StudyRoomService {
     private final StudyRoomMapper studyRoomMapper;
     private final PostReviewMapper postReviewMapper;
     private final PostFindRepository postFindRepository;
+    private final ObjectMapper objectMapper;
 
     /** 스터디룸, 수업 계획서, 리뷰 */
 
@@ -54,11 +59,8 @@ public class StudyRoomService {
     @Getter
     @AllArgsConstructor
     public static class InfoListDTO {
-        String subject;
         String cost;
-        String day;
-        String start;
-        String end;
+        Object info;
         String detail;
         Date checkDate;
     }
@@ -72,30 +74,57 @@ public class StudyRoomService {
     }
 
     /** 스터디룸 개설하기 && 수업 계획서 등록하기 */
-    public void roomRegister(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) {
+    public void roomRegister(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
 
         Teacher teacher = userEntityRepository.teacherFindById(teacherId);
         Student student = userEntityRepository.studentFindById(studentId);
+        log.info("===========" + teacherId + " " + studentId);
 
         StudyroomDTO studyroomDTO = new StudyroomDTO(teacher, student, Status.CLOSE);
+        /** dto subejct, day, start, end json으로 변경하여 byte 변경해서 넣기 */
+
+        Map<String, Object> info = new HashMap<>();
+        info.put("subject", studyroomInfoDTO.getSubject());
+        info.put("schedule", studyroomInfoDTO.getSchedule());
+        studyroomInfoDTO.insertBlob(objectToByte(info));
+
         StudyRoom studyRoom = studyRoomRepository.roomRegister(studyRoomMapper.toEntity(studyroomDTO));
+
         studyroomInfoDTO.updateId(studyRoom);
         studyRoomRepository.infoRegister(studyroomInfoMapper.toEntity(studyroomInfoDTO));
 
     }
+
+    public byte[] objectToByte(Object map) throws JsonProcessingException {
+        String value = objectMapper.writeValueAsString(map);
+        return value.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public Map<String,Object> byteToObject(byte[] value) throws JsonProcessingException {
+        String str = new String(value);
+        return objectMapper.readValue(str, HashMap.class);
+    }
+
     /** 수업 계획서 수정하기 */
-    public void roomUpdate(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) {
+    public void roomUpdate(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
         /** teacherid, studentid로 스터디룸 찾기 */
         StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
         studyroomInfoDTO.updateId(studyRoom);
+
+        Map<String, Object> info = new HashMap<>();
+        info.put("subject", studyroomInfoDTO.getSubject());
+        info.put("schedule", studyroomInfoDTO.getSchedule());
+        studyroomInfoDTO.insertBlob(objectToByte(info));
+
         studyRoomRepository.infoUpdate(studyroomInfoMapper.toEntity(studyroomInfoDTO));
     }
 
     /** 수업 계획서 조회하기 */
-    public void findStudyRoomInfo(String teacherId, String studentId) {
-//        StudyRoomInfo info = studyRoomRepository.findStudyRoomInfo(teacherId, studentId);
-//        return new InfoListDTO(info.getSubject(), info.getCost(), info.getDay(),
-//                info.getStart(), info.getEnd(), info.getDetail(), info.getCheckDate());
+    public InfoListDTO findStudyRoomInfo(String teacherId, String studentId) throws JsonProcessingException {
+        StudyRoomInfo info = studyRoomRepository.findStudyRoomInfo(teacherId, studentId);
+        Map<String, Object> map = byteToObject(info.getInfo());
+        return new InfoListDTO(info.getCost(), map, info.getDetail(), info.getCheckDate());
+
     }
 
     /** 선생님 - 수업 리뷰 조회하기 */

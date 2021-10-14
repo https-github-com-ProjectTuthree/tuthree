@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import project.tuthree.domain.room.StudyRoom;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -15,55 +16,51 @@ public class StudyroomInfoDTO {
 
     private StudyRoom id;
 
-    private String subject;
-
     private String cost;
 
-    private Map<String, Object> schedule;
+    private byte[] info; //subject, day, start, end
+    /**
+     * List : subject
+     * Hashmap : day <hashmap1>
+     * Hashmap : <hashmap1> start, end
+     */
+
+    /** entity로 변환되지 않는 정보 */
+    private List<String> subject;
+
+    private Map<String, Map<String, String>> schedule;
 
     private String detail;
 
     private Date checkDate;
 
     private boolean status; //학생의 수락 상태
-    @Builder
-    public StudyroomInfoDTO(StudyRoom id, String subject, String cost, Map<String, Object> schedule, String detail, Date checkDate, boolean status) {
+
+    @Builder //entity로 변환되는 부분
+    public StudyroomInfoDTO(StudyRoom id, String cost, byte[] info, String detail, Date checkDate, boolean status) {
         this.id = id;
-        this.subject = subject;
         this.cost = cost;
+        this.info = info;
+        this.detail = detail;
+        this.checkDate = checkDate;
+        this.status = status;
+    }
+
+    //정보 입력 받는 부분 나중에 byte 변환해야함
+    public StudyroomInfoDTO(StudyRoom id, String cost, List<String> subject, Map<String, Map<String, String>> schedule, String detail, Date checkDate, boolean status) {
+        this.id = id;
+        this.cost = cost;
+        this.subject = subject;
         this.schedule = schedule;
         this.detail = detail;
         this.checkDate = checkDate;
         this.status = status;
     }
 
-    /**
-     * 복합키 식별 관계 매핑
-     */
-//    private StudyRoom id;
-//    private String subject;
-//    private String cost;
-//    private String day;
-//    private String start;
-//    private String end;
-//    private String detail;
-//    private Date checkDate;
-//    private boolean status; //학생의 수락 상태
 
-//    @Builder
-//    public StudyroomInfoDTO(StudyRoom id, String subject, String cost, String day, String start, String end, String detail, Date checkDate, boolean status) {
-//        this.id = id;
-//        this.subject = subject;
-//        this.cost = cost;
-//        this.day = day;
-//        this.start = start;
-//        this.end = end;
-//        this.detail = detail;
-//        this.checkDate = checkDate;
-//        this.status = status;
-//    }
-
-
+    public void insertBlob(byte[] blob) {
+        this.info = blob;
+    }
 
     public void updateId(StudyRoom studyRoom) {
         this.id = studyRoom;
