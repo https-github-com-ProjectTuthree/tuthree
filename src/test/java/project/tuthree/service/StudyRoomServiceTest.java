@@ -14,13 +14,12 @@ import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.mapper.StudyRoomMapper;
 import project.tuthree.mapper.StudyroomInfoMapper;
 import project.tuthree.repository.StudyRoomRepository;
+import project.tuthree.repository.UserFileRepository;
 
 import javax.persistence.EntityManager;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -31,6 +30,8 @@ class StudyRoomServiceTest {
     StudyRoomMapper studyRoomMapper;
     @Autowired
     StudyroomInfoMapper studyroomInfoMapper;
+    @Autowired
+    UserFileRepository userFileRepository;
     @Autowired
     EntityManager em;
 
@@ -48,7 +49,7 @@ class StudyRoomServiceTest {
     @Test
     @Rollback(false)
     public void 스터디룸_계획서_작성() {
-        Teacher teacher = new Teacher("teachertt", new BCryptPasswordEncoder().encode("teachertt"), "name2", "email@naver.com", "01012341234", Sex.MALE, 2001, "t_picture2", Status.OPEN, Grade.TEACHER, new Date(),  Status.OPEN, "200000", "가천대", SchoolStatus.IN_SCHOOL, "컴공", 0.0,"t_certif2", true, "잘 부탁드립니다");
+        Teacher teacher = new Teacher("teachertt", new BCryptPasswordEncoder().encode("teachertt"), "name2", "email@naver.com", "01012341234", Sex.MALE, 2001, "t_picture2", Status.OPEN, Grade.TEACHER, new Date(), Status.OPEN, "200000", "가천대", SchoolStatus.IN_SCHOOL, "컴공", 0.0,"t_certif2", true, "잘 부탁드립니다");
         Student student = new Student("studenttt", new BCryptPasswordEncoder().encode("studenttt"), "name1", "email@naver.com", "01012341234", Sex.FEMALE, 1990, "picture1", Status.CLOSE, Grade.STUDENT, new Date(), Status.OPEN, "200000", School.H1, "잘부탁드립니다", null);
         em.persist(teacher);
         em.persist(student);
@@ -67,8 +68,9 @@ class StudyRoomServiceTest {
         schedule.put("tue", time2);
         schedule.put("wed", time3);
 
-        StudyroomInfoDTO dto = new StudyroomInfoDTO(studyRoom, "math", "200000", schedule, "deatil", new Date(), true);
-        studyRoomRepository.infoRegister(studyroomInfoMapper.toEntity(dto));
+
+////        StudyroomInfoDTO dto = new StudyroomInfoDTO(studyRoom, "math", "200000", schedule, "deatil", new Date(), true);
+//        studyRoomRepository.infoRegister(studyroomInfoMapper.toEntity(dto));
     }
 
     @Test
@@ -92,8 +94,8 @@ class StudyRoomServiceTest {
         schedule.put("tue", time2);
         schedule.put("wed", time3);
 
-        StudyroomInfoDTO dto = new StudyroomInfoDTO(studyRoom, "math", "200000", schedule, "detail", new Date(), true);
-        em.persist(studyroomInfoMapper.toEntity(dto));
+//        StudyroomInfoDTO dto = new StudyroomInfoDTO(studyRoom, "math", "200000", schedule, "detail", new Date(), true);
+//        em.persist(studyroomInfoMapper.toEntity(dto));
 
         Map<String, String> time4 = new HashMap<>();
         time.put("10:00", "12:00");
@@ -107,7 +109,7 @@ class StudyRoomServiceTest {
         schedule.put("tue", time5);
         schedule.put("wed", time6);
 
-        StudyroomInfoDTO dto1 = new StudyroomInfoDTO(studyRoom, "korean", "4400000", schedule, "hello.....student", null, true);
-        studyRoomRepository.infoUpdate(studyroomInfoMapper.toEntity(dto1));
+//        StudyroomInfoDTO dto1 = new StudyroomInfoDTO(studyRoom, "korean", "4400000", schedule, "hello.....student", null, true);
+//        studyRoomRepository.infoUpdate(studyroomInfoMapper.toEntity(dto1));
     }
 }
