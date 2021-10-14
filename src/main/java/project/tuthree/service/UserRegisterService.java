@@ -178,11 +178,11 @@ public class UserRegisterService {
     //기본정보 조회
     @Transactional(readOnly = true)
     public UserResponseDTO findByInfo (String id, String grade){
-        if(grade == "PARENT"){
+        if(Objects.equals(grade, "PARENT")){
             User entity = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
             return new UserResponseDTO(entity);
         }
-        else if(grade == "TEACHER") {
+        else if(Objects.equals(grade, "TEACHER")) {
             Teacher entity = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
             return new UserResponseDTO(entity);
         }
@@ -217,7 +217,7 @@ public class UserRegisterService {
     //학생과외정보 수정
     @Transactional
     public String studentUpdate(String id, StudentUpdateDTO updateDTO){
-        Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
 
@@ -226,7 +226,7 @@ public class UserRegisterService {
     //선생님과외정보 수정
     @Transactional
     public String teacherUpdate(String id, TeacherUpdateDTO updateDTO){
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
 
@@ -316,16 +316,19 @@ public class UserRegisterService {
     @Transactional
     public void changePwd(ChangePwdDTO pwdDTO, String id, String grade){
 
-        if(grade == "PARENT"){
-            User user = userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        if(Objects.equals(grade, "PARENT")){
+            User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+
             user.updateP(pwdDTO.getPwd());
         }
-        else if(grade == "TEACHER") {
-            Teacher teacher = teacherRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        else if(Objects.equals(grade, "TEACHER")) {
+            Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+
             teacher.updateP(pwdDTO.getPwd());
         }
         else {
-            Student student = studentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+
             student.updateP(pwdDTO.getPwd());
         }
     }
