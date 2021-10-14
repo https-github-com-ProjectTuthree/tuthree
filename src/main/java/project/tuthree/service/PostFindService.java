@@ -46,6 +46,8 @@ public class PostFindService {
      *
      */
 
+
+
     /**
      * 선생님 postfind 목록 조회  - registration 상관x
      */
@@ -109,7 +111,7 @@ public class PostFindService {
         List<String> subject = userEntityRepository.userFindSubject(userId);
         byte[] file = userFileRepository.transferUserFile(teacher.getPost());
 
-        return new PostFindTeacherDTO(postId, teacher.getName(), teacher.getSex(), teacher.getBirth(), teacher.getSchool(),
+        return new PostFindTeacherDTO(teacher.getId(), postId, teacher.getName(), teacher.getSex(), teacher.getBirth(), teacher.getSchool(),
                 teacher.getMajor(), teacher.getStatus().getKortype(), teacher.getStar(), teacher.getCost(),
                 teacher.getRegistration(), region, subject, teacher.getDetail(), file);
     }
@@ -126,7 +128,7 @@ public class PostFindService {
         List<String> subject = userEntityRepository.userFindSubject(userId);
         byte[] file = userFileRepository.transferUserFile(student.getPost());
 
-        return new PostFindStudentDTO(postId, student.getName(), student.getSex(), student.getBirth(),
+        return new PostFindStudentDTO(student.getId(), postId, student.getName(), student.getSex(), student.getBirth(),
                 student.getCost(), student.getSchool().getKorStatus(), student.getRegistration(), region, subject, student.getDetail(), file);
     }
 
@@ -202,6 +204,7 @@ public class PostFindService {
          * 이름 | 학교 | 과 | 과목 | 지역 | 가격
          * 모집중, 모집마감 | 별점 | 이미지
          */
+        String userId;
         Long postId;
         String name;
         Sex sex;
@@ -225,6 +228,7 @@ public class PostFindService {
          * 이름 | 과목 | 지역 | 가격
          * 모집중, 모집마감 | 이미지
          */
+        String userId;
         Long postId;
         String name;
         Sex sex;

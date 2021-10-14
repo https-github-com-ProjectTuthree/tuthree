@@ -48,7 +48,7 @@ public class ExceptionController {
     public NotExistBadDataResultResponse IllegalArgumentController(IllegalArgumentException e) {
         log.error("\n** error occurred!!!!\n[ " + String.valueOf(e) + " ] " + e.getMessage() +
                 "\n** error code\n" + StatusCode.FORBIDDEN.getCode() + "\n");
-        return new NotExistBadDataResultResponse(StatusCode.FORBIDDEN.getCode(), "데이터베이스에 대한 잘못된 접근입니다.");
+        return new NotExistBadDataResultResponse(StatusCode.FORBIDDEN.getCode(), "찾으시는 정보가 없거나 잘못된 정보를 입력하셨습니다.");
     }
 
     @ExceptionHandler(value = {SignatureException.class, MalformedJwtException.class})

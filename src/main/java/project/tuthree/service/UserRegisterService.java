@@ -107,7 +107,6 @@ public class UserRegisterService {
             if(!checkId(registerDTO.getId())){
 
                 if (!registerDTO.getFile().isEmpty()) {
-
                     String post = userFileRepository.saveFile(registerDTO.getFile(), PARENT);
                     registerDTO.updatePost(post);
                 }
@@ -135,6 +134,8 @@ public class UserRegisterService {
                     registerDTO.updatePost(post);
                 }
                 String id = studentRepository.save(registerDTO.toEntity()).getId();
+                userEntityRepository.userSaveSubject(registerDTO.getId(), registerDTO.getSubjectL());
+                userEntityRepository.userSaveRegion(registerDTO.getId(), registerDTO.getRegionL());
                 postFindService.studentPostFindRegister(id);
                 return id;
             }
@@ -162,6 +163,8 @@ public class UserRegisterService {
                     registerDTO.updateAuthPost(certification);
                 }
                 String id = teacherRepository.save(registerDTO.toEntity()).getId();
+                userEntityRepository.userSaveRegion(registerDTO.getId(), registerDTO.getRegionL());
+                userEntityRepository.userSaveSubject(registerDTO.getId(), registerDTO.getSubjectL());
                 postFindService.teacherPostFindRegister(id);
                 return id;
 

@@ -1,6 +1,7 @@
 package project.tuthree.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,11 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Status;
+import project.tuthree.domain.file.QUserFile;
+import project.tuthree.domain.file.UserFile;
 import project.tuthree.domain.post.PostReview;
+import project.tuthree.domain.post.QPostReview;
 import project.tuthree.domain.room.QStudyRoom;
 import project.tuthree.domain.room.QStudyRoomInfo;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
+import project.tuthree.domain.user.Teacher;
 import project.tuthree.dto.post.PostExamDTO;
 
 import javax.persistence.EntityManager;
@@ -21,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static project.tuthree.domain.file.QUserFile.userFile;
 import static project.tuthree.domain.post.QPostReview.postReview;
 import static project.tuthree.domain.room.QStudyRoom.studyRoom;
 import static project.tuthree.domain.room.QStudyRoomInfo.studyRoomInfo;
@@ -48,7 +54,8 @@ public class StudyRoomRepository {
         return studyRoomInfo.getId().getTeacherId().getId();
     }
 
-    /** 수업 계획서 수정하기 */
+    /**
+     * 수업 계획서 수정하기 */
     public void infoUpdate(StudyRoomInfo studyRoomInfo) {
 
         log.info("===============" + studyRoomInfo.getId().getStudentId().getId());
@@ -71,7 +78,14 @@ public class StudyRoomRepository {
                 .where(QStudyRoom.studyRoom.teacherId.id.eq(teacherId)
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
-        return studyRoom;
+        Boolean bool = jpaQueryFactory.select(studyRoomInfo.status)
+                .from(studyRoomInfo)
+                .where(studyRoomInfo.id.eq(studyRoom))
+                .fetchOne();
+        if(bool == true) {
+            return studyRoom;
+        }
+        return null;
     }
 
     /** 아이디 하나로 스터디룸 찾기 */
@@ -94,31 +108,50 @@ public class StudyRoomRepository {
 
     /** 학생 리뷰 작성하기 */
     public String writeReview(PostReview postReview) {
+        /** 선생님 리뷰 수정하기!!! */
         em.persist(postReview);
-        return postReview.getId().getTeacherId().getName();
+        Teacher teacher = em.find(Teacher.class, postReview.getId().getTeacherId().getId());
+        Long num = jpaQueryFactory.selectFrom(QPostReview.postReview)
+                .where(QPostReview.postReview.id.teacherId.id.eq(postReview.getId().getTeacherId().getId()))
+                .fetchCount();
+        teacher.updateStar(num, postReview.getStar());
+        return teacher.getName();
     }
 
     /** 과외 정보 승낙하기 */
-    public void acceptInfo(String teacherId, String studentId) {
+    public boolean acceptInfo(String teacherId, String studentId) {
         StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId);
-        studyRoomInfo.acceptInfo();
+        if(studyRoomInfo.isStatus() == true) {
+            return false;
+        }
+        return studyRoomInfo.acceptInfo();
+    }
+
+    /** 과외 정보 승낙 여부 확인 */
+    public boolean isAcceptInfo(String teacherId, String studentId) {
+        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId);
+        return studyRoomInfo.isStatus();
     }
 
     /** 수업 관리창 시작하기 */
-    public void openStudyRoom(String teacherId, String studentId) {
+    public boolean openStudyRoom(String teacherId, String studentId) {
         StudyRoom studyRoom = findStudyRoomById(teacherId, studentId);
         studyRoom.openStudyRoom();
+        return true;
     }
 
     /** 수업 종료하기 */
-    public void clostStudyRoom(String teacherId, String studentId) {
+    public void closeStudyRoom(String teacherId, String studentId) {
         StudyRoom studyRoom = findStudyRoomById(teacherId, studentId);
         studyRoom.closeStudyRoom();
     }
 
-    /** 시험지 등록 - 스터디룸 아이디와 함께 user_file에 저장 */
-
-    /** 시험지 답안 등록 - 아래 함수랑 합치기 */
+    /** 시험지 목록 불러오기 */
+    public List<UserFile> listTestPaper(StudyRoom studyRoom) {
+        return jpaQueryFactory.selectFrom(userFile)
+                .where(userFile.studyRoomId.eq(studyRoom))
+                .fetch();
+    }
 
     /** 시험지 학생 답안 등록 */
 

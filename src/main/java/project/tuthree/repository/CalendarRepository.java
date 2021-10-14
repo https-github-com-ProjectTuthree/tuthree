@@ -24,6 +24,7 @@ public class CalendarRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
+
     /** 스터디룸 캘린더 전체 조회 - 일정, 보고서 */
 
     public List<Calendar> findByStudyroom(StudyRoom studyRoom){

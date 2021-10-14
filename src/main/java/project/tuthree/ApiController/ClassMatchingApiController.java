@@ -8,6 +8,7 @@ import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.dto.BookmarkDTO;
+import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.PostFindRepository;
 import project.tuthree.repository.StudyRoomRepository;
@@ -104,16 +105,16 @@ public class ClassMatchingApiController {
 
     /** - 학생 - 최종 수락 */
     @GetMapping("/room/info/accept")
-    public NotExistDataResultResponse StudyRoomAccept(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
-        studyRoomRepository.acceptInfo(teacherId, studentId);
-        studyRoomRepository.openStudyRoom(teacherId, studentId);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "수업이 성사되었습니다.");
+    public Object StudyRoomAccept(@RequestParam("teacherId") String teacherId,
+                                                      @RequestParam("studentId") String studentId, @RequestParam("grade") String grade) {
+        Object res = studyRoomService.studyRoomIsAccept(teacherId, studentId, grade);
+        return res;
     }
 
     /** 수업 종료하기 */
     @GetMapping("/room/close")
     public NotExistDataResultResponse StudyRoomClose(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
-        studyRoomRepository.clostStudyRoom(teacherId, studentId);
+        studyRoomRepository.closeStudyRoom(teacherId, studentId);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "수업이 종료되었습니다.");
     }
 
@@ -168,15 +169,17 @@ public class ClassMatchingApiController {
     }
 
     @PostMapping("/test/roomtest")
-    public Object test_test(@RequestBody StudyroomInfoDTO studyroomInfoDTO) throws IOException {
-        ArrayToJson arrayToJson = new ArrayToJson();
+    public Object test_test(@RequestBody PostExamDTO postExamDTO) throws IOException {
+//        ArrayToJson arrayToJson = new ArrayToJson();
+//
+//        Map<Object, Object> info = new HashMap<>();
+//        info.put("subject", studyroomInfoDTO.getSubject());
+//        info.put("schedule", studyroomInfoDTO.getSchedule());
+//
+//        byte[] bytes = studyRoomService.objectToByte(info);
+//        return studyRoomService.byteToObject(bytes);
 
-        Map<Object, Object> info = new HashMap<>();
-        info.put("subject", studyroomInfoDTO.getSubject());
-        info.put("schedule", studyroomInfoDTO.getSchedule());
-
-        byte[] bytes = studyRoomService.objectToByte(info);
-        return studyRoomService.byteToObject(bytes);
+        return studyRoomService.saveStudentResponse(postExamDTO);
 
     }
 }
