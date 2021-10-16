@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.multipart.MultipartFile;
-import project.tuthree.ApiController.EmbeddedResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistBadDataResultResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.ApiController.StatusCode;
@@ -25,6 +26,7 @@ import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostreviewDTO;
 import project.tuthree.dto.room.StudyroomDTO;
 import project.tuthree.dto.room.StudyroomInfoDTO;
+import project.tuthree.exception.ExceptionSupplierImpl;
 import project.tuthree.mapper.PostReviewMapper;
 import project.tuthree.mapper.StudyRoomMapper;
 import project.tuthree.mapper.StudyroomInfoMapper;
@@ -34,7 +36,6 @@ import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -56,43 +57,6 @@ public class StudyRoomService {
     private final UserFileMapper userFileMapper;
 
     /** 스터디룸, 수업 계획서, 리뷰 */
-
-    @Getter
-    @AllArgsConstructor
-    public static class ReviewListDTO {
-        //선생님 아이디 외의 정보를 노출 시키지 않기 위한 클래스
-        String userId;
-        int star;
-        String content;
-        Date writeAt;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class InfoListDTO {
-        String cost;
-        Object info;
-        String detail;
-        Date checkDate;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class StudyRoomListDTO {
-        String teacherId;
-        String studentId;
-        Date date;
-        List<String> subject;
-        Status status;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class examListDTO {
-        Long id;
-        String title;
-        byte[] file;
-    }
 
     /** 스터디룸 개설하기 && 수업 계획서 등록하기 */
     public void roomRegister(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
@@ -148,11 +112,12 @@ public class StudyRoomService {
     }
 
     /** 선생님 - 수업 리뷰 조회하기 */
-    public List<ReviewListDTO> findReviewByPostId(Long postId) {
+    public List<ReviewListDTO> findReviewByPostId(Long postId, String sort) {
         String teacherId = postFindRepository.findTeacherById(postId);
-        List<PostReview> list = studyRoomRepository.findReviewByTeacher(teacherId);
+        List<PostReview> list = studyRoomRepository.findReviewByTeacher(teacherId, sort);
         return list.stream()
-                .map(m -> new ReviewListDTO(m.getId().getStudentId().getId(), m.getStar(), m.getContent(), m.getWriteAt()))
+                .map(m -> ExceptionSupplierImpl.wrap(() -> new ReviewListDTO(m.getId().getStudentId().getId(), m.getStar(), m.getContent(),
+                        userFileRepository.unixToDate(m.getWriteAt()))))
                 .collect(Collectors.toList());
     }
 
@@ -217,35 +182,76 @@ public class StudyRoomService {
         return list;
     }
 
-    /** 시험지 등록 */
-    public Long saveTestPaper(String teacherId, String studentId, MultipartFile file) throws NoSuchAlgorithmException, IOException {
+    /** 시험지 등록 pdf 밖에 안들어옴 */
+    public Long saveTestPaper(String teacherId, String studentId, MultipartFile file) throws NoSuchAlgorithmException, IOException, HttpMediaTypeNotAcceptableException {
+        if(!file.getContentType().equals("application/pdf")){
+            throw new HttpMediaTypeNotAcceptableException("pdf 형식의 파일을 입력해주세요.");
+        }
         StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        String[] names = file.getOriginalFilename().split("\\.");
+
+        String real_title = studyRoomRepository.findSameNameTestPaper(studyRoom, names[0]);
         String save_title = userFileRepository.saveFile(file, UserFileRepository.FileType.POSTPAPER);
-        UserfileDTO userfileDTO = new UserfileDTO(null, studyRoom, null, save_title, file.getOriginalFilename());
+        UserfileDTO userfileDTO = new UserfileDTO(studyRoom, save_title, real_title + "." + names[1]);
         return userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
     }
 
-    /** 시험지 답안 등록 - 아래 함수랑 합치기 */
-    public void saveRealAnswer(Long id, PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
+    /** 시험지 답안 등록 */
+    public String saveRealAnswer(Long id, String grade, PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
         //id에 해당하는 파일 이름 찾기
-        UserFile userFile = userFileRepository.userFileFindById(id);
-        String save = userFile.getRealTitle();
+        UserFile userFile = userFileRepository.userFileFindByFileId(id);
+        String real = userFile.getRealTitle();
+        if(real.contains(".")){
+            real = real.split("\\.")[0];
+        }
         //파일 이름_answer로 파일 이름 저장하기
-        String saved = userFileRepository.saveJsonFile(postExamDTO, save + "_answer", UserFileRepository.FileType.POSTPAPER);
-        UserfileDTO userfileDTO = new UserfileDTO(null, userFile.getStudyRoomId(), null, saved,save+"_answer");
+        String saveName = "";
+        if(Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.TEACHER) || Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.STUDENT)){
+            saveName = real + "_" + grade + "_answer.json";
+        }
+        String saved = userFileRepository.saveJsonFile(postExamDTO, saveName, UserFileRepository.FileType.POSTPAPER);
         //user_file 테이블에 저장하기
+        UserfileDTO userfileDTO = new UserfileDTO(userFile.getStudyRoomId(), saved, saveName);
         userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
+        return saveName;
     }
 
-    /** 시험지 학생 답안 등록 */
-    public Object saveStudentResponse(PostExamDTO postExamDTO) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(new File("/home/seojaehui/tuthree/var/file"), postExamDTO);
-
-        //시험지 파일 이름 들고오기
-        return postExamDTO;
+    @Getter
+    @AllArgsConstructor
+    public static class ReviewListDTO {
+        //선생님 아이디 외의 정보를 노출 시키지 않기 위한 클래스
+        String userId;
+        int star;
+        String content;
+        String writeAt;
     }
 
-    /** 정답 비교 확인 -> json 둘다 객체로 바꿔서 값 비교하고 o, x json으로 변환해서 내보내기 */
+    @Getter
+    @AllArgsConstructor
+    public static class InfoListDTO {
+        String cost;
+        Object info;
+        String detail;
+        Date checkDate;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class StudyRoomListDTO {
+        String teacherId;
+        String studentId;
+        Date date;
+        List<String> subject;
+        Status status;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class examListDTO {
+        Long id;
+        String title;
+        byte[] file;
+    }
+
 }
