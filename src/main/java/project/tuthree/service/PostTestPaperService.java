@@ -102,7 +102,7 @@ public class PostTestPaperService {
         List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
 
         for (int i = 0; i < saveNames.size(); i++) {
-            UserfileDTO userfileDTO = new UserfileDTO(null, null, post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
+            UserfileDTO userfileDTO = new UserfileDTO(post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
             userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
 
         }
@@ -140,24 +140,10 @@ public class PostTestPaperService {
         List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
 
         for (int i = 0; i < saveNames.size(); i++) {
-            UserfileDTO userfileDTO = new UserfileDTO(null, null, postTestPaper, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
+            UserfileDTO userfileDTO = new UserfileDTO(postTestPaper, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
             userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
         }
         return postTestPaper.getId();
     }
 
-//
-//    Teacher teacher = teacherRepository.findById(form.getUserId());
-//    PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
-//        log.info("======================" + teacher.getId());
-//
-//    PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
-//    List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
-//
-//        for (int i = 0; i < saveNames.size(); i++) {
-//        UserfileDTO userfileDTO = new UserfileDTO(null, null, post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
-//        userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
-//
-//    }
-//        return post.getId();
 }

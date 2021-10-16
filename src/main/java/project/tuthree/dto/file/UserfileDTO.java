@@ -29,4 +29,16 @@ public class UserfileDTO {
         this.saveTitle = saveTitle;
         this.realTitle = realTitle;
     }
+
+    public UserfileDTO(StudyRoom studyRoomId, String saveTitle, String realTitle) {
+        this.studyRoomId = studyRoomId;
+        this.saveTitle = saveTitle;
+        this.realTitle = realTitle;
+    }
+
+    public UserfileDTO(PostTestPaper testpaperId, String saveTitle, String realTitle) {
+        this.testpaperId = testpaperId;
+        this.saveTitle = saveTitle;
+        this.realTitle = realTitle;
+    }
 }
