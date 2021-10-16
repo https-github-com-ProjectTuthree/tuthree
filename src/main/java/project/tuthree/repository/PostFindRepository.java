@@ -1,25 +1,43 @@
 package project.tuthree.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.jsonwebtoken.lang.Strings;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.BookMark;
 import project.tuthree.domain.QBookMark;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.post.QPostFind;
-import project.tuthree.domain.user.QStudent;
-import project.tuthree.domain.user.Teacher;
+import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static io.jsonwebtoken.lang.Strings.hasText;
 import static project.tuthree.domain.QBookMark.bookMark;
 import static project.tuthree.domain.post.QPostFind.postFind;
 import static project.tuthree.domain.user.QStudent.student;
 import static project.tuthree.domain.user.QTeacher.teacher;
+import static project.tuthree.domain.user.QUserInfo.userInfo;
 
+@Slf4j
 @Repository
 @Transactional
 @RequiredArgsConstructor
@@ -30,20 +48,141 @@ public class PostFindRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
-    /** 선생님 post find 목록 찾기 */
-    public List<PostFind> findTeacherFindList(int page){
-        return jpaQueryFactory.selectFrom(postFind)
-                .join(postFind.teacherId, teacher).orderBy(teacher.create_date.desc())
-                .offset(setPage * (page - 1)).limit(setPage)
-                .fetch();
+    @Getter
+    @AllArgsConstructor
+    public static class PostFindSearchCondition {
+        //정렬, 검색
+        List<String> region;
+        List<String> subject;
+        String start;
+        String end;
+        String sort; //최신순, 오래된순, 가격 높은 순, 가격 낮은 순 (latest, old, high, low), 별점 높은 순, 별점 낮은 순
     }
 
     /** 선생님 post find 목록 찾기 */
-    public List<PostFind> findStudentFindList(int page){
-        return jpaQueryFactory.selectFrom(postFind)
-                .join(postFind.studentId, student).orderBy(student.create_date.desc())
-                .offset(setPage * (page - 1)).limit(setPage)
-                .fetch();
+    public JPAQuery<PostFind> findTeacherQuery(PostFindSearchCondition condition) {
+        QUserInfo m = userInfo;
+        QUserInfo n = new QUserInfo("n");
+        BooleanBuilder builder = new BooleanBuilder();
+        if(condition.getRegion() != null && !condition.getRegion().isEmpty()){
+            List<Predicate> list = new ArrayList<>();
+            condition.getRegion().stream().
+                    forEach(t -> list.add(n.region.contains(t)));
+            builder.and(ExpressionUtils.anyOf(list));
+        }
+
+        if(condition.getSubject() != null && !condition.getSubject().isEmpty()){
+            List<Predicate> list = new ArrayList<>();
+            condition.getSubject().stream()
+                    .forEach(t -> list.add(m.subject.contains(t)));
+            builder.and(ExpressionUtils.anyOf(list));
+        }
+        if(hasText(condition.getStart())){
+            builder.and(postFind.teacherId.cost.between(condition.getStart(), condition.getEnd()));
+        }
+        JPQLQuery<Teacher> where = JPAExpressions.select(postFind.teacherId).from(postFind, m, n).distinct()
+                .where(postFind.teacherId.id.eq(userInfo.userId)
+                        .and(m.userId.eq(n.userId))
+                        .and(builder));
+
+        JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
+                .where(postFind.teacherId.in(where));
+
+        //정렬
+        if(condition.getSort() != null && !condition.getSort().isEmpty()){
+            switch (condition.getSort()) {
+                case "latest" :
+                    query.orderBy(postFind.teacherId.create_date.desc());
+                    break;
+                case "old" :
+                    query.orderBy(postFind.teacherId.create_date.asc());
+                    break;
+                case "hprice" :
+                    query.orderBy(postFind.teacherId.cost.desc());
+                    break;
+                case "lprice" :
+                    query.orderBy(postFind.teacherId.cost.asc());
+                    break;
+                case "hstar" :
+                    query.orderBy(postFind.teacherId.star.desc());
+                    break;
+                case "lstar" :
+                    query.orderBy(postFind.teacherId.star.asc());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return query;
+    }
+    public List<PostFind> findTeacherFindList(int page, JPAQuery<PostFind> query){
+        return query.offset(setPage * (page - 1))
+                .limit(setPage).fetch();
+    }
+
+    public Long findTeacherHasRow(JPAQuery<PostFind> query) {
+        return query.fetchCount();
+    }
+
+    /** 학생 post find 목록 찾기 */
+
+    public JPAQuery<PostFind> findStudentQuery(PostFindSearchCondition condition) {
+        QUserInfo m = userInfo;
+        QUserInfo n = new QUserInfo("n");
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(condition.getRegion() != null && !condition.getRegion().isEmpty()){
+            List<Predicate> list = new ArrayList<>();
+            condition.getRegion().stream()
+                    .forEach(t -> list.add(n.region.contains(t)));
+            builder.and(ExpressionUtils.anyOf(list));
+        }
+        if(condition.getSubject() != null && !condition.getSubject().isEmpty()){
+            List<Predicate> list = new ArrayList<>();
+            condition.getSubject().stream()
+                    .forEach(t -> list.add(m.subject.contains(t)));
+            builder.and(ExpressionUtils.anyOf(list));
+        }
+        if(hasText(condition.getStart())){
+            builder.and(postFind.studentId.cost.between(condition.getStart(), condition.getEnd()));
+        }
+
+        JPQLQuery<Student> where = JPAExpressions.select(postFind.studentId).from(postFind, m, n).distinct()
+                .where(postFind.studentId.id.eq(userInfo.userId)
+                        .and(m.userId.eq(n.userId))
+                        .and(builder));
+
+        JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
+                .where(postFind.studentId.in(where));
+
+        //정렬
+        if(condition.getSort() != null && !condition.getSort().isEmpty()){
+            switch (condition.getSort()) {
+                case "latest" :
+                    query.orderBy(postFind.studentId.create_date.desc());
+                    break;
+                case "old" :
+                    query.orderBy(postFind.studentId.create_date.asc());
+                    break;
+                case "hprice" :
+                    query.orderBy(postFind.studentId.cost.desc());
+                    break;
+                case "lprice" :
+                    query.orderBy(postFind.studentId.cost.asc());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return query;
+    }
+    public List<PostFind> findStudentFindList(int page, JPAQuery<PostFind> query){
+        return query.offset(setPage * (page - 1))
+                .limit(setPage).fetch();
+    }
+
+    public Long findStudentHasRow(JPAQuery<PostFind> query) {
+        return query.fetchCount();
     }
 
     /** id로 특정 게시글 조회 */

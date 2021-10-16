@@ -3,13 +3,16 @@ package project.tuthree.ApiController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDoubleDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.domain.Status;
+import project.tuthree.dto.post.PostAnswerDTO;
 import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostreviewDTO;
 import project.tuthree.dto.post.PoststudyDTO;
@@ -19,6 +22,7 @@ import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.CalendarRepository;
 import project.tuthree.repository.PostStudyRepository;
 import project.tuthree.repository.PostStudyRepository.StudyListDTO;
+import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.CalendarService;
 import project.tuthree.service.CalendarService.CalendarListDTO;
@@ -29,6 +33,7 @@ import project.tuthree.service.StudyRoomService.StudyRoomListDTO;
 import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -46,6 +51,7 @@ public class ClassManageApiController {
     private final PostStudyService postStudyService;
     private final PostStudyRepository postStudyRepository;
     private final UserFileRepository userFileRepository;
+    private final StudyRoomRepository studyRoomRepository;
 
 
     @PostMapping("/room/review")
@@ -149,9 +155,9 @@ public class ClassManageApiController {
     /** 시험지 등록 */ //form-data
     @PostMapping("/room/exam")
     public NotExistDataResultResponse RegisterExamByStudyRoom(@RequestParam("teacherId") String teacherId,
-                                        @RequestParam("studentId") String studentId, @ModelAttribute MultipartFile file) throws NoSuchAlgorithmException, IOException {
-        Long savedId = studyRoomService.saveTestPaper(teacherId, studentId, file);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), savedId + "번 문제지가 등록되었습니다.");
+                                        @RequestParam("studentId") String studentId, @ModelAttribute MultipartFile file) throws NoSuchAlgorithmException, IOException, HttpMediaTypeNotAcceptableException {
+        Long id = studyRoomService.saveTestPaper(teacherId, studentId, file);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지가 등록되었습니다. : ");
     }
 
     /** 시험지 삭제 */
@@ -162,22 +168,24 @@ public class ClassManageApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deletedId + "번 문제지가 삭제되었습니다.");
     }
 
-    /** 시험지 답안 등록 */
-    @PostMapping("/room/exam/{post_id}")
-    public NotExistDataResultResponse RegisterAnswerById(@PathVariable("post_id") Long id,@RequestBody PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
-        studyRoomService.saveRealAnswer(id, postExamDTO);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지에 대한 답안이 입력되었습니다.");
+    /**
+     *
+     * @param id 문제지 번호
+     * @param grade teacher / student (대문자, 소문자 상관없음) (선생님 답안지 입력, 학생 답안지 입력)
+     * @param postExamDTO 답안
+     */
+    @PostMapping(value = "/room/exam/{post_id}")
+    public NotExistDataResultResponse RegisterAnswerById(@PathVariable("post_id") Long id, @RequestParam("grade") String grade,
+                                                         @RequestBody PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
+        String fileName = studyRoomService.saveRealAnswer(id, grade, postExamDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지에 대한 답안이 입력되었습니다. : " + fileName);
     }
 
-
-    /** 시험지 학생 답안 등록 */
-
-
-    /** 정답 비교 확인 */
+    /** 정답 비교 확인 - repository에서 바로 처리 , service 붙이기에는 복잡해짐 */
     @GetMapping("/room/exam/{post_id}")
-    public void CheckAnswer(@PathVariable("post_id") Long id) {
-
+    public ExistDataSuccessResponse CheckAnswer(@PathVariable("post_id") Long id) throws IOException {
+        PostAnswerDTO postAnswerDTO = studyRoomRepository.scoreTestPaper(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                id + "번 문제의 답안을 채점했습니다.", postAnswerDTO);
     }
-
-
 }
