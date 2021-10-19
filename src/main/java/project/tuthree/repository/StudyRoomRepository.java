@@ -1,7 +1,8 @@
 package project.tuthree.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,18 @@ import project.tuthree.domain.room.QStudyRoomInfo;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
 import project.tuthree.domain.user.Teacher;
+import project.tuthree.dto.post.PostAnswerDTO;
+import project.tuthree.dto.post.PostAnswerDTO.AnswerDTO;
+import project.tuthree.dto.post.PostAnswerDTO.answerType;
 import project.tuthree.dto.post.PostExamDTO;
+import project.tuthree.dto.post.PostExamDTO.ProblemDTO;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static project.tuthree.domain.file.QUserFile.userFile;
@@ -41,6 +48,7 @@ public class StudyRoomRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
+    private final UserFileRepository userFileRepository;
 
     /** 스터디룸 개설하기 */
     public StudyRoom roomRegister(StudyRoom studyRoom) {
@@ -99,11 +107,23 @@ public class StudyRoomRepository {
     }
 
     /** 선생님 아이디로 리뷰 조회 */
-    public List<PostReview> findReviewByTeacher(String teacherId) {
-        List<PostReview> postReviewList = jpaQueryFactory.selectFrom(postReview)
-                .where(postReview.id.teacherId.id.eq(teacherId))
-                .fetch();
-        return postReviewList;
+    public List<PostReview> findReviewByTeacher(String teacherId, String sort) {
+        JPAQuery<PostReview> query = jpaQueryFactory.selectFrom(postReview)
+                .where(postReview.id.teacherId.id.eq(teacherId));
+        switch (sort){
+            case "latest" :
+                query.orderBy(postReview.writeAt.desc());
+                break;
+            case "high" :
+                query.orderBy(postReview.star.desc());
+                break;
+            case "low" :
+                query.orderBy(postReview.star.asc());
+                break;
+            default:
+                break;
+        }
+        return query.fetch();
     }
 
     /** 학생 리뷰 작성하기 */
@@ -153,7 +173,55 @@ public class StudyRoomRepository {
                 .fetch();
     }
 
-    /** 시험지 학생 답안 등록 */
+    /**
+     * 정답 비교 확인 -> json 둘다 객체로 바꿔서 값 비교하고 o, x json으로 변환해서 내보내기
+     * @param id 문제 번호
+     * @return
+     */
+    public PostAnswerDTO scoreTestPaper(Long id) throws IOException {
+        UserFile userFile = userFileRepository.userFileFindByFileId(id);
+        String name = userFile.getRealTitle();
 
-    /** 정답 비교 확인 -> json 둘다 객체로 바꿔서 값 비교하고 o, x json으로 변환해서 내보내기 */
+        if(name.contains(".")) {
+            name = name.split("\\.")[0];
+        }
+
+        List<ProblemDTO> teacher = findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json").getProblem();
+        List<ProblemDTO> student = findExamByIdnName(userFile.getStudyRoomId(), name + "_student_answer.json").getProblem();
+        List<AnswerDTO> answer = new ArrayList<>();
+        for (int i = 0; i < teacher.size(); i++) {
+            if (teacher.get(i).isAuto() == true) {
+                answer.add((teacher.get(i).getAns().equals(student.get(i).getAns())) ?
+                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.RIGHT)) :
+                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.WRONG)));
+            }else{
+                answer.add(new AnswerDTO(teacher.get(i).getQuestion(), answerType.NONE));
+            }
+        }
+
+        return new PostAnswerDTO(Long.valueOf(teacher.size()), answer);
+    }
+
+    /** 스터디룸 아이디와 파일 이름으로 답안지 찾기 */
+    public PostExamDTO findExamByIdnName(StudyRoom studyRoom, String name) throws IOException {
+        String path = jpaQueryFactory.select(userFile.saveTitle).from(userFile)
+                .where(userFile.studyRoomId.eq(studyRoom)
+                        .and(userFile.realTitle.eq(name)))
+                .fetchOne();
+        Object object = userFileRepository.changeJsonFile(path);
+        ObjectMapper mapper = new ObjectMapper();
+        PostExamDTO postExamDTO = mapper.convertValue(object, PostExamDTO.class);
+        return postExamDTO;
+
+    }
+
+    /** 스터디룸 아이디으로 파일 이름 겹치는 지 확인 */
+    public String findSameNameTestPaper(StudyRoom studyRoom, String name){
+        Long count = jpaQueryFactory.selectFrom(userFile)
+                .where(userFile.studyRoomId.eq(studyRoom)
+                        .and(userFile.realTitle.contains(name)))
+                .fetchCount();
+
+        return (count > 0) ? name + "(" + count + ")" : name;
+    }
 }

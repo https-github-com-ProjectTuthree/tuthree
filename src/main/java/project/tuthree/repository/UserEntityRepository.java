@@ -82,8 +82,7 @@ public class UserEntityRepository {
 
     /** 지역 정보 찾기 */
     public List<String> userFindRegion(String id) {
-        return jpaQueryFactory.select(userInfo.region)
-                .from(userInfo)
+        return jpaQueryFactory.select(userInfo.region).from(userInfo)
                 .where(userInfo.region.isNotNull()
                         .and(userInfo.userId.eq(id)))
                 .fetch();
@@ -100,8 +99,7 @@ public class UserEntityRepository {
     /** 과목 정보 찾기 */
     public List<String> userFindSubject(String id) {
 
-        return jpaQueryFactory.select(userInfo.subject)
-                .from(userInfo)
+        return jpaQueryFactory.select(userInfo.subject).from(userInfo)
                 .where(userInfo.subject.isNotNull()
                         .and(userInfo.userId.eq(id)))
                 .fetch();

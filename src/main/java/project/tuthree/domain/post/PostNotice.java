@@ -7,7 +7,6 @@ import project.tuthree.domain.user.Admin;
 import javax.persistence.*;
 import java.util.Date;
 
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter

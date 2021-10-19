@@ -1,5 +1,7 @@
 package project.tuthree.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,13 +17,17 @@ import project.tuthree.dto.post.PostfindDTO;
 import project.tuthree.mapper.BookMarkMapper;
 import project.tuthree.mapper.PostFindMapper;
 import project.tuthree.repository.PostFindRepository;
+import project.tuthree.repository.PostFindRepository.PostFindSearchCondition;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
+import project.tuthree.service.PostFindService.PostFindStudentCountListDTO.PostFindStudentListDTO;
+import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO.PostFindTeacherListDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static project.tuthree.domain.post.QPostFind.postFind;
@@ -38,30 +44,25 @@ public class PostFindService {
     private final PostFindMapper postFindMapper;
     private final UserEntityRepository userEntityRepository;
     private final BookMarkMapper bookMarkMapper;
-
-    /**
-     * 정렬 쿼리, 목록 조회에 사용하기
-     * 가격 : 낮은 순, 높은 순
-     * 올린 시간 : 최신순
-     *
-     */
-
-
+    private final ObjectMapper objectMapper;
 
     /**
      * 선생님 postfind 목록 조회  - registration 상관x
      */
-    public List<PostFindTeacherListDTO> findTeacherList(int page) throws IOException {
+    public PostFindTeacherCountListDTO findTeacherList(int page, PostFindSearchCondition condition) throws IOException {
         //postfind
-        List<PostFind> teacherFindList = postFindRepository.findTeacherFindList(page);
+        JPAQuery<PostFind> query = postFindRepository.findTeacherQuery(condition);
+        log.info("===============lgolog" + query.toString());
+
+        List<PostFind> teacher = postFindRepository.findTeacherFindList(page, query);
+        Long teacherHasRow = postFindRepository.findTeacherHasRow(query);
 
         List<PostFindTeacherListDTO> list = new ArrayList<>();
 
-        for (PostFind f : teacherFindList) {
-            //지역
-            List<String> region = userEntityRepository.userFindRegion(f.getTeacherId().getId());
+        for (PostFind f : teacher) {
 
-            //과목
+            /** 검색 후에 또 지역을 끌어옴... */
+            List<String> region = userEntityRepository.userFindRegion(f.getTeacherId().getId());
             List<String> subject = userEntityRepository.userFindSubject(f.getTeacherId().getId());
             byte[] file = userFileRepository.transferUserFile(f.getTeacherId().getPost());
 
@@ -69,24 +70,24 @@ public class PostFindService {
                     f.getTeacherId().getMajor(), f.getTeacherId().getStar(), f.getTeacherId().getCost(), f.getTeacherId().getSex(),f.getTeacherId().getRegistration(),
                     region, subject, file);
             list.add(dto);
-
         }
-        return list;
+        return new PostFindTeacherCountListDTO(teacherHasRow, list);
     }
 
     /**
      * 학생 postfind 목록 조회 - registration 상관 x
      */
-    public List<PostFindStudentListDTO> findStudentList(int page) throws IOException {
+    public PostFindStudentCountListDTO findStudentList(int page, PostFindSearchCondition condition) throws IOException {
         //postfind
-        List<PostFind> studentFindList = postFindRepository.findStudentFindList(page);
-
+        JPAQuery<PostFind> query = postFindRepository.findStudentQuery(condition);
+        List<PostFind> student = postFindRepository.findStudentFindList(page, query);
+        Long studentHasRow = postFindRepository.findStudentHasRow(query);
         List<PostFindStudentListDTO> list = new ArrayList<>();
 
-        for (PostFind f : studentFindList) {
-            //지역
+        for (PostFind f : student) {
+
+            /** 검색 후에 또 지역을 끌어옴... */
             List<String> region = userEntityRepository.userFindRegion(f.getStudentId().getId());
-            //과목
             List<String> subject = userEntityRepository.userFindSubject(f.getStudentId().getId());
             byte[] file = userFileRepository.transferUserFile(f.getStudentId().getPost());
 
@@ -95,7 +96,7 @@ public class PostFindService {
                     region, subject, file);
             list.add(dto);
         }
-        return list;
+        return new PostFindStudentCountListDTO(studentHasRow, list);
     }
 
     /** 특정 선생님 조회 */
@@ -104,11 +105,9 @@ public class PostFindService {
 
         Teacher teacher = userEntityRepository.teacherFindById(userId);
 
-        //지역
         List<String> region = userEntityRepository.userFindRegion(userId);
-
-        //과목
         List<String> subject = userEntityRepository.userFindSubject(userId);
+
         byte[] file = userFileRepository.transferUserFile(teacher.getPost());
 
         return new PostFindTeacherDTO(teacher.getId(), postId, teacher.getName(), teacher.getSex(), teacher.getBirth(), teacher.getSchool(),
@@ -120,11 +119,10 @@ public class PostFindService {
     public PostFindStudentDTO findStudent(Long postId) throws IOException {
 
         String userId = postFindRepository.findStudentById(postId);
-        Student student = userEntityRepository.studentFindById(userId);
 
-        //지역
+        Student student = userEntityRepository.studentFindById(userId);
         List<String> region = userEntityRepository.userFindRegion(userId);
-        //과목
+
         List<String> subject = userEntityRepository.userFindSubject(userId);
         byte[] file = userFileRepository.transferUserFile(student.getPost());
 
@@ -162,40 +160,56 @@ public class PostFindService {
 
     @Getter
     @AllArgsConstructor
-    public static class PostFindTeacherListDTO {
-        /**
-         * 이름 | 학교 | 과 | 과목 | 지역 | 가격
-         * 모집중, 모집마감 | 별점 | 이미지
-         */
-        Long postId;
-        String name;
-        String school;
-        String major;
-        double star;
-        String cost;
-        Sex sex;
-        Status registration;
-        List<String> region;
-        List<String> subject;
-        byte[] post;
+    public static class PostFindTeacherCountListDTO {
+        private Long count;
+        private List<PostFindTeacherListDTO> list;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostFindTeacherListDTO {
+            /**
+             * 이름 | 학교 | 과 | 과목 | 지역 | 가격
+             * 모집중, 모집마감 | 별점 | 이미지
+             */
+            Long postId;
+            String name;
+            String school;
+            String major;
+            double star;
+            String cost;
+            Sex sex;
+            Status registration;
+            List<String> region;
+            List<String> subject;
+            byte[] post;
+        }
     }
+
 
     @Getter
     @AllArgsConstructor
-    public static class PostFindStudentListDTO {
-        /**
-         * 이름 | 과목 | 지역 | 가격
-         * 모집중, 모집마감 | 이미지
-         */
-        Long postId;
-        String name;
-        String cost;
-        Sex sex;
-        Status registration;
-        List<String> region;
-        List<String> subject;
-        byte[] post;
+    public static class PostFindStudentCountListDTO {
+        private Long count;
+        private List<PostFindStudentListDTO> list;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostFindStudentListDTO {
+            /**
+             * 이름 | 과목 | 지역 | 가격
+             * 모집중, 모집마감 | 이미지
+             */
+            Long postId;
+            String name;
+            String cost;
+            Sex sex;
+            Status registration;
+            List<String> region;
+            List<String> subject;
+            byte[] post;
+        }
     }
+
 
     @Getter
     @AllArgsConstructor
