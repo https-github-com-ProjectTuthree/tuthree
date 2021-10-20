@@ -23,7 +23,7 @@ public class StudentDTO {
     private String post;
     private Status notification;
     private Grade grade;
-    private Date create_date;
+    private Date createDate;
     private String region;
     private Status registration;
     private String subject;
@@ -33,7 +33,7 @@ public class StudentDTO {
     private User user;
 
     @Builder
-    public StudentDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date, String region, Status registration, String subject, String cost, School school, String detail, User user) {
+    public StudentDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date createDate, String region, Status registration, String subject, String cost, School school, String detail, User user) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -44,7 +44,7 @@ public class StudentDTO {
         this.post = post;
         this.notification = notification;
         this.grade = grade;
-        this.create_date = create_date;
+        this.createDate = createDate;
         this.region = region;
         this.registration = registration;
         this.subject = subject;
