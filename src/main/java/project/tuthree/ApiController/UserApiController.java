@@ -4,16 +4,23 @@ import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
+import project.tuthree.domain.user.User;
+import project.tuthree.domain.user.UserRepository;
 import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
+import project.tuthree.repository.AdminRepository;
 import project.tuthree.repository.UserFileRepository;
+import project.tuthree.service.AdminService;
 import project.tuthree.service.PostFindService;
 import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
@@ -24,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,8 +44,11 @@ public class UserApiController {
 
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
+    private final UserRepository userRepository;
     private final PostFindService postFindService;
     private final UserFileRepository userFileRepository;
+    private final AdminService adminService;
+    private final AdminRepository adminRepository;
 
     /** id체크 **/
     @GetMapping("/register/{id}/checkid")
@@ -217,6 +228,21 @@ public class UserApiController {
     }
 
 
+/*    *//**유저 목록 조회**//*
+    @GetMapping("/admin/userlist/{page}")
+    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PathVariable("page") int page) {
+        List<UserListDTO> user = adminService.userList(page);
+        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , user);
+    }*/
+
+    @GetMapping("/admin/userlist")
+    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
+        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
+        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
+    }
+
 
     /**헤더에서 사용자 정보 확인**/
     public CheckUser CheckUserI(String AUTHORIZATION){
@@ -235,6 +261,7 @@ public class UserApiController {
 
         return checkUser;
     }
+
 
 
 }

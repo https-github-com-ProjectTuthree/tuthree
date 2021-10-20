@@ -4,8 +4,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.tuthree.domain.Status;
 
 import javax.persistence.*;
+import java.util.List;
+
+import static project.tuthree.domain.user.QUserInfo.userInfo;
 
 @Entity
 @Getter
@@ -17,6 +21,7 @@ import javax.persistence.*;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserInfo {
+
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "USERIFNO_SEQ_GENERATOR")
@@ -35,5 +40,22 @@ public class UserInfo {
         this.userId = userId;
         this.region = region;
         this.subject = subject;
+    }
+
+
+    public void updateR(String userId, List<String> region) {
+        this.userId = userId;
+        for (String r : region){
+            this.region = r;
+        }
+
+    }
+
+    public void updateS(String  userId, List<String> subject){
+        this.userId = userId;
+        for (String s : subject){
+            this.subject = s;
+        }
+
     }
 }

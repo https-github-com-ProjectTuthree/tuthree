@@ -50,14 +50,15 @@ public class User implements Persistable<String>{
     private Grade grade;
 
     @CreatedDate
+    @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date create_date;
+    private Date createDate;
 
 
 
     @Override
     public boolean isNew(){
-        return create_date == null;
+        return createDate == null;
     }
 
     public interface Persistable<ID>{
@@ -66,7 +67,7 @@ public class User implements Persistable<String>{
     }
 
    @Builder
-    public User(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date create_date) {
+    public User(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date createDate) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -77,7 +78,7 @@ public class User implements Persistable<String>{
         this.post = post;
         this.notification = notification;
         this.grade = grade;
-        this.create_date = create_date;
+        this.createDate = createDate;
     }
 
     public void updateP(String pwd){

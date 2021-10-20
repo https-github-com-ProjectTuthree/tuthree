@@ -10,6 +10,7 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class UserRegisterService {
                     result = FALSE;
                     return result;
                 }
-            }            
+            }
         }else {
             result = TRUE;
         }
@@ -89,7 +90,7 @@ public class UserRegisterService {
         else{
             return false;
         }*/
-    
+
     /*    //아이디 중복 체크
     public boolean checkId(String id){
         return userRepository.existsById(id);
@@ -199,15 +200,19 @@ public class UserRegisterService {
     //튜터정보조회
     @Transactional(readOnly = true)
     public TeacherResponseDTO findTutorId (String id){
-        Teacher entity = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
-        return new TeacherResponseDTO(entity);
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        List<String> region = userEntityRepository.userFindRegion(id);
+        List<String> subject = userEntityRepository.userFindSubject(id);
+        return new TeacherResponseDTO(teacher, region, subject);
     }
 
     //튜티정보조회
     @Transactional(readOnly = true)
     public StudentResponseDTO findTuTeeId (String id){
         Student entity = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
-        return new StudentResponseDTO(entity);
+        List<String> region = userEntityRepository.userFindRegion(id);
+        List<String> subject = userEntityRepository.userFindSubject(id);
+        return new StudentResponseDTO(entity, region, subject);
     }
 
     /*@Transactional
@@ -225,6 +230,9 @@ public class UserRegisterService {
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
 
+        userEntityRepository.userSaveRegion(updateDTO.getId(), updateDTO.getRegionL());
+        userEntityRepository.userSaveSubject(updateDTO.getId(), updateDTO.getSubjectL());
+
         return id;
     }
     //선생님과외정보 수정
@@ -234,6 +242,8 @@ public class UserRegisterService {
 
         teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
 
+        userEntityRepository.userSaveRegion(updateDTO.getId(), updateDTO.getRegionL());
+        userEntityRepository.userSaveSubject(updateDTO.getId(), updateDTO.getSubjectL());
         return id;
     }
 
