@@ -42,7 +42,7 @@ public class StudentRegisterDTO {
         this.post = post;
         this.notification = Status.OPEN;
         this.grade = grade.STUDENT;
-        this.create_date = new Date();
+        this.createDate = new Date();
         this.region = region;
         this.registration = registration;
         this.subject = subject;
@@ -81,7 +81,7 @@ public class StudentRegisterDTO {
     @ColumnDefault("STUDENT")
     private Grade grade = Grade.STUDENT;
 
-    private Date create_date = new Date();
+    private Date createDate = new Date();
     private String region; ///json
     private List<String> regionL;
     private Status registration;
@@ -104,7 +104,7 @@ public class StudentRegisterDTO {
                 .post(post)
                 .notification(notification)
                 .grade(grade)
-                .create_date(create_date)
+                .createDate(createDate)
                 .registration(registration)
                 .cost(cost)
                 .school(school)

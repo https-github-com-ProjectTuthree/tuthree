@@ -17,7 +17,7 @@ import java.util.Date;
 public class UserListDTO {
     private String id;
     private String name;
-    private Date create_date;
+    private Date createDate;
     private String pwd;
     private String email;
     private String tel;
@@ -27,7 +27,7 @@ public class UserListDTO {
 
 
     @Builder
-    public UserListDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Grade grade, Date create_date){
+    public UserListDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, Grade grade, Date createDate){
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -36,7 +36,7 @@ public class UserListDTO {
         this.sex = sex;
         this.birth = birth;
         this.grade = grade;
-        this.create_date = create_date;
+        this.createDate = createDate;
 
     }
    /* @Builder

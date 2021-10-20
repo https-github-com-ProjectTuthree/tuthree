@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.domain.post.PostNotice;
 import project.tuthree.domain.user.*;
+import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.user.AdminDTO;
 import project.tuthree.dto.user.UserDTO;
 import project.tuthree.dto.user.UserListDTO;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +32,11 @@ public class AdminService {
         return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
     }
 
-    @Transactional
-    public List<UserListDTO> userList() {
-        List<User> userEntities = userRepository.findAll();
-        List<Teacher> teacherEntites = teacherRepository.findAll();
-        List<Student> studentEntities = studentRepository.findAll();
+   /*@Transactional
+    public List<UserListDTO> userList(int page) {
+        List<User> userEntities = adminRepository.userByPage(page);
+        List<Teacher> teacherEntites = adminRepository.teacherByPage(page);
+        List<Student> studentEntities = adminRepository.studentByPage(page);
 
         List<UserListDTO> userListDTO = new ArrayList<>();
 
@@ -47,7 +50,7 @@ public class AdminService {
                     .sex(user.getSex())
                     .grade(user.getGrade())
                     .tel(user.getTel())
-                    .create_date(user.getCreate_date())
+                    .createDate(user.getCreateDate())
                     .build();
             userListDTO.add(parentDTO);
         }
@@ -61,7 +64,7 @@ public class AdminService {
                     .sex(teacher.getSex())
                     .grade(teacher.getGrade())
                     .tel(teacher.getTel())
-                    .create_date(teacher.getCreate_date())
+                    .createDate(teacher.getCreateDate())
                     .build();
             userListDTO.add(teacherDTO);
         }
@@ -76,26 +79,53 @@ public class AdminService {
                     .sex(student.getSex())
                     .grade(student.getGrade())
                     .tel(student.getTel())
-                    .create_date(student.getCreate_date())
+                    .createDate(student.getCreateDate())
                     .build();
             userListDTO.add(studentDTO);
         }
         Collections.sort(userListDTO, new ListComparator());
 
         return userListDTO;
-    }
+    }*/
+   @Transactional
+   public Page<UserListDTO> userList(Pageable pageable) {
+       Page<User> userEntities = userRepository.findAll(pageable);
+       Page<Teacher> teacherEntites = teacherRepository.findAll(pageable);
+       Page<Student> studentEntities = studentRepository.findAll(pageable);
+
+       Page<UserListDTO> userPageList = userEntities.map(
+               user -> new UserListDTO(
+                       user.getId(), user.getPwd() , user.getName(),
+                       user.getEmail(), user.getTel(), user.getSex(),
+                       user.getBirth(), user.getGrade(), user.getCreateDate()
+               ));
+
+
+       return userPageList;
+   }
+    /**날짜순 정렬**/
     public class ListComparator implements Comparator<UserListDTO>{
 
         @Override
         public int compare(UserListDTO b1, UserListDTO b2) {
-            return b1.getCreate_date().compareTo(b2.getCreate_date());
+            return b1.getCreateDate().compareTo(b2.getCreateDate());
         }
     }
 
-/*    @Transactional
-    public Page<User> parentList(Pageable pageable){
-        return userRepository.findAll(pageable);
-    }*/
+
+
+    @Transactional
+    public Page<UserListDTO> parentList(Pageable pageable){
+        Page<User> userList = userRepository.findAll(pageable);
+
+        Page<UserListDTO> userPageList = userList.map(
+                user -> new UserListDTO(
+                        user.getId(), user.getPwd() , user.getName(),
+                        user.getEmail(), user.getTel(), user.getSex(),
+                        user.getBirth(), user.getGrade(), user.getCreateDate()
+                ));
+        return userPageList;
+    }
 
 
 
