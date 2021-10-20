@@ -21,7 +21,7 @@ public class Student implements Persistable<String>{
 
     @Builder
     public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post,
-                   Status notification, Grade grade, Date create_date, Status registration, String cost, School school, String detail, User user) {
+                   Status notification, Grade grade, Date createDate, Status registration, String cost, School school, String detail, User user) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -32,7 +32,7 @@ public class Student implements Persistable<String>{
         this.post = post;
         this.notification = notification;
         this.grade = grade;
-        this.create_date = create_date;
+        this.createDate = createDate;
         this.registration = registration;
         this.cost = cost;
         this.school = school;
@@ -70,8 +70,9 @@ public class Student implements Persistable<String>{
     private Grade grade;
 
     @CreatedDate
+    @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date create_date;
+    private Date createDate;
 
 //    private String region; ///json
 
@@ -94,7 +95,7 @@ public class Student implements Persistable<String>{
 
     @Override
     public boolean isNew(){
-        return create_date == null;
+        return createDate == null;
     }
 
     public void update(Status registration, String cost, School school, String detail) {
