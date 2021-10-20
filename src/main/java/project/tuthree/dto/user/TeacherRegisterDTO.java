@@ -53,7 +53,7 @@ public class TeacherRegisterDTO {
 
     @ColumnDefault("TEACHER")
     private Grade grade = Grade.TEACHER;
-    private Date create_date = new Date();
+    private Date createDate = new Date();
     private String region; ///json
     private List<String> regionL;
 
@@ -97,7 +97,7 @@ public class TeacherRegisterDTO {
         this.file = file;
         this.notification = notification;
         this.grade = grade;
-        this.create_date = new Date();
+        this.createDate = new Date();
         this.region = jsonp(regionL);
         this.registration = registration;
         this.subject = jsonp(subjectL);
@@ -139,7 +139,7 @@ public class TeacherRegisterDTO {
                 .post(post)
                 .notification(notification)
                 .grade(grade)
-                .create_date(create_date)
+                .createDate(createDate)
                 .registration(registration)
                 .cost(cost)
                 .school(school)
