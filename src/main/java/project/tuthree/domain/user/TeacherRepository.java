@@ -1,5 +1,7 @@
 package project.tuthree.domain.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,10 +11,6 @@ import java.util.Optional;
 public interface TeacherRepository extends JpaRepository<Teacher, String> {
     //아이디중복체크
     boolean existsById(String id);
-
-    //로그인
-    @EntityGraph(attributePaths = "authorities")
-    Optional<Teacher> findById(String id);
 
     /** 이메일로 아이디 찾기**/
     Teacher findByNameAndEmail(String email, String name);
@@ -27,4 +25,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     Teacher findByIdAndNameAndTel(String id, String tel, String name);
 
     List<Teacher> findAll();
+
+    Page<Teacher> findAll(Pageable pageable);
 }

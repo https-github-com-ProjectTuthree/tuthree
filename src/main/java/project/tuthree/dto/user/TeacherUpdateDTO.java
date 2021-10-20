@@ -7,12 +7,15 @@ import project.tuthree.domain.Status;
 import project.tuthree.domain.user.SchoolStatus;
 import project.tuthree.domain.user.Teacher;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class TeacherUpdateDTO {
-    private String region; ///json
+    private String id;
+    private List<String> regionL;
     private Status registration;
-    private String subject;
+    private List<String> subjectL;
     private String cost;
     private String school;
     private SchoolStatus status;
@@ -20,11 +23,12 @@ public class TeacherUpdateDTO {
     private String detail;
 
     @Builder
-    public TeacherUpdateDTO(String region, Status registration, String subject,
+    public TeacherUpdateDTO(String id, List<String> regionL, Status registration, List<String> subjectL,
                             String cost, String school, SchoolStatus status, String major,String detail) {
-        this.region = region;
+        this.id = id;
+        this.regionL = regionL;
         this.registration = registration;
-        this.subject = subject;
+        this.subjectL = subjectL;
         this.cost = cost;
         this.school = school;
         this.status = status;

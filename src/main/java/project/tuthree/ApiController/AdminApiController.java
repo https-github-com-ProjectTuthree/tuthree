@@ -51,17 +51,12 @@ public class AdminApiController {
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
 
-    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList () {
-        //if(grade == "PARENT"){
-        //List<User> user = userRepository.findAll();
-        List<UserListDTO> user = adminService.userList();
-        //Long page = user.size();
-        Long page = 1L;
-        //Long page = user.getTotalElements();
+/*    @GetMapping("/admin/userlist")
+    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
+        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "의 회원정보가 조회되었습니다.", page , user);
-    }
+                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
+    }*/
 
 
 

@@ -44,7 +44,7 @@ public class TeacherDTO {
     private Grade grade;
 
     @NotNull
-    private Date create_date;
+    private Date createDate;
 
     @NotNull
     private String region;
@@ -78,7 +78,7 @@ public class TeacherDTO {
     private String detail;
 
     @Builder
-    public TeacherDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date create_date, String region, Status registration, String subject, String cost, String school, SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
+    public TeacherDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date createDate, String region, Status registration, String subject, String cost, String school, SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -89,7 +89,7 @@ public class TeacherDTO {
         this.post = post;
         this.notification = notification;
         this.grade = grade;
-        this.create_date = create_date;
+        this.createDate = createDate;
         this.region = region;
         this.registration = registration;
         this.subject = subject;

@@ -1,8 +1,12 @@
 package project.tuthree.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
 
@@ -37,7 +41,21 @@ public class UserDTO {
     private int birth;
     private String post;
     private Grade grade;
-    private Date create_date;
+    private Date createDate;
+
+    @Builder
+    public UserDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Grade grade, Date createDate){
+        this.id = id;
+        this.pwd = pwd;
+        this.name = name;
+        this.email = email;
+        this.tel = tel;
+        this.sex = sex;
+        this.birth = birth;
+        this.post = post;
+        this.grade = grade.PARENT;
+        this.createDate = new Date();
+    }
 
 
 }

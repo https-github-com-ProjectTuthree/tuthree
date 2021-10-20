@@ -55,11 +55,11 @@ public class UserRegisterDTO {
     @ColumnDefault("Parent")
     private Grade grade = Grade.PARENT;
 
-    private Date create_date = new Date();
+    private Date createDate = new Date();
 
 
    @Builder
-    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, MultipartFile file, Status notification, Grade grade, Date create_date){
+    public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, MultipartFile file, Grade grade){
        Assert.notNull(id, "id must not be blank");
        Assert.notNull(pwd, "pwd must not be blank");
        Assert.notNull(name, "name must not be blank");
@@ -75,7 +75,7 @@ public class UserRegisterDTO {
        this.file = file;
        this.notification = Status.OPEN;
        this.grade = grade.PARENT;
-       this.create_date = new Date();
+       this.createDate = new Date();
     }
 
     public User toEntity(){
@@ -90,7 +90,7 @@ public class UserRegisterDTO {
                 .post(post)
                 .notification(notification)
                 .grade(grade)
-                .create_date(create_date)
+                .createDate(createDate)
                 .build();
     }
 
