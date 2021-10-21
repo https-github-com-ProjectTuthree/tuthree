@@ -10,6 +10,7 @@ import project.tuthree.domain.user.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -24,6 +25,7 @@ public class UserListDTO {
     private Sex sex;
     private int birth;
     private Grade grade;
+
 
 
     @Builder
@@ -65,5 +67,18 @@ public class UserListDTO {
         this.tel = entity.getTel();
         this.sex = entity.getSex();
     }*/
+
+    private static String getTimestampToDate(String timestampStr){
+        long timestamp = Long.parseLong(timestampStr);
+        Date date = new java.util.Date(timestamp*1000L);
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+9"));
+        String formattedDate = sdf.format(date);
+        return formattedDate;
+    }
+
+
+
+
 
 }
