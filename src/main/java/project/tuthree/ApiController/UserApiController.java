@@ -3,14 +3,9 @@ package project.tuthree.ApiController;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.UserFileRepository;
@@ -19,11 +14,9 @@ import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 @Slf4j

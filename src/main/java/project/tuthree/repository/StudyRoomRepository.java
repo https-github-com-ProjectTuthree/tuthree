@@ -86,6 +86,7 @@ public class StudyRoomRepository {
                 .where(QStudyRoom.studyRoom.teacherId.id.eq(teacherId)
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
+        if(studyRoom == null) return null;
         Boolean bool = jpaQueryFactory.select(studyRoomInfo.status)
                 .from(studyRoomInfo)
                 .where(studyRoomInfo.id.eq(studyRoom))
@@ -169,7 +170,8 @@ public class StudyRoomRepository {
     /** 시험지 목록 불러오기 */
     public List<UserFile> listTestPaper(StudyRoom studyRoom) {
         return jpaQueryFactory.selectFrom(userFile)
-                .where(userFile.studyRoomId.eq(studyRoom))
+                .where(userFile.studyRoomId.eq(studyRoom)
+                        .and(userFile.realTitle.endsWith(".pdf")))
                 .fetch();
     }
 
@@ -189,20 +191,21 @@ public class StudyRoomRepository {
         List<ProblemDTO> teacher = findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json").getProblem();
         List<ProblemDTO> student = findExamByIdnName(userFile.getStudyRoomId(), name + "_student_answer.json").getProblem();
         List<AnswerDTO> answer = new ArrayList<>();
+
         for (int i = 0; i < teacher.size(); i++) {
             if (teacher.get(i).isAuto() == true) {
                 answer.add((teacher.get(i).getAns().equals(student.get(i).getAns())) ?
-                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.RIGHT)) :
-                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.WRONG)));
+                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.RIGHT, teacher.get(i).getAns(), student.get(i).getAns())) :
+                        (new AnswerDTO(teacher.get(i).getQuestion(), answerType.WRONG, teacher.get(i).getAns(), student.get(i).getAns())));
             }else{
-                answer.add(new AnswerDTO(teacher.get(i).getQuestion(), answerType.NONE));
+                answer.add(new AnswerDTO(teacher.get(i).getQuestion(), answerType.NONE, teacher.get(i).getAns(), student.get(i).getAns()));
             }
         }
 
         return new PostAnswerDTO(Long.valueOf(teacher.size()), answer);
     }
 
-    /** 스터디룸 아이디와 파일 이름으로 답안지 찾기 */
+    /** 스터디룸 아이디와 파일 이름으로 답안지 찾기 - (json -> 객체) 반환까지 완료 */
     public PostExamDTO findExamByIdnName(StudyRoom studyRoom, String name) throws IOException {
         String path = jpaQueryFactory.select(userFile.saveTitle).from(userFile)
                 .where(userFile.studyRoomId.eq(studyRoom)
@@ -212,7 +215,6 @@ public class StudyRoomRepository {
         ObjectMapper mapper = new ObjectMapper();
         PostExamDTO postExamDTO = mapper.convertValue(object, PostExamDTO.class);
         return postExamDTO;
-
     }
 
     /** 스터디룸 아이디으로 파일 이름 겹치는 지 확인 */

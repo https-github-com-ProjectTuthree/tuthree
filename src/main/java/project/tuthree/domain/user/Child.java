@@ -21,7 +21,6 @@ public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "CHILD_SEQ_GENERATOR")
-
     private Long id;
 
     @Column(name = "parent_id")
@@ -31,7 +30,6 @@ public class Child {
     private String studentId;
     @Column(name = "student_name")
     private String studentName;
-
 
     private boolean status;
 

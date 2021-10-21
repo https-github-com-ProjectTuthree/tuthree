@@ -9,6 +9,12 @@ spring:
     #hikari:
       #schema: classpath:src/main/resources/schema.sql
 
+  rabbitmq:
+    host: localhost
+    username: tuthree1234
+    password: 1234
+    port: 5672
+
   jpa:
     hibernate:
       ddl-auto: none
