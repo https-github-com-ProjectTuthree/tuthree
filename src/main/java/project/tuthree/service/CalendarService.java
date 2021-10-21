@@ -44,8 +44,7 @@ public class CalendarService {
 
         List<StudyListDTO> postStudy = postStudyService.findPostByStudyRoom(teacherId, studentId);
         for(StudyListDTO s : postStudy){
-            list.add(new calendarFullListDTO(s.getId(),
-                    userFileRepository.unixToDate(s.getDateAt()), String.valueOf(s.getNumber()) + "회차", "보고서"));
+            list.add(new calendarFullListDTO(s.getId(), s.getDateAt(), String.valueOf(s.getNumber()) + "회차", "보고서"));
         }
         return list;
     }
@@ -55,12 +54,9 @@ public class CalendarService {
      */
     public List<CalendarListDTO> findByDate(String teacherId, String studentId, String date) throws ParseException {
 
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date to = transFormat.parse(date);
-        List<Calendar> dateList = calendarRepository.findByDate(teacherId, studentId, to);
-
+        List<Calendar> dateList = calendarRepository.findByDate(teacherId, studentId, date);
         return dateList.stream()
-                .map(m -> wrap(() -> new CalendarListDTO(m.getId(), String.valueOf(m.getDateAt()), m.getSchedule())))
+                .map(m -> wrap(() -> new CalendarListDTO(m.getId(), userFileRepository.unixToDate(m.getDateAt()), m.getSchedule())))
                 .collect(Collectors.toList());
     }
 

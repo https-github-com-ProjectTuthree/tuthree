@@ -1,6 +1,7 @@
 package project.tuthree.dto.post;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class PostAnswerDTO {
 
     private Long prob;
@@ -15,23 +17,18 @@ public class PostAnswerDTO {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
     public static class AnswerDTO {
 
         private Long question;
         private answerType score;
+        private String teacherAnswer;
+        private String studentAnswer;
 
-        public AnswerDTO(Long question, answerType score) {
-            this.question = question;
-            this.score = score;
-        }
     }
 
     public enum answerType {
         RIGHT, WRONG, NONE
     }
 
-    public PostAnswerDTO(Long prob, List<AnswerDTO> answer) {
-        this.prob = prob;
-        this.answer = answer;
-    }
 }

@@ -117,12 +117,9 @@ public class PostAdminApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 공지사항이 수정되었습니다.");
     }
 
-
     // TEST PAPER ////////////////////////////////
 
-    /**
-     * 커뮤니티 게시글 삭제
-     */
+    /** 커뮤니티 게시글 삭제 */
     @DeleteMapping("/community/admin/id/{post_id}")
     public NotExistDataResultResponse CommunityAdminDelete(@PathVariable("post_id") Long id) {
         Long deletedId = postTestPaperService.deleteCommunity(id);

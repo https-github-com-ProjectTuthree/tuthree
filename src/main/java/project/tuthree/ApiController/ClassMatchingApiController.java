@@ -20,15 +20,11 @@ import project.tuthree.service.PostFindService.PostFindTeacherDTO;
 import project.tuthree.service.StudyRoomService;
 import project.tuthree.service.StudyRoomService.InfoListDTO;
 import project.tuthree.service.StudyRoomService.ReviewListDTO;
-import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -39,7 +35,6 @@ public class ClassMatchingApiController {
     private final PostFindRepository postFindRepository;
     private final StudyRoomService studyRoomService;
     private final StudyRoomRepository studyRoomRepository;
-    private final ArrayToJson arrayToJson;
 
     /**
      * 선생님 과외 구하는 글 목록 조회

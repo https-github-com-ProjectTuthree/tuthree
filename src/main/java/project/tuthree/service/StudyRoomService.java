@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistBadDataResultResponse;
@@ -39,6 +38,7 @@ import project.tuthree.repository.UserFileRepository;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,10 +63,8 @@ public class StudyRoomService {
 
         Teacher teacher = userEntityRepository.teacherFindById(teacherId);
         Student student = userEntityRepository.studentFindById(studentId);
-        log.info("===========" + teacherId + " " + studentId);
 
         StudyroomDTO studyroomDTO = new StudyroomDTO(teacher, student, Status.CLOSE);
-        /** dto subejct, day, start, end json으로 변경하여 byte 변경해서 넣기 */
 
         Map<String, Object> info = new HashMap<>();
         info.put("subject", studyroomInfoDTO.getSubject());
@@ -129,7 +127,7 @@ public class StudyRoomService {
     }
 
     /** 아이디 하나로 스터디룸 찾기 */
-    public List<StudyRoomListDTO> findStudyRoomByOneId(String id, Status status) throws JsonProcessingException {
+    public List<StudyRoomListDTO> findStudyRoomByOneId(String id, Status status) throws JsonProcessingException, ParseException {
         List<StudyRoom> studyRoomList = studyRoomRepository.findStudyRoomByOneId(id, status);
         List<StudyRoomListDTO> list = new ArrayList<>();
 
@@ -137,18 +135,34 @@ public class StudyRoomService {
             StudyRoomInfo studyRoomInfo = studyRoomRepository.findStudyRoomInfo(s.getTeacherId().getId(), s.getStudentId().getId());
             Object object = byteToObject(studyRoomInfo.getInfo()).get("subject");
             List<String> subject = objectMapper.convertValue(object, List.class);
-            StudyRoomListDTO dto = new StudyRoomListDTO(s.getTeacherId().getId(), s.getStudentId().getId(),
-                    studyRoomInfo.getCheckDate(), subject, s.getStatus());
+            StudyRoomListDTO dto = new StudyRoomListDTO(s.getTeacherId().getId(), s.getTeacherId().getName(), s.getStudentId().getId(),
+                    s.getStudentId().getName(), userFileRepository.unixToDate(studyRoomInfo.getCheckDate()), subject, s.getStatus());
             list.add(dto);
         }
 
         return list;
     }
 
+    /** 학부모 - 자녀의 스터디룸 찾기 */
+    public List<StudyRoomListDTO> findStudyRoomByParent(String id, Status status) throws JsonProcessingException {
+        List<StudyRoomListDTO> list = new ArrayList<>();
+        //자녀 아이디 목록
+        List<String> childIds = userEntityRepository.userFindChild(id);
+        //자녀 아이디별 스터디룸 목록
+        for (String s : childIds) {
+            try{
+                List<StudyRoomListDTO> studyRoomByOneId = findStudyRoomByOneId(s, status);
+                studyRoomByOneId.stream().forEach(m -> list.add(m));
+            }catch (NullPointerException | ParseException e){
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
+
     /** 스터디룸 승낙하기 & 승낙 확인하기 & 스터디룸 개설하기 */
     public Object studyRoomIsAccept(String teacherId, String studentId, String grade) {
         if (grade.toLowerCase(Locale.ROOT).equals(Grade.TEACHER.getStrType())) {
-
             if(studyRoomRepository.isAcceptInfo(teacherId, studentId) == true){
                 return new NotExistDataResultResponse(StatusCode.OK.getCode(), "수업이 성사되었습니다.");
             }
@@ -188,12 +202,23 @@ public class StudyRoomService {
             throw new HttpMediaTypeNotAcceptableException("pdf 형식의 파일을 입력해주세요.");
         }
         StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
-        String[] names = file.getOriginalFilename().split("\\.");
+        String[] names = file.getOriginalFilename().split("\\.pdf");
 
         String real_title = studyRoomRepository.findSameNameTestPaper(studyRoom, names[0]);
         String save_title = userFileRepository.saveFile(file, UserFileRepository.FileType.POSTPAPER);
-        UserfileDTO userfileDTO = new UserfileDTO(studyRoom, save_title, real_title + "." + names[1]);
+        UserfileDTO userfileDTO = new UserfileDTO(studyRoom, save_title, real_title + ".pdf");
         return userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
+    }
+
+    /** 시험지 답안 반환 */
+    public PostExamDTO sendRealAnswer(Long id) throws IOException {
+        UserFile userFile = userFileRepository.userFileFindByFileId(id);
+        String name = userFile.getRealTitle();
+
+        if(name.contains(".")) {
+            name = name.split("\\.")[0];
+        }
+        return studyRoomRepository.findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json");
     }
 
     /** 시험지 답안 등록 */
@@ -240,8 +265,10 @@ public class StudyRoomService {
     @AllArgsConstructor
     public static class StudyRoomListDTO {
         String teacherId;
+        String teacherName;
         String studentId;
-        Date date;
+        String studentName;
+        String date;
         List<String> subject;
         Status status;
     }

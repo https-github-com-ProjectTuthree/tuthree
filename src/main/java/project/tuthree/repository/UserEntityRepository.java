@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
@@ -102,6 +103,13 @@ public class UserEntityRepository {
         return jpaQueryFactory.select(userInfo.subject).from(userInfo)
                 .where(userInfo.subject.isNotNull()
                         .and(userInfo.userId.eq(id)))
+                .fetch();
+    }
+
+    /** 자녀 아이디 목록 찾기 */
+    public List<String> userFindChild(String id) {
+        return jpaQueryFactory.select(student.id).from(student)
+                .where(student.user.id.eq(id))
                 .fetch();
     }
 
