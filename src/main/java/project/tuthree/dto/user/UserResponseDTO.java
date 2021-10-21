@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
@@ -21,38 +22,39 @@ public class UserResponseDTO {
     private String tel;
     private Sex sex;
     private Integer birth;
-    private String post;
     private Status notification;
+    private byte[] post;
 
 
-    public UserResponseDTO(User entity){
+    public UserResponseDTO(User entity, byte[] post){
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
         this.tel = entity.getTel();
         this.sex = entity.getSex();
         this.birth = entity.getBirth();
-        this.post = entity.getPost();
         this.notification = entity.getNotification();
+        this.post = post;
     }
-    public UserResponseDTO(Teacher entity){
+    public UserResponseDTO(Teacher entity, byte[] post){
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
         this.tel = entity.getTel();
         this.sex = entity.getSex();
         this.birth = entity.getBirth();
-        this.post = entity.getPost();
         this.notification = entity.getNotification();
+        this.post = post;
     }
-    public UserResponseDTO(Student entity){
+    public UserResponseDTO(Student entity, byte[] post){
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
         this.tel = entity.getTel();
         this.sex = entity.getSex();
         this.birth = entity.getBirth();
-        this.post = entity.getPost();
         this.notification = entity.getNotification();
+        this.post = post;
     }
+
 }
