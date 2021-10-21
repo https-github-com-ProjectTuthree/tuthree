@@ -15,14 +15,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 public class TeacherResponseDTO {
 
     private String id;
-    private String region; ///json
+    private List<String> region;
     private Status registration;
-    private String subject;
+    private List<String> subject;
     private String cost;
     private String school;
     private SchoolStatus status;
@@ -30,7 +31,7 @@ public class TeacherResponseDTO {
     private String certification;
     private String detail;
 
-    public TeacherResponseDTO(Teacher entity) {
+    public TeacherResponseDTO(Teacher entity, List<String> region, List<String> subject) {
         this.id = entity.getId();
         this.registration = entity.getRegistration();
         this.cost = entity.getCost();
@@ -39,6 +40,8 @@ public class TeacherResponseDTO {
         this.major = entity.getMajor();
         this.certification = entity.getCertification();
         this.detail = entity.getDetail();
+        this.region = region;
+        this.subject = subject;
     }
 
 }
