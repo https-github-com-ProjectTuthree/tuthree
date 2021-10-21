@@ -5,11 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.post.PostNotice;
 import project.tuthree.domain.user.*;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.user.AdminDTO;
-import project.tuthree.dto.user.UserDTO;
 import project.tuthree.dto.user.UserListDTO;
 import project.tuthree.repository.AdminRepository;
 
@@ -17,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +28,7 @@ public class AdminService {
         return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
     }
 
-   /*@Transactional
+   @Transactional
     public List<UserListDTO> userList(int page) {
         List<User> userEntities = adminRepository.userByPage(page);
         List<Teacher> teacherEntites = adminRepository.teacherByPage(page);
@@ -86,12 +82,13 @@ public class AdminService {
         Collections.sort(userListDTO, new ListComparator());
 
         return userListDTO;
-    }*/
-   @Transactional
+    }
+  /* @Transactional
    public Page<UserListDTO> userList(Pageable pageable) {
        Page<User> userEntities = userRepository.findAll(pageable);
        Page<Teacher> teacherEntites = teacherRepository.findAll(pageable);
        Page<Student> studentEntities = studentRepository.findAll(pageable);
+
 
        Page<UserListDTO> userPageList = userEntities.map(
                user -> new UserListDTO(
@@ -102,7 +99,7 @@ public class AdminService {
 
 
        return userPageList;
-   }
+   }*/
     /**날짜순 정렬**/
     public class ListComparator implements Comparator<UserListDTO>{
 

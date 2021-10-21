@@ -104,6 +104,13 @@ public class Student implements Persistable<String>{
         this.school = school;
         this.detail = detail;
     }
+    public void updateInfo(String email, String tel,Integer birth, String post, Status notification){
+        this.email = email;
+        this.tel = tel;
+        this.birth = birth;
+        this.post = post;
+        this.notification = notification;
+    }
 
     public void accept(User user){
         this.user = user;
@@ -113,3 +120,4 @@ public class Student implements Persistable<String>{
         this.pwd = pwd;
     }
 }
+

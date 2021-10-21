@@ -7,5 +7,6 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     /**자녀요청찾기**/
     Child findByParentIdAndStudentId(String parentId, String studentId);
 
+    /**자녀 요청 조회**/
     Child findByStudentId(String studentId);
 }
