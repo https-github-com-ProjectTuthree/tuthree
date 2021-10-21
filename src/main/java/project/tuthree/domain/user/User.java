@@ -81,6 +81,14 @@ public class User implements Persistable<String>{
         this.createDate = createDate;
     }
 
+    public void updateInfo(String email, String tel,Integer birth, String post, Status notification){
+        this.email = email;
+        this.tel = tel;
+        this.birth = birth;
+        this.post = post;
+        this.notification = notification;
+    }
+
     public void updateP(String pwd){
         this.pwd = new BCryptPasswordEncoder().encode(pwd);
     }
