@@ -1,5 +1,7 @@
 package project.tuthree.domain.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -23,4 +25,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     Teacher findByIdAndNameAndTel(String id, String tel, String name);
 
     List<Teacher> findAll();
+
+    Page<Teacher> findAll(Pageable pageable);
 }

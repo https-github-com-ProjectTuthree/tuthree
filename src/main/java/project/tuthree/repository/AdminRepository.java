@@ -39,4 +39,9 @@ public class AdminRepository {
         if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
         return " ";
     }
+
+    public Long userHasRow() {
+        return (Long) em.createQuery("select count(u) from User u").getSingleResult()+(Long) em.createQuery("select count(t) from Teacher t").getSingleResult()+(Long) em.createQuery("select count(s) from Student s").getSingleResult();
+    }
+
 }
