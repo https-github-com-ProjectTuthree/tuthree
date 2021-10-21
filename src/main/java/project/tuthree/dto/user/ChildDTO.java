@@ -30,6 +30,7 @@ public class ChildDTO {
         return Child.builder()
                 .parentId(parentId)
                 .studentId(studentId)
+                .studentName(studentName)
                 .status(status)
                 .build();
     }

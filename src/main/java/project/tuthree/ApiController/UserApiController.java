@@ -98,10 +98,13 @@ public class UserApiController {
 
     /**기본정보조회**/
     @GetMapping("/user/mypage")
-    public UserResponseDTO findUserInfo(@RequestHeader(value="Authorization") String AUTHORIZATION){
+    public ExistDataSuccessResponse findUserInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) throws IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
-        return userRegisterService.findByInfo(id, grade);
+        UserResponseDTO responseDTO = userRegisterService.findByInfo(id, grade);
+        log.debug("\n---- 기본정보조회 ----\n");
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 정보를 조회합니다.", responseDTO);
+
     }
 
     /**튜터 과외정보조회**/
@@ -123,27 +126,33 @@ public class UserApiController {
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
     }
 
+    /**정보 수정**/
+    @PutMapping("/user/mypage")
+    public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody UserUpdateDTO updateDTO){
+        String id = CheckUserI(AUTHORIZATION).getId();
+        String grade = CheckUserI(AUTHORIZATION).getGrade();
+        String updatedId = userRegisterService.userUpdate(id, grade, updateDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
+
+    }
 
     /**튜터 정보 수정**/
     @PutMapping("/user/tutorclass")
-    public String teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) {
+    public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) {
         String id = CheckUserI(AUTHORIZATION).getId();
-        return userRegisterService.teacherUpdate(id, updateDTO);
+        String updatedId =  userRegisterService.teacherUpdate(id, updateDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
+
     }
 
     /**튜티 정보 수정**/
     @PutMapping("/user/tuteeclass")
-    public String studentUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody StudentUpdateDTO updateDTO) {
+    public NotExistDataResultResponse studentUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody StudentUpdateDTO updateDTO) {
         String id = CheckUserI(AUTHORIZATION).getId();
-        return userRegisterService.studentUpdate(id, updateDTO);
+        String updatedId =  userRegisterService.studentUpdate(id, updateDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
+
     }
-
-    //정보 수정
-/*    @PutMapping("/user/mypage")
-    public Long update(@RequestBody UserResponseDTO responseDTO){
-        return userRegisterService.update(id, responseDTO);
-    }*/
-
 
     /**
      * 사용자 로그인
@@ -205,21 +214,21 @@ public class UserApiController {
     }
 
     /**자녀추가**/
-    @PostMapping("/user/parent")
+    @PostMapping("/user/child")
     public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, ChildDTO childDTO){
         String id = userRegisterService.plusChild(parentId, childDTO);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
     }
 
     /**자녀수락**/
-    @PostMapping("/user/myclass")
+    @PostMapping("/user/parent")
     public NotExistDataResultResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId){
         String id = userRegisterService.acceptChild(parentId, studentId);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), id+"가 부모로 등록되었습니다.");
     }
 
     /**요청보기**/
-    @GetMapping("/user/myclass")
+    @GetMapping("/user/parent")
     public ExistDataSuccessResponse AcceptChild(@RequestHeader(value="Authorization") String AUTHORIZATION){
         String studentId = CheckUserI(AUTHORIZATION).getId();
         ChildDTO childDTO = userRegisterService.checkChild(studentId);
@@ -228,20 +237,20 @@ public class UserApiController {
     }
 
 
-/*    *//**유저 목록 조회**//*
+    //**유저 목록 조회**//*
     @GetMapping("/admin/userlist/{page}")
     public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PathVariable("page") int page) {
         List<UserListDTO> user = adminService.userList(page);
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , user);
-    }*/
+    }
 
-    @GetMapping("/admin/userlist")
+/*    @GetMapping("/admin/userlist")
     public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
         Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }
+    }*/
 
 
     /**헤더에서 사용자 정보 확인**/
