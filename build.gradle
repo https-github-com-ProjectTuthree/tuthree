@@ -24,6 +24,9 @@ repositories {
 }
 
 dependencies {
+
+	//external broker
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-reactor-netty'
 	compileOnly group: 'com.google.firebase', name: 'firebase-admin', version: '7.1.0'
 
 	//rabbitmq

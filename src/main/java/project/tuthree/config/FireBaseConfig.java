@@ -3,21 +3,15 @@ package project.tuthree.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Slf4j
-@Configuration
+@Service
 public class FireBaseConfig {
 
     private static final String path = "project-tuthree-firebase-adminsdk-b508m-21e23c6c8a.json";

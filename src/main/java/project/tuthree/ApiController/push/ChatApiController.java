@@ -1,107 +1,74 @@
-package project.tuthree.ApiController;
+package project.tuthree.ApiController.push;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.controller.MessageController;
-import project.tuthree.controller.MessageSender;
-import project.tuthree.controller.RabbitService;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.StatusCode;
 import project.tuthree.dto.ChatDTO;
+import project.tuthree.repository.ChatRepository;
 import project.tuthree.service.push.ChatService;
+import project.tuthree.service.push.ChatService.chatListDTO;
+import project.tuthree.service.push.RabbitService;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ChatApiController {
 
+    private final SimpMessageSendingOperations msgTemplate;
     private final RabbitService rabbitService;
-//    private final SimpMessageSendingOperations msgTemplate;
     private final ChatService chatService;
-    private final MessageController controller;
-    private final MessageSender sender;
-
-
-//    @ApiOperation(value = "채팅 전송", notes = "채팅 전송")
-//    @MessageMapping("/chat/msg")
-//    public void returning(@RequestBody ChatDTO chatDTO) throws IOException {
-//        msgTemplate.convertAndSend("/exchange/chat-exchange/msg." + chatDTO.getRoom().getId(), new ChatDTO(chatDTO));
-//        rabbitService.rabbitChatProducer(chatDTO);
-//    }
-
-    /** 채팅방 개설 - 사용자 아이디 2개, 이미 채팅방이 있는 경우 바로 redirect */
-    @GetMapping("/chatRoom")
-    public void makeChatRoomByIds(@RequestParam("user1") String user1,
-                                  @RequestParam("user2") String user2, final HttpServletResponse response) throws IOException {
-//        Long roomId = chatService.makeChatRoomByIds(user1, user2);
-        //uri redirect
-        response.sendRedirect("/chat/{roomId}");
-    }
-
-    /** 채팅방 입성 - 이전 채팅 불러오기 (파라미터 받아서 새로 만든 방이면 불러오지 않기) */
-    @GetMapping("/chat/{room}")
-    public void startChat(@PathVariable("room") Long id){
-
-    }
-
-    @PostMapping("/chat")
-    public boolean chatController(@RequestParam("room") Long id, final @RequestBody ChatDTO chatDTO) throws InterruptedException {
-        controller.sendMessage(chatDTO);
-        sender.send(id, chatDTO.getContent());
-        return true;
-    }
+    private final ChatRepository chatRepository;
 /**
  * 채팅 전송
  * 채팅방 생성
  * 채팅 내역 조회
  * 채팅방 전체 조회
  * 읽지 않은 채팅 수 조회
- *
- *
  * */
-//
-//@ApiOperation(value = "채팅 전송", notes = "채팅 전송")
-//@MessageMapping("/chat/msg")
-//public void send(@RequestBody @Valid ChatRequestDto chatRequestDto) {
-//        msgTemplate.convertAndSend("/exchange/chat-exchange/msg." + chatRequestDto.getRoomId(), new ChatLogResponseDto(chatRequestDto));
-//        rabbitService.rabbitChatProducer(chatRequestDto);
-//        }
-//
-//@ApiOperation(value = "채팅방 생성", notes = "채팅방 생성")
-//@PostMapping("/chat")
-//public ResponseEntity<Long> addChatRoom(@RequestBody ChatRequestDto chatRequestDto) {
-//        return new ResponseEntity<>(chatService.addChatRoom(chatRequestDto), HttpStatus.CREATED);
-//        }
-//
-//@ApiOperation(value = "채팅내역 조회", notes = "채팅방의 채팅 내역 조회")
-//@ApiImplicitParams
-//        ({
-//                @ApiImplicitParam(name = "roomId", dataType = "Long", value = "채팅방 PK", required = true),
-//                @ApiImplicitParam(name = "nickname", dataType = "String", value = "본인 닉네임", required = true)
-//        })
-//@GetMapping("/chat/{roomId}")
-//public ResponseEntity<ChatRoomResponseDto> getChatLogByRoomId(@PathVariable Long roomId,
-//@RequestParam String nickname) {
-//        return new ResponseEntity<>(chatService.findAllChatLogByRoomId(roomId, nickname), HttpStatus.OK);
-//        }
-//
-//@ApiOperation(value = "채팅방 전체 조회", notes = "채팅방 전체 조회")
-//@ApiImplicitParam(name = "nickname", dataType = "String", value = "본인 닉네임", required = true)
-//@GetMapping("/chat")
-//public ResponseEntity<List<ChatRoomListResponseDto>> getChatRooms(@RequestParam String nickname) {
-//        return new ResponseEntity<>(chatService.findAllChatRoomByNickname(nickname), HttpStatus.OK);
-//        }
-//
-//@ApiOperation(value = "읽지 않은 채팅 수 조회", notes = "읽지 않은 채팅 수 조회")
-//@ApiImplicitParam(name = "nickname", dataType = "String", value = "본인 닉네임", required = true)
-//@GetMapping("/chat/read")
-//public ResponseEntity<Integer> getChatLogNotRead(@RequestParam String nickname) {
-//        return new ResponseEntity<>(chatService.countAllNotReadChatLog(nickname), HttpStatus.OK);
-//        }
+
+//??messagemapping??
+    @PostMapping("/chat/send")
+    public NotExistDataResultResponse sendChat(@RequestBody ChatDTO chatDTO) {
+        //valid
+        //이건 솔직히 뭔지 잘 모르겠다...
+        msgTemplate.convertAndSend("/exchange/chat-exchange/msg." + chatDTO.getRoom().getId(), chatDTO);
+        //큐로 보내기
+        rabbitService.rabbitChatProducer(chatDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),
+                "채팅 전송 완료");
+    }
+
+    /** 채팅방 생성 */
+    @PostMapping("/chat")
+    public NotExistDataResultResponse addChatRoom(@RequestBody ChatDTO chatDTO) {
+        chatService.addChatRoomByIds("", "");//아이디를 두개를 넘겨야 되는데,..흠..
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),
+                "채팅방에 생성되었습니다.");
+    }
+
+    /** 채팅방 나가기 - 채팅방 삭제 */
+
+    /** (채팅방 채팅 목록) 채팅 내역 불러오기 */
+    @GetMapping("/chat/{roomId}")
+    public ExistDataSuccessResponse getChatByRoomId(@RequestParam("roomId") Long id) {
+        List<ChatDTO> chatList = chatService.findChatListByRoomId(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                "채팅 목록을 불러왔습니다.", chatList);
+    }
+
+    /** (개인 채팅 목록) 참가한 채팅방 전체 조회 - 마지막으로 전송된 채팅도 같이 불러오기 & 읽지 않은 채팅 수*/
+    @GetMapping("/chat/list")
+    public ExistDataSuccessResponse findChatRoomByOneId(@RequestParam("id") String id) throws ParseException {
+        List<chatListDTO> chatRoomById = chatRepository.findChatRoomById(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                "채팅방을 조회했습니다.", chatRoomById);
+    }
 
 }

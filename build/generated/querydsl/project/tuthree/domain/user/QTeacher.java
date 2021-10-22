@@ -27,7 +27,7 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final StringPath cost = createString("cost");
 
-    public final DatePath<java.util.Date> create_date = createDate("create_date", java.util.Date.class);
+    public final DatePath<java.util.Date> createDate = createDate("createDate", java.util.Date.class);
 
     public final StringPath detail = createString("detail");
 

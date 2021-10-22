@@ -39,11 +39,4 @@ public class AdminApiController {
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
 
-/*    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
-        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }*/
-
 }

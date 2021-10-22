@@ -3,23 +3,15 @@ package project.tuthree.ApiController;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-<<<<<<< HEAD
-=======
 import org.junit.Assert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
->>>>>>> master
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.controller.JwtController;
-<<<<<<< HEAD
-=======
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.User;
 import project.tuthree.domain.user.UserRepository;
 import project.tuthree.dto.EmbeddedDTO;
->>>>>>> master
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
@@ -33,11 +25,6 @@ import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-<<<<<<< HEAD
-=======
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
->>>>>>> master
 import java.util.Map;
 
 @Slf4j
@@ -50,9 +37,6 @@ public class UserApiController {
 
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
-    private final UserRepository userRepository;
-    private final PostFindService postFindService;
-    private final UserFileRepository userFileRepository;
     private final AdminService adminService;
     private final AdminRepository adminRepository;
 

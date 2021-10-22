@@ -174,6 +174,7 @@ public class UserRegisterService {
                 return "중복";
             }
         }catch(Exception e){
+            e.printStackTrace();
             throw new RuntimeException();
         }
 
