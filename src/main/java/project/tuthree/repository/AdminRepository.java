@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.user.Admin;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.QAdmin;
+import project.tuthree.domain.post.PostFaq;
+import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static project.tuthree.domain.user.QAdmin.admin;
 
@@ -22,6 +23,8 @@ public class AdminRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final int setPage = 3;
+
 
     public String findById(String id) {
         Admin admin = em.find(Admin.class, id);
@@ -38,6 +41,27 @@ public class AdminRepository {
                 .fetchOne();
         if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
         return " ";
+    }
+
+    public List<User> userByPage(int page) {
+        return em.createQuery("select u from User u order by u.createDate desc", User.class)
+                .setFirstResult(setPage*(page-1))
+                .setMaxResults(setPage)
+                .getResultList();
+    }
+
+    public List<Teacher> teacherByPage(int page) {
+        return em.createQuery("select t from Teacher t order by t.createDate desc", Teacher.class)
+                .setFirstResult(setPage*(page-1))
+                .setMaxResults(setPage)
+                .getResultList();
+    }
+
+    public List<Student> studentByPage(int page) {
+        return em.createQuery("select s from Student s order by s.createDate desc", Student.class)
+                .setFirstResult(setPage*(page-1))
+                .setMaxResults(setPage)
+                .getResultList();
     }
 
     public Long userHasRow() {
