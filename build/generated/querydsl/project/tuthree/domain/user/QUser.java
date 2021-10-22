@@ -21,7 +21,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Integer> birth = createNumber("birth", Integer.class);
 
-    public final DateTimePath<java.util.Date> create_date = createDateTime("create_date", java.util.Date.class);
+    public final DateTimePath<java.util.Date> createDate = createDateTime("createDate", java.util.Date.class);
 
     public final StringPath email = createString("email");
 
