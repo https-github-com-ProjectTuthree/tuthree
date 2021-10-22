@@ -29,7 +29,7 @@ public class MessageService {
         params.put("to", "tonumber");
         params.put("from", "fromnumber");
         params.put("type", "SMS");
-        params.put("text", "우리 열차는 사당행 열차입니다. 탑승 번호 : " + authNo);
+        params.put("text", "인증 번호 : " + authNo);
         params.put("app_version", "test app 1.2"); // application name and version
 
         try {

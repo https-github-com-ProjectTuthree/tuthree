@@ -16,17 +16,8 @@ public class RabbitService {
     private static final String exchange = "chat-exchange";
     private final RabbitTemplate rabbitTemplate;
 
-//    public void rabbitProducer(String topic, Long roomId) {
-//        PushService.NotificationResponse response = PushService.NotificationResponse.builder()
-//                .topic(topic)
-//                .productId(roomId)
-//                .build();
-//        rabbitTemplate.convertAndSend(exchange, "push.room." + String.valueOf(roomId), response);
-//    }
-//    //push.keyword
-
     public void rabbitChatProducer(ChatDTO chatDTO) {
-        rabbitTemplate.convertAndSend(exchange, "push.room." + String.valueOf(chatDTO.getRoom()), chatDTO);
+        rabbitTemplate.convertAndSend(exchange, "push.chat", chatDTO);
     }
     //push.chat
 

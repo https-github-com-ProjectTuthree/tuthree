@@ -89,10 +89,10 @@ public class PostFindRepository {
         if(condition.getSort() != null && !condition.getSort().isEmpty()){
             switch (condition.getSort()) {
                 case "latest" :
-                    query.orderBy(postFind.teacherId.create_date.desc());
+                    query.orderBy(postFind.teacherId.createDate.desc());
                     break;
                 case "old" :
-                    query.orderBy(postFind.teacherId.create_date.asc());
+                    query.orderBy(postFind.teacherId.createDate.asc());
                     break;
                 case "hprice" :
                     query.orderBy(postFind.teacherId.cost.desc());
@@ -153,10 +153,10 @@ public class PostFindRepository {
         if(condition.getSort() != null && !condition.getSort().isEmpty()){
             switch (condition.getSort()) {
                 case "latest" :
-                    query.orderBy(postFind.studentId.create_date.desc());
+                    query.orderBy(postFind.studentId.createDate.desc());
                     break;
                 case "old" :
-                    query.orderBy(postFind.studentId.create_date.asc());
+                    query.orderBy(postFind.studentId.createDate.asc());
                     break;
                 case "hprice" :
                     query.orderBy(postFind.studentId.cost.desc());
