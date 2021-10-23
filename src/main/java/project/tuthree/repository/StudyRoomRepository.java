@@ -97,6 +97,13 @@ public class StudyRoomRepository {
         return null;
     }
 
+    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 일단 선생님만 */
+    public List<StudyRoomInfo> findStudyRoomSchedule(String id) {
+        return jpaQueryFactory.selectFrom(studyRoomInfo)
+                .where(studyRoomInfo.id.teacherId.id.eq(id))
+                .fetch();
+    }
+
     /** 아이디 하나로 스터디룸 찾기 */
     public List<StudyRoom> findStudyRoomByOneId(String id, Status status) {
         return jpaQueryFactory.selectFrom(studyRoom)
@@ -184,11 +191,13 @@ public class StudyRoomRepository {
         UserFile userFile = userFileRepository.userFileFindByFileId(id);
         String name = userFile.getRealTitle();
 
-        if(name.contains(".")) {
-            name = name.split("\\.")[0];
+        if(name.contains(".pdf")) {
+            name = name.split("\\.pdf")[0];
         }
 
-        List<ProblemDTO> teacher = findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json").getProblem();
+        PostExamDTO dto = findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json");
+
+        List<ProblemDTO> teacher = dto.getProblem();
         List<ProblemDTO> student = findExamByIdnName(userFile.getStudyRoomId(), name + "_student_answer.json").getProblem();
         List<AnswerDTO> answer = new ArrayList<>();
 
@@ -202,7 +211,7 @@ public class StudyRoomRepository {
             }
         }
 
-        return new PostAnswerDTO(Long.valueOf(teacher.size()), answer);
+        return new PostAnswerDTO(Long.valueOf(teacher.size()), dto.getDueDate(), answer);
     }
 
     /** 스터디룸 아이디와 파일 이름으로 답안지 찾기 - (json -> 객체) 반환까지 완료 */
@@ -221,9 +230,7 @@ public class StudyRoomRepository {
     public String findSameNameTestPaper(StudyRoom studyRoom, String name){
         Long count = jpaQueryFactory.selectFrom(userFile)
                 .where(userFile.studyRoomId.eq(studyRoom)
-                        .and(userFile.realTitle.contains(name)))
-                .fetchCount();
-
+                        .and(userFile.realTitle.contains(name))).fetchCount();
         return (count > 0) ? name + "(" + count + ")" : name;
     }
 }

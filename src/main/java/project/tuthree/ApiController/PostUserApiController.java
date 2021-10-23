@@ -25,6 +25,7 @@ import project.tuthree.service.UserFileService.FileIdName;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -32,10 +33,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class PostUserApiController {
-    /**
-     * responsebody 처리하기 valid
-     */
-
     private final PostFaqService postFaqService;
     private final PostNoticeService postNoticeService;
     private final PostTestPaperService postTestPaperService;
@@ -45,14 +42,6 @@ public class PostUserApiController {
     private final UserFileRepository userFileRepository;
     private final UserFileService userFileService;
 
-    /**
-     * 파일 전송 테스트
-//     */
-//    @GetMapping("/community/downdown")
-//    public @ResponseBody List<byte []> transfer(HttpServletResponse response) throws IOException {
-//        List<byte[]> list = userFileRepository.transferUserFile(1L);
-//        return list;
-//    }
 
     // TEST PAPER ////////////////////////////////
     /** 커뮤니티 글 목록 조회 */
@@ -66,7 +55,7 @@ public class PostUserApiController {
 
     /** 커뮤니티 특정 글 조회 */ //파일 이름도 같이 넘겨주기
     @GetMapping("/community/id/{post_id}")
-    public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) throws IOException {
+    public ExistDoubleDataSuccessResponse CommunityFind(@PathVariable("post_id") Long id) throws IOException, ParseException {
         PostSingleContentDTO dto = postTestPaperService.communityFindById(id);
         List<FileIdName> userfileDTOList = userFileService.userFileFindByPostId(id);
         log.debug("\n---- 사용자 커뮤니티 글 조회 [ID : " + id + "] ----\n");
@@ -108,7 +97,7 @@ public class PostUserApiController {
         /** 이전에 그 글이랑 관련된 자료는 다 지우고 새로 수정하기?? 흠... */
         Long updatedId = postTestPaperService.updateCommunity(id, form);
         log.debug("\n---- 사용자 커뮤니티 글 수정 [ID : " + id + "] ----\n");
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 수정되었습니다.");
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 게시글이 수정되었습니다.");
     }
 
     /**
@@ -133,11 +122,18 @@ public class PostUserApiController {
 
     /** FAQ 특정 글 조회 */
     @GetMapping("/faq/id/{faq_id}")
-    public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id) {
+    public ExistDataSuccessResponse FaqFind(@PathVariable("faq_id") Long id) throws ParseException {
         PostSingleContentTypeDTO postListDTO = postFaqService.faqFindById(id);
         log.debug("\n---- 사용자 FAQ 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 id + "번 게시글이 조회되었습니다.", postListDTO);
+    }
+
+    /** FAQ 조회수 up */
+    @GetMapping("/faq/view/{faq_id}")
+    public NotExistDataResultResponse FaqViewUpdate(@PathVariable("faq_id") Long id) {
+        Long updatedId = postFaqRepository.updateFaq(id);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 게시글의 조회수가 업로드됐습니다.");
     }
 
     // NOTICE ////////////////////////////////
@@ -152,7 +148,7 @@ public class PostUserApiController {
 
     /** 공지사항 특정 글 조회 */
     @GetMapping("/notice/id/{notice_id}")
-    public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) {
+    public ExistDataSuccessResponse NoticeFind(@PathVariable("notice_id") Long id) throws ParseException {
         PostSingleContentTypeDTO postListDTO = postNoticeService.noticeById(id);
         log.debug("\n---- 사용자 공지사항 게시글 조회 [ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "번 공지사항이 조회되었습니다.", postListDTO);

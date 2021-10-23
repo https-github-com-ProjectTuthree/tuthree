@@ -3,6 +3,7 @@ package project.tuthree.repository;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static project.tuthree.domain.user.QAdmin.admin;
 
+@Slf4j
 @Repository
 @Transactional
 @RequiredArgsConstructor
@@ -33,13 +35,15 @@ public class AdminRepository {
 
     /** id, pwd 일치하는 관리자 찾기 */
     public String findByIdPwd(String id, String pwd) {
-        String s_pwd = jpaQueryFactory.select(admin.pwd)
-                .from(admin)
-                .where(JPAExpressions.selectFrom(admin)
-                        .where(admin.id.eq(id)).exists()
-                        .and(admin.id.eq(id)))
-                .fetchOne();
-        if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
+        try {
+            String s_pwd = jpaQueryFactory.select(admin.pwd)
+                    .from(admin)
+                    .where(admin.id.eq(id))
+                    .fetchOne();
+            if (bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
+        } catch (NullPointerException e) {
+            log.info("return================");
+        }
         return " ";
     }
 

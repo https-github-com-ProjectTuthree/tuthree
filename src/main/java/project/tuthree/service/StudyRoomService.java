@@ -35,6 +35,7 @@ import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -107,6 +108,18 @@ public class StudyRoomService {
         StudyRoomInfo info = studyRoomRepository.findStudyRoomInfo(teacherId, studentId);
         Map<String, Object> map = byteToObject(info.getInfo());
         return new InfoListDTO(info.getCost(), map, info.getDetail(), info.getCheckDate());
+    }
+
+    /** 선생님 스케쥴 조회하기 */
+    public List<scheduleListDTO> findTeacherSchedule(String id) throws ParseException, JsonProcessingException {
+        List<StudyRoomInfo> studyRoomSchedule = studyRoomRepository.findStudyRoomSchedule(id);
+        List<scheduleListDTO> list = new ArrayList<>();
+        for (StudyRoomInfo i : studyRoomSchedule) {
+            list.add(new scheduleListDTO(i.getId().getStudentId().getName(),
+                    byteToObject(i.getInfo()).get("schedule")));
+        }
+        return list;
+
     }
 
     /** 선생님 - 수업 리뷰 조회하기 */
@@ -215,8 +228,8 @@ public class StudyRoomService {
         UserFile userFile = userFileRepository.userFileFindByFileId(id);
         String name = userFile.getRealTitle();
 
-        if(name.contains(".")) {
-            name = name.split("\\.")[0];
+        if(name.contains(".pdf")) {
+            name = name.split("\\.pdf")[0];
         }
         return studyRoomRepository.findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json");
     }
@@ -226,13 +239,13 @@ public class StudyRoomService {
         //id에 해당하는 파일 이름 찾기
         UserFile userFile = userFileRepository.userFileFindByFileId(id);
         String real = userFile.getRealTitle();
-        if(real.contains(".")){
-            real = real.split("\\.")[0];
+        if(real.contains(".pdf")){
+            real = real.split("\\.pdf")[0];
         }
         //파일 이름_answer로 파일 이름 저장하기
         String saveName = "";
         if(Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.TEACHER) || Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.STUDENT)){
-            saveName = real + "_" + grade + "_answer.json";
+            saveName = real + "_" + grade.toLowerCase(Locale.ROOT) + "_answer.json";
         }
         String saved = userFileRepository.saveJsonFile(postExamDTO, saveName, UserFileRepository.FileType.POSTPAPER);
         //user_file 테이블에 저장하기
@@ -279,6 +292,13 @@ public class StudyRoomService {
         Long id;
         String title;
         byte[] file;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class scheduleListDTO {
+        String studentName;
+        Object schedule;
     }
 
 }

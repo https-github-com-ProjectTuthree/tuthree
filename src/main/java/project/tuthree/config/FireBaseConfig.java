@@ -13,23 +13,23 @@ import java.io.IOException;
 @Slf4j
 @Service
 public class FireBaseConfig {
-
-    private static final String path = "project-tuthree-firebase-adminsdk-b508m-21e23c6c8a.json";
-
-    @PostConstruct
-    public void init() {
-        try {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(path).getInputStream())).build();
-
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
-                log.info("Firebase Application Initialize");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//
+//    private static final String path = "project-tuthree-firebase-adminsdk-b508m-21e23c6c8a.json";
+//
+//    @PostConstruct
+//    public void init() {
+//        try {
+//            FirebaseOptions options = new FirebaseOptions.Builder()
+//                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(path).getInputStream())).build();
+//
+//            if (FirebaseApp.getApps().isEmpty()) {
+//                FirebaseApp.initializeApp(options);
+//                log.info("Firebase Application Initialize");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    @Bean
 //    public FirebaseAuth initFirebaseAuth() {

@@ -27,6 +27,7 @@ import project.tuthree.service.CalendarService.calendarFullListDTO;
 import project.tuthree.service.PostStudyService;
 import project.tuthree.service.StudyRoomService;
 import project.tuthree.service.StudyRoomService.StudyRoomListDTO;
+import project.tuthree.service.StudyRoomService.scheduleListDTO;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -47,7 +48,15 @@ public class ClassManageApiController {
     private final UserFileRepository userFileRepository;
     private final StudyRoomRepository studyRoomRepository;
 
+    /** 선생님 스케쥴 조회 */
+    @GetMapping("/tutor/schedule")
+    public ExistDataSuccessResponse FindTeacherSchedule(@RequestParam("id") String id) throws JsonProcessingException, ParseException {
+        List<scheduleListDTO> teacherSchedule = studyRoomService.findTeacherSchedule(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                "선생님 일정이 조회되었습니다.", teacherSchedule);
+    }
 
+    /** 선생님에 대한 리뷰 작성 */
     @PostMapping("/room/review")
     public NotExistDataResultResponse WriteStudyRoomReview(@RequestParam("teacherId") String teacherId,
                                                            @RequestParam("studentId") String studentId, @RequestBody @Valid PostreviewDTO postreviewDTO) {
@@ -190,6 +199,10 @@ public class ClassManageApiController {
         String fileName = studyRoomService.saveRealAnswer(id, grade.trim(), postExamDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지에 대한 답안이 입력되었습니다. : " + fileName);
     }
+
+    /** 답안 수정하기 */
+
+
 
     /** 학생 답안지 등록을 위한 답안지 반환 */
     @GetMapping("/room/exam/answer/{post_id}")
