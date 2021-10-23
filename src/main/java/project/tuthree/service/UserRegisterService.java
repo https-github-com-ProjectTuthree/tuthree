@@ -11,6 +11,7 @@ import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -184,22 +185,25 @@ public class UserRegisterService {
     /**기본정보 조회**/
     @Transactional(readOnly = true)
     public UserResponseDTO findByInfo (String id, String grade)throws IOException {
-        if(Objects.equals(grade, "PARENT")){
+        if(Objects.equals(grade, "parent")){
             User entity = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
             byte[] file = userFileRepository.transferUserFile(entity.getPost());
             return new UserResponseDTO(entity, file);
         }
-        else if(Objects.equals(grade, "TEACHER")) {
+        else if(Objects.equals(grade, "teacher")) {
             Teacher entity = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
 
             byte[] file = userFileRepository.transferUserFile(entity.getPost());
             return new UserResponseDTO(entity, file);
         }
-        else {
+        else if(Objects.equals(grade, "student")){
             Student entity = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id + grade));
             byte[] file = userFileRepository.transferUserFile(entity.getPost());
             return new UserResponseDTO(entity, file);
+        }
+        else{
+            throw new NullPointerException();
         }
     }
 
@@ -223,19 +227,29 @@ public class UserRegisterService {
 
     /**개인정보수정**/
     @Transactional
-    public String userUpdate(String id, String grade, UserUpdateDTO updateDto){
-        if(Objects.equals(grade,"PARENT")){
+    public String userUpdate(String id, String grade, UserUpdateDTO updateDto) throws NoSuchAlgorithmException, IOException {
+        if(Objects.equals(grade, "parent")){
             User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            String post = userFileRepository.saveFile(updateDto.getFile(), PARENT);
+            updateDto.updatePost(post);
             user.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
+
         }
-        else if(Objects.equals(grade, "TEACHER")) {
+        else if(Objects.equals(grade, "teacher")) {
             Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
+            String post = userFileRepository.saveFile(updateDto.getFile(), TEACHER);
+            updateDto.updatePost(post);
             teacher.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
 
         }
-        else {
+        else if (Objects.equals(grade, "student")){
             Student student = studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id + grade));
+            String post = userFileRepository.saveFile(updateDto.getFile(), STUDENT);
+            updateDto.updatePost(post);
             student.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
+        }
+        else{
+            throw new NullPointerException();
         }
 
 
@@ -245,6 +259,10 @@ public class UserRegisterService {
     /**학생과외정보 수정**/
     @Transactional
     public String studentUpdate(String id, StudentUpdateDTO updateDTO){
+        /*if(!updateDTO.getRegionL().isEmpty()){
+            userInfoRepository.deleteByUserId(id);
+            userInfoRepository.flush();
+        }*/
         Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
@@ -390,6 +408,23 @@ public class UserRegisterService {
         Long id = childRepository.findByStudentId(studentId).getId();
         Child child = childRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 내용이 없습니다. id="+ id));
         return new ChildDTO(child.getParentId(), child.getStudentId(), child.getStudentName(), child.isStatus());
+    }
+
+    /**회원 탈퇴**/ //그냥 회원상태인지 아닌상태인지를 만드는게 더 날듯
+    @Transactional
+    public void quitUser(String id, String grade){
+        if(Objects.equals(grade, "PARENT")){
+            User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            userRepository.delete(user);
+        }
+        else if(Objects.equals(grade, "TEACHER")) {
+            Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            teacherRepository.delete(teacher);
+        }
+        else {
+            Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+            studentRepository.delete(student);
+        }
     }
 
 
