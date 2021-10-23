@@ -26,7 +26,7 @@ public class QStudent extends EntityPathBase<Student> {
 
     public final StringPath cost = createString("cost");
 
-    public final DateTimePath<java.util.Date> create_date = createDateTime("create_date", java.util.Date.class);
+    public final DateTimePath<java.util.Date> createDate = createDateTime("createDate", java.util.Date.class);
 
     public final StringPath detail = createString("detail");
 
