@@ -13,6 +13,7 @@ import java.util.List;
 public class PostAnswerDTO {
 
     private Long prob;
+    private String dueDate;
     private List<AnswerDTO> answer;
 
     @Getter

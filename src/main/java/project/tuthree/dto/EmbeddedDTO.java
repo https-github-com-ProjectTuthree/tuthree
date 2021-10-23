@@ -21,7 +21,7 @@ public class EmbeddedDTO {
         Long id;
         String userId;
         String title;
-        Date writeAt;
+        String writeAt;
         Long view;
         //계정 아이디 외의 다른 정보를 노출시키지 않기 위해 만든 클래스
     }
@@ -32,7 +32,7 @@ public class EmbeddedDTO {
         Long id;
         String userId;
         String title;
-        Date writeAt;
+        String writeAt;
         String type;
         Long view;
         //계정 아이디 외의 다른 정보를 노출시키지 않기 위해 만든 클래스
@@ -46,7 +46,7 @@ public class EmbeddedDTO {
         String title;
         String content;
         Long view;
-        Date writeAt;
+        String writeAt;
         Status secret;
         //계정 아이디 외의 다른 정보를 노출시키지 않기 위해 만든 클래스
     }
@@ -59,7 +59,7 @@ public class EmbeddedDTO {
         String title;
         String content;
         Long view;
-        Date writeAt;
+        String writeAt;
         String type;
         Status secret;
         //계정 아이디 외의 다른 정보를 노출시키지 않기 위해 만든 클래스

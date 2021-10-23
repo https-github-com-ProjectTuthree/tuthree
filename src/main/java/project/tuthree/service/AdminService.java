@@ -24,10 +24,6 @@ public class AdminService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
 
-    public String adminLogin(AdminDTO adminDTO) {
-        return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
-    }
-
    @Transactional
     public List<UserListDTO> userList(int page) {
         List<User> userEntities = adminRepository.userByPage(page);

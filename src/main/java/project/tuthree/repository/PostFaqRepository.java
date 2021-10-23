@@ -66,6 +66,13 @@ public class PostFaqRepository {
         return id;
     }
 
+    /** faq 조회수 업로드 */
+    public Long updateFaq(Long id) {
+        PostFaq faq = em.find(PostFaq.class, id);
+        faq.updateView();
+        return id;
+    }
+
     public Long faqHasRow() {
         return (Long) em.createQuery("select count(p) from PostFaq p").getSingleResult();
     }

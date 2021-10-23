@@ -11,11 +11,7 @@ import project.tuthree.dto.user.TeacherDTO.TeacherDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-<<<<<<< HEAD
-    date = "2021-10-21T23:03:42+0900",
-=======
-    date = "2021-10-22T11:44:28+0900",
->>>>>>> master
+    date = "2021-10-22T12:06:20+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
