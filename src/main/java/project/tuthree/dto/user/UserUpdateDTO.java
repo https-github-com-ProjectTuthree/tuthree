@@ -3,6 +3,7 @@ package project.tuthree.dto.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Sex;
 
@@ -14,6 +15,7 @@ public class UserUpdateDTO {
     private String tel;
     private Integer birth;
     private String post;
+    private MultipartFile file;
     private Status notification;
 
     @Builder
@@ -24,5 +26,8 @@ public class UserUpdateDTO {
         this.birth = birth;
         this.post = post;
         this.notification = notification;
+    }
+    public void updatePost(String post) {
+        this.post = post;
     }
 }
