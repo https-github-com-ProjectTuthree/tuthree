@@ -10,6 +10,7 @@ import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 import static project.tuthree.domain.user.QStudent.student;
@@ -28,6 +29,7 @@ public class UserEntityRepository {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
+    private final UserInfoRepository userInfoRepository;
 
     /** user id로 찾기 */
     public Student studentFindById(String id) {
@@ -75,6 +77,15 @@ public class UserEntityRepository {
 
     /** 지역 정보 저장 */
     public void userSaveRegion(String userId, List<String> region) {
+        for (String r : region) {
+            UserInfo userInfo = new UserInfo(userId, r, null);
+            em.persist(userInfo);
+        }
+    }
+
+    public void userUpdateRegion(String userId, List<String> region) {
+        //userInfoRepository.deleteByUserId(userId);
+        //userInfoRepository.flush();
         for (String r : region) {
             UserInfo userInfo = new UserInfo(userId, r, null);
             em.persist(userInfo);
