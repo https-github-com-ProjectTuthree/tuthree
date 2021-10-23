@@ -119,7 +119,7 @@ public class UserApiController {
 
     /**정보 수정**/
     @PutMapping("/user/mypage")
-    public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody UserUpdateDTO updateDTO){
+    public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody UserUpdateDTO updateDTO)throws NoSuchAlgorithmException, IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
         String updatedId = userRegisterService.userUpdate(id, grade, updateDTO);
@@ -225,6 +225,15 @@ public class UserApiController {
         ChildDTO childDTO = userRegisterService.checkChild(studentId);
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO);
 
+    }
+
+    /**회원탈퇴**/
+    @DeleteMapping("/user/quit")
+    public NotExistDataResultResponse delete(@RequestHeader(value="Authorization") String AUTHORIZATION){
+        String id = CheckUserI(AUTHORIZATION).getId();
+        String grade = CheckUserI(AUTHORIZATION).getGrade();
+        userRegisterService.quitUser(id, grade);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다.");
     }
 
 
