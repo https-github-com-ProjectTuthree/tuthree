@@ -13,6 +13,7 @@ import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.AdminDTO;
 import project.tuthree.dto.user.UserListDTO;
+import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +33,7 @@ public class AdminApiController {
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final AdminRepository adminRepository;
 
     @PostMapping("/admin/in")
     public NonValueNotExistDataResultResponse adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
@@ -51,12 +53,16 @@ public class AdminApiController {
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
 
-/*    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
-        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
+    /**회원목록 조회**/
+    @GetMapping("/admin/userlist")
+    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@RequestParam("grade") String grade, @RequestParam(value = "userId", required = false) String userId, @PageableDefault(size= 10, sort="createDate") Pageable pageRequest) {
+
+        Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
+
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }*/
+                "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
+
+    }
 
 
 
