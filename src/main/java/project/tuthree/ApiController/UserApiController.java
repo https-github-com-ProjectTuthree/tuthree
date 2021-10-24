@@ -246,21 +246,6 @@ public class UserApiController {
     }
 
 
-    //**유저 목록 조회**//*
-    @GetMapping("/admin/userlist/{page}")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PathVariable("page") int page) {
-        List<UserListDTO> user = adminService.userList(page);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , user);
-    }
-
-/*    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
-        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }*/
-
 
     /**헤더에서 사용자 정보 확인**/
     public CheckUser CheckUserI(String AUTHORIZATION){

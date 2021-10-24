@@ -27,4 +27,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     List<Teacher> findAll();
 
     Page<Teacher> findAll(Pageable pageable);
+
+    Page<Teacher> findById(String id, Pageable pageable);
 }

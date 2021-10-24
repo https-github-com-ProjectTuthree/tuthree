@@ -10,10 +10,7 @@ import project.tuthree.dto.user.AdminDTO;
 import project.tuthree.dto.user.UserListDTO;
 import project.tuthree.repository.AdminRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -112,16 +109,82 @@ public class AdminService {
 
 
     @Transactional
-    public Page<UserListDTO> parentList(Pageable pageable){
-        Page<User> userList = userRepository.findAll(pageable);
+    public Page<UserListDTO> userList(String grade, Pageable pageable, String id){
+        if(Objects.equals(grade, "parent")){
+            if(Objects.equals(id, null)) {
+                Page<User> userList = userRepository.findAll(pageable);
 
-        Page<UserListDTO> userPageList = userList.map(
-                user -> new UserListDTO(
-                        user.getId(), user.getPwd() , user.getName(),
-                        user.getEmail(), user.getTel(), user.getSex(),
-                        user.getBirth(), user.getGrade(), user.getCreateDate()
-                ));
-        return userPageList;
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }
+            else{
+                Page<User> userList = userRepository.findById(id, pageable);
+
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }
+        }
+        else if(Objects.equals(grade, "teacher")){
+            if(Objects.equals(id, null)) {
+                Page<Teacher> userList = teacherRepository.findAll(pageable);
+
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }else{
+                Page<Teacher> userList = teacherRepository.findById(id, pageable);
+
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }
+        }
+        else if(Objects.equals(grade, "student")){
+            if(Objects.equals(id, null)) {
+                Page<Student> userList = studentRepository.findAll(pageable);
+
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }else{
+                Page<Student> userList = studentRepository.findById(id, pageable);
+
+                Page<UserListDTO> userPageList = userList.map(
+                        user -> new UserListDTO(
+                                user.getId(), user.getPwd(), user.getName(),
+                                user.getEmail(), user.getTel(), user.getSex(),
+                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                        ));
+                return userPageList;
+            }
+        }
+        else{
+            return (Page<UserListDTO>) new NullPointerException();
+        }
+
+
     }
 
 
