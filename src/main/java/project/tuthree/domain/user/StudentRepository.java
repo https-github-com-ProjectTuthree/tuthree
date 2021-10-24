@@ -1,5 +1,7 @@
 package project.tuthree.domain.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -25,4 +27,8 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     Student findByIdAndNameAndTel(String id, String tel, String name);
 
     List<Student> findAll();
+
+    Page<Student> findAll(Pageable pageable);
+
+    Page<Student> findById(String id, Pageable pageable);
 }
