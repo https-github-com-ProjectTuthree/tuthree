@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -117,7 +118,7 @@ public class Student implements Persistable<String>{
     }
 
     public void updateP(String pwd){
-        this.pwd = pwd;
+        this.pwd = new BCryptPasswordEncoder().encode(pwd);
     }
 }
 

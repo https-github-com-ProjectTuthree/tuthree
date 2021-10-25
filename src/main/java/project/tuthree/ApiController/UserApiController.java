@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -139,7 +138,7 @@ public class UserApiController {
 
     /**튜터 정보 수정**/
     @PutMapping("/user/tutorclass")
-    public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) {
+    public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) throws IOException, NoSuchAlgorithmException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String updatedId =  userRegisterService.teacherUpdate(id, updateDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
@@ -216,7 +215,8 @@ public class UserApiController {
 
     /**자녀추가**/
     @PostMapping("/user/child")
-    public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, ChildDTO childDTO){
+    public NotExistDataResultResponse PlusChild(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody ChildDTO childDTO){
+        String parentId = CheckUserI(AUTHORIZATION).getId();
         String id = userRegisterService.plusChild(parentId, childDTO);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
     }
@@ -247,6 +247,12 @@ public class UserApiController {
     }
 
 
+/*    @GetMapping("/admin/userlist")
+    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
+        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
+        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
+                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
+    }*/
 
 
     /**헤더에서 사용자 정보 확인**/
