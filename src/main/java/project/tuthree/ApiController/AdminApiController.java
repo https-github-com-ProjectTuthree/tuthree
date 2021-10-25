@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
@@ -62,9 +61,9 @@ public class AdminApiController {
         Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
 
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
-
+                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
     }
+
 
 
     /**회원조회**/
@@ -87,5 +86,13 @@ public class AdminApiController {
                     userId + " 가 없습니다.", null);
         }
     }
+
+    /**학교인증**/
+    @GetMapping("/tutor/auth")
+    public NotExistDataResultResponse checkTutorAuth(@RequestParam("tutorId") String tutorId){
+        adminService.checkTutorAuth(tutorId);
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(), tutorId+"의 인증이 완료되었습니다.");
+    }
+
 
 }
