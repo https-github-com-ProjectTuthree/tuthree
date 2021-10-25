@@ -15,27 +15,29 @@ public class ChatDTO {
     private Long id;
     private ChatRoom room;
     private String userId;
+    private String name;
     private Date chatAt;
     private String content;
+    private boolean read;
 
     @Builder
-    public ChatDTO(Long id, ChatRoom room, String userId, Date chatAt, String content) {
+    public ChatDTO(Long id, ChatRoom room, String userId, String name, Date chatAt, String content, boolean read) {
         this.id = id;
         this.room = room;
         this.userId = userId;
+        this.name = name;
         this.chatAt = chatAt;
         this.content = content;
+        this.read = read;
     }
 
-    public ChatDTO(ChatRoom room, String userId, String content) {
-        this.room = room;
+    public void update(ChatRoom chatRoom, String userId, String name, String content) {
+        this.room = chatRoom;
         this.userId = userId;
+        this.name = name;
+        this.chatAt = new Date();
         this.content = content;
+        this.read = false;
     }
 
-    public ChatDTO(ChatDTO chatDTO) {
-        this.room = chatDTO.getRoom();
-        this.userId = chatDTO.getUserId();
-        this.content = chatDTO.getContent();
-    }
 }

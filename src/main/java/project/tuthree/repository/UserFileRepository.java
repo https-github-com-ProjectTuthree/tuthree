@@ -225,4 +225,9 @@ public class UserFileRepository {
         return transFormat.format(unix);
     }
 
+    public String unixToTimestamp(Date unix) throws ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return transFormat.format(unix);
+    }
+
 }

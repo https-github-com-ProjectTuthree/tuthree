@@ -28,6 +28,10 @@ public class QChat extends EntityPathBase<Chat> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath name = createString("name");
+
+    public final BooleanPath read = createBoolean("read");
+
     public final project.tuthree.domain.room.QChatRoom room;
 
     public final StringPath userId = createString("userId");
