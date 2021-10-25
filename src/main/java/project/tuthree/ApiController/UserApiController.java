@@ -25,6 +25,7 @@ import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 

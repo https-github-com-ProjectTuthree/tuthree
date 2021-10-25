@@ -1,74 +1,93 @@
-//package project.tuthree.ApiController.push;
-//
-//import lombok.*;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.messaging.simp.SimpMessageSendingOperations;
-//import org.springframework.web.bind.annotation.*;
-//import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
-//import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
-//import project.tuthree.ApiController.StatusCode;
-//import project.tuthree.dto.ChatDTO;
-//import project.tuthree.repository.ChatRepository;
-//import project.tuthree.service.push.ChatService;
-//import project.tuthree.service.push.ChatService.chatListDTO;
-//import project.tuthree.service.push.RabbitService;
-//
-//import java.text.ParseException;
-//import java.util.List;
-//
-//@Slf4j
-//@RestController
-//@RequiredArgsConstructor
-//public class ChatApiController {
-//
-//    private final SimpMessageSendingOperations msgTemplate;
-//    private final RabbitService rabbitService;
-//    private final ChatService chatService;
-//    private final ChatRepository chatRepository;
-///**
-// * 채팅 전송
-// * 채팅방 생성
-// * 채팅 내역 조회
-// * 채팅방 전체 조회
-// * 읽지 않은 채팅 수 조회
-// * */
-//
-////??messagemapping??
-//    @PostMapping("/chat/send")
-//    public NotExistDataResultResponse sendChat(@RequestBody ChatDTO chatDTO) {
-//        //valid
-//        //이건 솔직히 뭔지 잘 모르겠다...
-//        msgTemplate.convertAndSend("/exchange/chat-exchange/msg." + chatDTO.getRoom().getId(), chatDTO);
-//        //큐로 보내기
-//        rabbitService.rabbitChatProducer(chatDTO);
-//        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),
-//                "채팅 전송 완료");
-//    }
-//
-//    /** 채팅방 생성 */
-//    @PostMapping("/chat")
-//    public NotExistDataResultResponse addChatRoom(@RequestBody ChatDTO chatDTO) {
-//        chatService.addChatRoomByIds("", "");//아이디를 두개를 넘겨야 되는데,..흠..
-//        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),
-//                "채팅방에 생성되었습니다.");
-//    }
-//
-//    /** 채팅방 나가기 - 채팅방 삭제 */
-//
-//    /** (채팅방 채팅 목록) 채팅 내역 불러오기 */
-//    @GetMapping("/chat/{roomId}")
-//    public ExistDataSuccessResponse getChatByRoomId(@RequestParam("roomId") Long id) {
-//        List<ChatDTO> chatList = chatService.findChatListByRoomId(id);
-//        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-//                "채팅 목록을 불러왔습니다.", chatList);
-//    }
-//
-//    /** (개인 채팅 목록) 참가한 채팅방 전체 조회 - 마지막으로 전송된 채팅도 같이 불러오기 & 읽지 않은 채팅 수*/
-//    @GetMapping("/chat/list")
-//    public ExistDataSuccessResponse findChatRoomByOneId(@RequestParam("id") String id) throws ParseException {
-//        List<chatListDTO> chatRoomById = chatRepository.findChatRoomById(id);
-//        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-//                "채팅방을 조회했습니다.", chatRoomById);
-//    }
-//
-//}
+package project.tuthree.ApiController.push;
+
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
+import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.StatusCode;
+import project.tuthree.controller.RedisTestService;
+import project.tuthree.dto.ChatDTO;
+import project.tuthree.dto.room.ChatroomDTO;
+import project.tuthree.repository.ChatRepository;
+import project.tuthree.service.push.ChatService;
+import project.tuthree.service.push.ChatService.chatRoomDTO;
+
+import java.text.ParseException;
+import java.util.List;
+
+@Slf4j
+@RestController
+@RequestMapping("/chat")
+@RequiredArgsConstructor
+public class ChatApiController {
+
+    private final ChatService chatService;
+    private final ChatRepository chatRepository;
+    private final RedisTestService redisTestService;
+/**
+ * 채팅 전송
+ * 채팅방 생성
+ * 채팅 내역 조회
+ * 채팅방 전체 조회
+ * 읽지 않은 채팅 수 조회
+ * */
+
+    @PostMapping("/send")
+    public NotExistDataResultResponse sendChat(@RequestBody ChatDTO chatDTO) {
+        //valid
+        chatService.sendChat(chatDTO);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "채팅 전송 완료");
+    }
+
+    /**
+     * 문의하기를 눌렀을 경우 채팅방 생성 및 바로 채팅 하는 화면으로 넘어간다. 그리고 소켓 연결
+     * 문의하기를 눌렀을 경우 이미 채팅방이 있으면 채팅하는 화면으로 넘어가고, 이전 채팅을 불러낸다.
+     */
+
+    /** 채팅방 찾기 - 채팅방 생성
+     * 문의하기를 눌렀을 때, 선생님과 학생의 채팅방을 찾는다. 없으면 채팅방을 만들고 채팅방 번호를 리턴
+     * 이후 채팅창에서 채팅하기를 하면 채팅방이 이미 만들어졌고, 번호도 아는 상태
+     * */
+    @PostMapping
+    public NotExistDataResultResponse addChatRoom(@RequestBody ChatroomDTO chatroomDTO) {
+        chatService.addChatRoomByIds(chatroomDTO.getUser1(), chatroomDTO.getUser2());
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),"채팅방이 생성되었습니다.");
+    }
+
+    /** 채팅방 나가기 - 채팅방 삭제 */
+
+    /** (채팅방 채팅 목록) 채팅 내역 불러오기 */
+    @GetMapping("/{roomId}")
+    public ExistDataSuccessResponse getChatByRoomId(@PathVariable("roomId") Long id) {
+        List<chatRoomDTO> chatList = chatService.findChatListByRoomId(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                "채팅 목록을 불러왔습니다.", chatList);
+    }
+
+    /** (개인 채팅 목록) 참가한 채팅방 전체 조회 - 마지막으로 전송된 채팅도 같이 불러오기 & 읽지 않은 채팅 수
+     * 파이어베이스 알림 쌓인 걸로 할 수 있나??
+     * 알림 쌓인 걸 어떻게 해야할 지 모르겟다..
+     * */
+
+    @GetMapping("/list")
+    public ExistDataSuccessResponse findChatRoomByOneId(@RequestParam("id") String id) throws ParseException {
+        List<chatRoomDTO> chatRoomById = chatRepository.findChatRoomById(id);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"채팅방을 조회했습니다.", chatRoomById);
+    }
+
+    @PostMapping("/fcm-save")
+    public void saveFcmToken(@RequestBody TokenDTO tokenDTO) {
+        redisTestService.setRedisStringValue(tokenDTO.getId(), tokenDTO.getToken());
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    public static class TokenDTO {
+        String id;
+        String token;
+    }
+
+
+}
