@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -101,7 +102,7 @@ public class UserApiController {
 
     /**튜터 과외정보조회**/
     @GetMapping("/user/tutorclass") //토큰값으로 조회하게 바꾸기
-    public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) {
+    public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) throws IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
         log.debug("\n---- 과외정보조회 ----\n");
@@ -238,20 +239,6 @@ public class UserApiController {
     }
 
 
-    //**유저 목록 조회**//*
-    @GetMapping("/admin/userlist/{page}")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PathVariable("page") int page) {
-        List<UserListDTO> user = adminService.userList(page);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , user);
-    }
-
-/*    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
-        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }*/
 
 
     /**헤더에서 사용자 정보 확인**/
