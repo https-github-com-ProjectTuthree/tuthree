@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
+import project.tuthree.domain.user.Child;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
+import project.tuthree.domain.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -42,6 +44,8 @@ public class UserDTO {
     private String post;
     private Grade grade;
     private Date createDate;
+    private Child child;
+    private byte[] file;
 
     @Builder
     public UserDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Grade grade, Date createDate){
@@ -55,6 +59,16 @@ public class UserDTO {
         this.post = post;
         this.grade = grade.PARENT;
         this.createDate = new Date();
+    }
+    public UserDTO(User entity, Child child, byte[] file){
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.email = entity.getEmail();
+        this.tel = entity.getTel();
+        this.sex = entity.getSex();
+        this.birth = entity.getBirth();
+        this.child = child;
+        this.file = file;
     }
 
 
