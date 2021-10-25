@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -109,7 +110,7 @@ public class UserApiController {
 
     /**튜터 과외정보조회**/
     @GetMapping("/user/tutorclass") //토큰값으로 조회하게 바꾸기
-    public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) {
+    public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) throws IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
         log.debug("\n---- 과외정보조회 ----\n");
@@ -244,6 +245,7 @@ public class UserApiController {
         userRegisterService.quitUser(id, grade);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다.");
     }
+
 
 
 
