@@ -54,7 +54,6 @@ public class UserRegisterService {
             result = TRUE;
         }
         return result;
-        //throw new IllegalStateException("이미 존재하는 회원입니다.");
     }
 
     public void validId(String id){
@@ -86,24 +85,6 @@ public class UserRegisterService {
         return str;
     }
 
-        /*if(!userRepository.existsById(id)||!studentRepository.existsById(id)||!teacherRepository.existsById(id)){
-            return true;
-        }
-        else{
-            return false;
-        }*/
-
-    /*    //아이디 중복 체크
-    public boolean checkId(String id){
-        return userRepository.existsById(id);
-    }*/
-//로그인
-//    public Optional<User> userLogin(String id){
-//        return userRepository.findById(id);
-//    }
-
-
-
     /**학부모 회원가입**/
     @Transactional
     public String createParent(UserRegisterDTO registerDTO){
@@ -123,8 +104,6 @@ public class UserRegisterService {
         }catch(Exception e){
             throw new RuntimeException();
         }
-        //return "redirect:/";
-        //return userRepository.save(registerDTO.toEntity()).getId();
     }
 
     /**학생 회원가입**/
@@ -209,11 +188,12 @@ public class UserRegisterService {
 
     /**튜터정보조회**/
     @Transactional(readOnly = true)
-    public TeacherResponseDTO findTutorId (String id){
+    public TeacherResponseDTO findTutorId (String id) throws IOException{
         Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
         List<String> region = userEntityRepository.userFindRegion(id);
         List<String> subject = userEntityRepository.userFindSubject(id);
-        return new TeacherResponseDTO(teacher, region, subject);
+        byte[] file = userFileRepository.transferUserFile(teacher.getCertification());
+        return new TeacherResponseDTO(teacher, region, subject, file);
     }
 
     /**튜티정보조회**/

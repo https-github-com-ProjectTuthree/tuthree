@@ -30,8 +30,9 @@ public class TeacherResponseDTO {
     private String major;
     private String certification;
     private String detail;
+    private byte[] file;
 
-    public TeacherResponseDTO(Teacher entity, List<String> region, List<String> subject) {
+    public TeacherResponseDTO(Teacher entity, List<String> region, List<String> subject, byte[] file) {
         this.id = entity.getId();
         this.registration = entity.getRegistration();
         this.cost = entity.getCost();
@@ -42,6 +43,7 @@ public class TeacherResponseDTO {
         this.detail = entity.getDetail();
         this.region = region;
         this.subject = subject;
+        this.file = file;
     }
 
 }
