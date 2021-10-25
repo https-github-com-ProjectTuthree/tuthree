@@ -5,12 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.domain.Status;
+import project.tuthree.domain.room.StudyRoom;
+import project.tuthree.domain.room.StudyRoomId;
 import project.tuthree.domain.user.*;
-import project.tuthree.dto.user.AdminDTO;
-import project.tuthree.dto.user.UserListDTO;
+import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
+import project.tuthree.repository.StudyRoomRepository;
+import project.tuthree.repository.UserEntityRepository;
+import project.tuthree.repository.UserFileRepository;
 
+import java.io.IOException;
 import java.util.*;
+
+import static project.tuthree.domain.Status.CLOSE;
+import static project.tuthree.domain.Status.OPEN;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +29,16 @@ public class AdminService {
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final UserEntityRepository userEntityRepository;
+    private final StudyRoomRepository studyRoomRepository;
+    private final UserFileRepository userFileRepository;
+    private final ChildRepository childRepository;
 
     public String adminLogin(AdminDTO adminDTO) {
         return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
     }
 
-   @Transactional
+   /*@Transactional
     public List<UserListDTO> userList(int page) {
         List<User> userEntities = adminRepository.userByPage(page);
         List<Teacher> teacherEntites = adminRepository.teacherByPage(page);
@@ -79,7 +92,7 @@ public class AdminService {
         Collections.sort(userListDTO, new ListComparator());
 
         return userListDTO;
-    }
+    }*/
   /* @Transactional
    public Page<UserListDTO> userList(Pageable pageable) {
        Page<User> userEntities = userRepository.findAll(pageable);
@@ -107,7 +120,41 @@ public class AdminService {
     }
 
 
+    /**유저정보조회**/
+    @Transactional(readOnly = true)
+    public UserDTO viewParent(String id) throws IOException{
+        User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        Child child = childRepository.findByParentIdAndStatusTrue(id);
+        byte[] file = userFileRepository.transferUserFile(user.getPost());
+        return new UserDTO(user, child, file);
+    }
 
+    /**튜터정보조회**/
+    @Transactional(readOnly = true)
+    public TeacherDTO viewTeacher (String id) throws IOException {
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        List<String> region = userEntityRepository.userFindRegion(id);
+        List<String> subject = userEntityRepository.userFindSubject(id);
+        List<StudyRoom> studentsIng = studyRoomRepository.findStudyRoomByOneId(id, OPEN);
+        List<StudyRoom> studentsEnd = studyRoomRepository.findStudyRoomByOneId(id, CLOSE);
+        byte[] file = userFileRepository.transferUserFile(teacher.getPost());
+        byte[] authFile = userFileRepository.transferUserFile(teacher.getCertification());
+
+        return new TeacherDTO(teacher, region, subject, studentsIng, studentsEnd, file, authFile);
+    }
+    /**튜티정보조회**/
+    @Transactional(readOnly = true)
+    public StudentAllDTO viewStudent (String id) throws IOException{
+        Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        List<String> region = userEntityRepository.userFindRegion(id);
+        List<String> subject = userEntityRepository.userFindSubject(id);
+        List<StudyRoom> teachersIng = studyRoomRepository.findStudyRoomByOneId(id, OPEN);
+        List<StudyRoom> teachersEnd = studyRoomRepository.findStudyRoomByOneId(id, CLOSE);
+        byte[] file = userFileRepository.transferUserFile(student.getPost());
+
+        return new StudentAllDTO(student, region, subject, teachersIng, teachersEnd, file);
+    }
+    /**회원조회**/
     @Transactional
     public Page<UserListDTO> userList(String grade, Pageable pageable, String id){
         if(Objects.equals(grade, "parent")){

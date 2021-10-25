@@ -5,20 +5,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.*;
-import project.tuthree.dto.user.AdminDTO;
-import project.tuthree.dto.user.UserListDTO;
+import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static project.tuthree.domain.user.QUser.user;
 
@@ -65,5 +67,25 @@ public class AdminApiController {
     }
 
 
+    /**회원조회**/
+    @GetMapping("/user/{grade}/{user_id}")
+    public ExistDataSuccessResponse viewUser(@PathVariable("grade") String grade, @PathVariable("user_id")String userId) throws IOException {
+        if (Objects.equals(grade, "parent")) {
+            UserDTO userDTO = adminService.viewParent(userId);
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                    userId + " 를 조회했습니다.", userDTO);
+        } else if (Objects.equals(grade, "teacher")) {
+            TeacherDTO teacherDTO = adminService.viewTeacher(userId);
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                    userId + " 를 조회했습니다.", teacherDTO);
+        } else if (Objects.equals(grade, "student")) {
+            StudentAllDTO studentDTO = adminService.viewStudent(userId);
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                    userId + " 를 조회했습니다.", studentDTO);
+        } else {
+            return new ExistDataSuccessResponse(StatusCode.CONFLICT.getCode(),
+                    userId + " 가 없습니다.", null);
+        }
+    }
 
 }

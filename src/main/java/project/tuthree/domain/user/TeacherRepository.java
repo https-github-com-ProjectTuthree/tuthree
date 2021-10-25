@@ -28,5 +28,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
     Page<Teacher> findAll(Pageable pageable);
 
+    //findByIdContaining Like절
     Page<Teacher> findById(String id, Pageable pageable);
 }
