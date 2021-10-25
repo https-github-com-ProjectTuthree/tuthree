@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.tuthree.domain.Status;
 
 import javax.persistence.*;
@@ -72,6 +73,7 @@ public class Teacher implements Persistable<String>{
 
     private String certification;
 
+    //@Convert(converter=BooleanToYNConverter.class) //db에 데이터타입이 이미 0,1이라 데이터타입을 바꿔야될듯
     @Column(name = "certify_status") //converter 적용하기
     private boolean certifyStatus;
 
@@ -109,13 +111,14 @@ public class Teacher implements Persistable<String>{
     }
 
     public void update(Status registration, String cost, String school,
-                       SchoolStatus status, String major, String detail){
+                       SchoolStatus status, String major, String detail, String certification){
         this.registration = registration;
         this.cost = cost;
         this.school = school;
         this.status = status;
         this.major = major;
         this.detail = detail;
+        this.certification = certification;
     }
 
     public void updateInfo(String email, String tel,Integer birth, String post, Status notification){
@@ -132,8 +135,10 @@ public class Teacher implements Persistable<String>{
     }
 
     public void updateP(String pwd){
-        this.pwd = pwd;
+        this.pwd =new BCryptPasswordEncoder().encode(pwd);
     }
 
+    public void updateAuth(){
+        this.certifyStatus = true;
+    }
 }
-
