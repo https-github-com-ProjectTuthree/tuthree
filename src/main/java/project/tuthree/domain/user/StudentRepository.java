@@ -26,6 +26,8 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     /**번호로 비밀번호**/
     Student findByIdAndNameAndTel(String id, String tel, String name);
 
+    Student findByIdAndName(String id, String name);
+
     List<Student> findAll();
 
     Page<Student> findAll(Pageable pageable);
