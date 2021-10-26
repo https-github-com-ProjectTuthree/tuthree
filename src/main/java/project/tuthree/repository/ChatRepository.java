@@ -1,5 +1,9 @@
 package project.tuthree.repository;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +15,15 @@ import project.tuthree.domain.room.ChatRoom;
 import project.tuthree.service.push.ChatService;
 import project.tuthree.service.push.ChatService.chatRoomDTO;
 import project.tuthree.service.push.ChatService.chatRoomDTO.chatListDTO;
+import project.tuthree.service.push.ChatService.chatRoomListDTO;
 
 import javax.persistence.EntityManager;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static project.tuthree.domain.QChat.chat;
@@ -55,10 +63,10 @@ public class ChatRepository {
         try {
             Long id = jpaQueryFactory.select(chatRoom.id).from(chatRoom)
                     .where((chatRoom.user1.eq(user1).and(chatRoom.user2.eq(user2)))
-                            .or(chatRoom.user2.eq(user1)).and(chatRoom.user1.eq(user2))
+                            .or((chatRoom.user2.eq(user1)).and(chatRoom.user1.eq(user2)))
                     )
                     .fetchOne();
-            return (id == null) ? -1 : id;
+            return (id == null) ? -1L : id;
         } catch (Exception e) {
             return -1L;
         }
@@ -77,29 +85,45 @@ public class ChatRepository {
                 .fetch();
     }
 
+    public List<ChatRoom> findChatRoomById(String id) {
+
+        return jpaQueryFactory.selectFrom(chatRoom)
+                .where(chatRoom.user1.eq(id).or(chatRoom.user2.eq(id)))
+                .fetch();
+
+    }
+
     /** 한명이 속한 채팅방 찾아서 마지막 채팅과 함께 반환 */
-    public List<chatRoomDTO> findChatRoomById(String id) {
-//                .fetch();
+    public List<chatRoomListDTO> findChatRoomWLogById(String id) {
+
         QChat m = chat;
         QChat n = new QChat("n");
         List<Chat> fetch = jpaQueryFactory.selectFrom(m)
                 .where(m.chatAt.eq(jpaQueryFactory.select(n.chatAt.max())
                         .from(n)
-                        .where(n.room.eq(m.room))
+                        .where((n.room.user1.eq(id).or(n.room.user2.eq(id)))
+                                .and(n.room.eq(m.room)))
                         .groupBy(n.room))
                 )
                 .fetch();
 
         return fetch.stream()
-                .map(t -> wrap(() -> new chatRoomDTO(t.getRoom().getId(), new chatListDTO(t.getUserId(), t.getName(), t.getContent(), userFileRepository.unixToDate(t.getChatAt())))))
+                .map(t -> wrap(() -> new chatRoomListDTO(t.getRoom().getId(), new chatRoomListDTO.chatListDTO(t.getUserId(), t.getName(), t.getContent(), userFileRepository.unixToDate(t.getChatAt())))))
                 .collect(Collectors.toList());
     }
 
     /** 읽지 않은 채팅 수 */
-    public Long findChatNotReadByRoomId(Long id) {
-        return jpaQueryFactory.selectFrom(chat)
-                .where(chat.room.id.eq(id))
-                .fetchCount();
+    public Map<Long, Long> findChatNotReadByUserId(String userId) {
+        Map<Long, Long> map = new HashMap<>();
+        List<Tuple> fetch = jpaQueryFactory.select(chat.room.id, chat.count()).from(chat)
+                .where((chat.room.user1.eq(userId).or(chat.room.user2.eq(userId)))
+                        .and(chat.userId.notEqualsIgnoreCase(userId))
+                        .and(chat.read.eq(false)))
+                .groupBy(chat.room).fetch();
+
+        fetch.stream().forEach(m -> map.put(m.get(0, Long.class), m.get(1, Long.class)));
+        return map;
     }
+
 
 }

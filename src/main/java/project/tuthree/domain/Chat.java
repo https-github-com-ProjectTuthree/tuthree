@@ -38,7 +38,7 @@ public class Chat {
     @Column(name = "user_name")
     private String name; //다른 테이블을 사용하지 않고 바로 넘겨주기 위함
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "chat_at")
     private Date chatAt;
 

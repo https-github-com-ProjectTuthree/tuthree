@@ -95,7 +95,6 @@ public class PostTestPaperService {
     public Long writeCommunity(PaperForm form) throws NoSuchAlgorithmException, IOException {
         Teacher teacher = userEntityRepository.teacherFindById(form.getUserId());
         PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
-        log.info("======================" + teacher.getId());
 
         PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
         List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
@@ -103,7 +102,6 @@ public class PostTestPaperService {
         for (int i = 0; i < saveNames.size(); i++) {
             UserfileDTO userfileDTO = new UserfileDTO(post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
             userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
-
         }
         return post.getId();
     }

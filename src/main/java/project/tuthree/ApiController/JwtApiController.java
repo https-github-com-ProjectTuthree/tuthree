@@ -7,21 +7,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.After;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
+import project.tuthree.configuration.Utils;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.exception.NotEnoughUserException;
 import project.tuthree.repository.PostTestPaperRepository;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+
+import static project.tuthree.configuration.Utils.*;
 
 @Aspect
 @Slf4j
@@ -32,8 +34,6 @@ public class JwtApiController {
      * api 테스트를 위해 token 로직은 잠시 종료 해 둠
      */
 
-    private final String AUTHORIZATION = "Authorization";
-    private final String BEARER = "Bearer";
 
     private final JwtController jwtController;
     private final PostTestPaperRepository postTestPaperRepository;
@@ -61,6 +61,41 @@ public class JwtApiController {
     //올바른 토큰인가?
     //권한이 관리자인가?
     //토큰의 아이디가 원글의 아이디와 동일한가?
+
+    /**
+     *
+     * 토큰 파싱이 안될 때 로그인해주세요.
+     */
+    @Around("execution(* PostUserApiController.writeCommunity(..))")
+    public Object CheckNormalUser(final ProceedingJoinPoint joinPoint) throws Throwable {
+        //선생님 작성
+        //올바른 토큰인가?
+        String[] requestToken = request.getHeader(AUTHORIZATION).split(" ");
+        if(!requestToken[0].equals(BEARER)){
+            throw new MalformedJwtException("토큰 형식이 맞지 않습니다.");
+        }
+        try {
+            Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
+            log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
+
+            String userId = String.valueOf(map.get(CLAIMUSERID));
+            String grade = String.valueOf(map.get(CLAIMGRADE));
+            if (userId == null || grade == null) throw new MalformedJwtException("토큰 형식이 맞지 않습니다.");
+
+            Object result = joinPoint.proceed();
+
+            String responseToken = jwtController.makeJwtToken(userId, grade);
+            response.setHeader(AUTHORIZATION, BEARER + " " + responseToken);
+            log.info("CheckNormalUser");
+            return result;
+        } catch (IndexOutOfBoundsException e) {
+            throw new MalformedJwtException("먼저 로그인해주세요.");
+        } catch (Exception e) {
+            throw new Exception();
+        }
+
+    }
+
 
 
     /** 관리자 작성 - 관리자 권한인지 확인 */
@@ -102,8 +137,8 @@ public class JwtApiController {
         Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
         log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
 
-        String userId = String.valueOf(map.get("userId"));
-        String grade = String.valueOf(map.get("Grade"));
+        String userId = String.valueOf(map.get(CLAIMUSERID));
+        String grade = String.valueOf(map.get(CLAIMGRADE));
 
         Assert.assertEquals(Grade.TEACHER.getStrType(), grade);//권한이 관리자인가?
 
@@ -128,8 +163,8 @@ public class JwtApiController {
         Map<String, Object> map = jwtController.decryptValidJwtToken(requestToken[1]);
         log.info(jwtController.decryptValidJwtToken(requestToken[1]).toString());
 
-        String userId = String.valueOf(map.get("userId"));
-        String grade = String.valueOf(map.get("Grade"));
+        String userId = String.valueOf(map.get(CLAIMUSERID));
+        String grade = String.valueOf(map.get(CLAIMGRADE));
 
         if(grade.equals(Grade.TEACHER.getStrType())){
             //선생님 권한??

@@ -34,12 +34,10 @@ public class AdminService {
     private final UserFileRepository userFileRepository;
     private final ChildRepository childRepository;
 
-<<<<<<< HEAD
-   @Transactional
-=======
-    public String adminLogin(AdminDTO adminDTO) {
-        return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
-    }
+//   @Transactional
+//    public String adminLogin(AdminDTO adminDTO) {
+//        return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
+//    }
 
    /*@Transactional
 >>>>>>> master

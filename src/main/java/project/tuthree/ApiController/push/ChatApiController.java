@@ -6,15 +6,19 @@ import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.ApiController.StatusCode;
+import project.tuthree.configuration.Utils;
+import project.tuthree.controller.JwtController;
 import project.tuthree.controller.RedisTestService;
 import project.tuthree.dto.ChatDTO;
 import project.tuthree.dto.room.ChatroomDTO;
-import project.tuthree.repository.ChatRepository;
 import project.tuthree.service.push.ChatService;
 import project.tuthree.service.push.ChatService.chatRoomDTO;
+import project.tuthree.service.push.ChatService.chatRoomListDTO;
 
 import java.text.ParseException;
 import java.util.List;
+
+import static project.tuthree.configuration.Utils.AUTHORIZATION;
 
 @Slf4j
 @RestController
@@ -22,9 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatApiController {
 
-    private final ChatService chatService;
-    private final ChatRepository chatRepository;
     private final RedisTestService redisTestService;
+    private final JwtController jwtController;
+    private final ChatService chatService;
 /**
  * 채팅 전송
  * 채팅방 생성
@@ -52,12 +56,13 @@ public class ChatApiController {
     @PostMapping
     public NotExistDataResultResponse addChatRoom(@RequestBody ChatroomDTO chatroomDTO) {
         chatService.addChatRoomByIds(chatroomDTO.getUser1(), chatroomDTO.getUser2());
+        //초기 채팅 보내기
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),"채팅방이 생성되었습니다.");
     }
 
     /** 채팅방 나가기 - 채팅방 삭제 */
 
-    /** (채팅방 채팅 목록) 채팅 내역 불러오기 */
+    /** (채팅방 채팅 목록) 채팅 내역 불러오기*/
     @GetMapping("/{roomId}")
     public ExistDataSuccessResponse getChatByRoomId(@PathVariable("roomId") Long id) {
         List<chatRoomDTO> chatList = chatService.findChatListByRoomId(id);
@@ -66,16 +71,18 @@ public class ChatApiController {
     }
 
     /** (개인 채팅 목록) 참가한 채팅방 전체 조회 - 마지막으로 전송된 채팅도 같이 불러오기 & 읽지 않은 채팅 수
+     *  + 안 읽은 채팅의 갯수
      * 파이어베이스 알림 쌓인 걸로 할 수 있나??
      * 알림 쌓인 걸 어떻게 해야할 지 모르겟다..
      * */
-
     @GetMapping("/list")
-    public ExistDataSuccessResponse findChatRoomByOneId(@RequestParam("id") String id) throws ParseException {
-        List<chatRoomDTO> chatRoomById = chatRepository.findChatRoomById(id);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"채팅방을 조회했습니다.", chatRoomById);
+    public ExistDataSuccessResponse findChatRoomByOneId(@RequestHeader(AUTHORIZATION) String token) throws ParseException {
+        String userId = jwtController.parseValueFromJwtToken(token, Utils.CLAIMUSERID);
+        List<chatRoomListDTO> chatNotRead = chatService.findChatNotRead(userId);
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"채팅방을 조회했습니다.", chatNotRead);
     }
 
+    /** fcm token 저장 api */
     @PostMapping("/fcm-save")
     public void saveFcmToken(@RequestBody TokenDTO tokenDTO) {
         redisTestService.setRedisStringValue(tokenDTO.getId(), tokenDTO.getToken());

@@ -50,14 +50,6 @@ public class FirebaseConfiguration {
                     "Firebase Application Initialize" +
                     "\n====================\n");
 
-//            if (FirebaseApp.getApps().isEmpty()) {
-//                firebaseApp = FirebaseApp.initializeApp(options);
-//                log.info("\n====================\n" +
-//                        "Firebase Application Initialize" +
-//                        "\n====================\n");
-//
-////                log.info("==============token : \n" + googleCredentials.getAccessToken().getTokenValue() + "\n");
-//            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {

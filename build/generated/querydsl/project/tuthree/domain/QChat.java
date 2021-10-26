@@ -22,7 +22,7 @@ public class QChat extends EntityPathBase<Chat> {
 
     public static final QChat chat = new QChat("chat");
 
-    public final DatePath<java.util.Date> chatAt = createDate("chatAt", java.util.Date.class);
+    public final DateTimePath<java.util.Date> chatAt = createDateTime("chatAt", java.util.Date.class);
 
     public final StringPath content = createString("content");
 

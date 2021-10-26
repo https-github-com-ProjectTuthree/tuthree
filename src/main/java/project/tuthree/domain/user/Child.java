@@ -28,6 +28,7 @@ public class Child {
 
     @Column(name = "student_id")
     private String studentId;
+
     @Column(name = "student_name")
     private String studentName;
 

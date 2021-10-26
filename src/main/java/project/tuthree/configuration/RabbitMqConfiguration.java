@@ -14,6 +14,8 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.inject.Named;
+
 
 @Configuration
 public class RabbitMqConfiguration {
@@ -23,21 +25,38 @@ public class RabbitMqConfiguration {
     private final String chatExchange = "chat-exchange";
     private final String routingkey = "messages.*";
 
-    @Bean
+    private final String keywordQueue = "keyword";
+    private final String keywordExchange = "keyword-exchange";
+    private final String keywrodRoutingkey = "keyword.*";
+
+    @Bean(name = "chat")
     Queue chatQueue() {
         return new Queue(chatQueue, true, false, false);
     }
 
-    @Bean
+    @Bean(name = "keyword")
+    Queue keywordQueue() {
+        return new Queue(keywordQueue, true, false, false);}
+
+    @Bean(name = "chatTopicExchange")
     TopicExchange topicExchange() {
         return new TopicExchange(chatExchange);
     }
 
+    @Bean(name = "keywordTopicExchange")
+    TopicExchange keywordExchange() {
+        return new TopicExchange(keywordExchange);}
+
     //토픽, 다이렉트 어떤 걸로 갈지 모르겠다
 
     @Bean
-    Binding chatQueueBinding(Queue queue, TopicExchange exchange) {
+    Binding chatQueueBinding(@Named("chat") Queue queue, @Named("chatTopicExchange") TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(routingkey);
+    }
+
+    @Bean
+    Binding keywordQueueBinding(@Named("keyword") Queue queue, @Named("keywordTopicExchange") TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(keywrodRoutingkey);
     }
 
     @Bean
