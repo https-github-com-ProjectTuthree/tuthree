@@ -7,12 +7,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostFaq;
+import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
 
+import static project.tuthree.domain.file.QUserFile.userFile;
 import static project.tuthree.domain.user.QAdmin.admin;
 
 @Repository
@@ -29,6 +31,15 @@ public class AdminRepository {
     public String findById(String id) {
         Admin admin = em.find(Admin.class, id);
         return admin.getId();
+    }
+
+    /**  */
+    public Long existById(String id){
+        Long count = jpaQueryFactory.selectFrom(admin)
+                .where(admin.id.eq(id))
+                .fetchCount();
+
+        return count;
     }
 
     /** id, pwd 일치하는 관리자 찾기 */
