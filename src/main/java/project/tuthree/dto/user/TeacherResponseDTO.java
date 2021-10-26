@@ -29,6 +29,7 @@ public class TeacherResponseDTO {
     private SchoolStatus status;
     private String major;
     private String certification;
+    private boolean certifyStatus;
     private String detail;
     private byte[] file;
 
@@ -41,6 +42,7 @@ public class TeacherResponseDTO {
         this.major = entity.getMajor();
         this.certification = entity.getCertification();
         this.detail = entity.getDetail();
+        this.certifyStatus = entity.isCertifyStatus();
         this.region = region;
         this.subject = subject;
         this.file = file;

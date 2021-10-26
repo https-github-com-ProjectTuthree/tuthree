@@ -134,7 +134,7 @@ public class AdminService {
     /**튜터정보조회**/
     @Transactional(readOnly = true)
     public TeacherDTO viewTeacher (String id) throws IOException {
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
         List<String> region = userEntityRepository.userFindRegion(id);
         List<String> subject = userEntityRepository.userFindSubject(id);
         List<StudyRoom> studentsIng = studyRoomRepository.findStudyRoomByOneId(id, OPEN);
@@ -144,6 +144,7 @@ public class AdminService {
 
         return new TeacherDTO(teacher, region, subject, studentsIng, studentsEnd, file, authFile);
     }
+
     /**튜티정보조회**/
     @Transactional(readOnly = true)
     public StudentAllDTO viewStudent (String id) throws IOException{
@@ -156,6 +157,8 @@ public class AdminService {
 
         return new StudentAllDTO(student, region, subject, teachersIng, teachersEnd, file);
     }
+
+
     /**회원조회**/
     @Transactional
     public Page<UserListDTO> userList(String grade, Pageable pageable, String id){
@@ -233,12 +236,14 @@ public class AdminService {
             return (Page<UserListDTO>) new NullPointerException();
         }
 
-
     }
 
-
-
-
+    /**인증확인**/
+    @Transactional
+    public void checkTutorAuth(String tutorId){
+        Teacher teacher = teacherRepository.findById(tutorId).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ tutorId));
+        teacher.updateAuth();
+    }
 
 
 }
