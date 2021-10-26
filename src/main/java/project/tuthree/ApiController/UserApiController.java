@@ -218,7 +218,8 @@ public class UserApiController {
     public NotExistDataResultResponse PlusChild(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody ChildDTO childDTO){
         String parentId = CheckUserI(AUTHORIZATION).getId();
         String id = userRegisterService.plusChild(parentId, childDTO);
-        return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
+        String parentName = userRepository.findById(parentId).get().getName();
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(),parentName+"님 께서 " +id+"로 자녀를 신청하였습니다.");
     }
 
     /**자녀수락**/
