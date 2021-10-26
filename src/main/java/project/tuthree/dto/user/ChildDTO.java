@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import project.tuthree.domain.user.Child;
 
+import static java.lang.Boolean.FALSE;
+
 @Getter
 @Setter
 @NoArgsConstructor

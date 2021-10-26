@@ -208,23 +208,32 @@ public class UserRegisterService {
     @Transactional
     public String userUpdate(String id, String grade, UserUpdateDTO updateDto) throws NoSuchAlgorithmException, IOException {
         if(Objects.equals(grade, "parent")){
+            if (!updateDto.getFile().isEmpty()) {
+                String post = userFileRepository.saveFile(updateDto.getFile(), PARENT);
+                updateDto.updatePost(post);
+            }
             User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
-            String post = userFileRepository.saveFile(updateDto.getFile(), PARENT);
-            updateDto.updatePost(post);
+
             user.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
 
         }
         else if(Objects.equals(grade, "teacher")) {
+            if (!updateDto.getFile().isEmpty()) {
+                String post = userFileRepository.saveFile(updateDto.getFile(), TEACHER);
+                updateDto.updatePost(post);
+            }
             Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
-            String post = userFileRepository.saveFile(updateDto.getFile(), TEACHER);
-            updateDto.updatePost(post);
+
             teacher.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
 
         }
         else if (Objects.equals(grade, "student")){
+            if (!updateDto.getFile().isEmpty()) {
+                String post = userFileRepository.saveFile(updateDto.getFile(), STUDENT);
+                updateDto.updatePost(post);
+            }
             Student student = studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id + grade));
-            String post = userFileRepository.saveFile(updateDto.getFile(), STUDENT);
-            updateDto.updatePost(post);
+
             student.updateInfo(updateDto.getEmail(), updateDto.getTel(), updateDto.getBirth(), updateDto.getPost(), updateDto.getNotification());
         }
         else{
@@ -238,10 +247,6 @@ public class UserRegisterService {
     /**학생과외정보 수정**/
     @Transactional
     public String studentUpdate(String id, StudentUpdateDTO updateDTO){
-        /*if(!updateDTO.getRegionL().isEmpty()){
-            userInfoRepository.deleteByUserId(id);
-            userInfoRepository.flush();
-        }*/
         Student student = studentRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
@@ -253,13 +258,19 @@ public class UserRegisterService {
     }
     /**선생님과외정보 수정**/
     @Transactional
-    public String teacherUpdate(String id, TeacherUpdateDTO updateDTO){
+    public String teacherUpdate(String id, TeacherUpdateDTO updateDTO) throws IOException, NoSuchAlgorithmException {
         Teacher teacher = teacherRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
 
-        teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail());
+        if (!updateDTO.getAuthFile().isEmpty()) {
+            String certification = userFileRepository.saveFile(updateDTO.getAuthFile(), TEACHER);
+            updateDTO.updateAuthPost(certification);
+        }
+
+        teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail(), updateDTO.getCertification());
 
         userEntityRepository.userSaveRegion(updateDTO.getId(), updateDTO.getRegionL());
         userEntityRepository.userSaveSubject(updateDTO.getId(), updateDTO.getSubjectL());
+
         return id;
     }
 
@@ -366,8 +377,17 @@ public class UserRegisterService {
     /**자녀 추가**/
     @Transactional
     public String plusChild(String parentId, ChildDTO childDTO){
+        String studentId= childDTO.getStudentId();
+        String StudentName = childDTO.getStudentName();
+        String id = studentRepository.findByIdAndName(studentId, StudentName).getId();
         childDTO.setParentId(parentId);
-        return childRepository.save(childDTO.toEntity()).getStudentId();
+        childDTO.setStatus(false);
+        if(id.equals(" ")) {
+            return "확인되지 않은 id";
+        }
+        else{
+            return childRepository.save(childDTO.toEntity()).getStudentId();
+        }
     }
 
     /**자녀수락**/

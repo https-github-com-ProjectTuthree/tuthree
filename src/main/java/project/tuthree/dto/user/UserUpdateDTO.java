@@ -19,12 +19,13 @@ public class UserUpdateDTO {
     private Status notification;
 
     @Builder
-    public UserUpdateDTO(String id, String email, String tel,Integer birth, String post, Status notification){
+    public UserUpdateDTO(String id, String email, String tel,Integer birth, String post, MultipartFile file, Status notification){
         this.id = id;
         this.email = email;
         this.tel = tel;
         this.birth = birth;
         this.post = post;
+        this.file = file;
         this.notification = notification;
     }
     public void updatePost(String post) {

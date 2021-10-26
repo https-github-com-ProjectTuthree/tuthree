@@ -2,12 +2,11 @@ package project.tuthree.dto.user;
 
 import lombok.*;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.School;
-import project.tuthree.domain.user.Sex;
-import project.tuthree.domain.user.User;
+import project.tuthree.domain.room.StudyRoom;
+import project.tuthree.domain.user.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +31,8 @@ public class StudentDTO {
     private String detail;
     private User user;
 
+
+
     @Builder
     public StudentDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date createDate, String region, Status registration, String subject, String cost, School school, String detail, User user) {
         this.id = id;
@@ -53,4 +54,6 @@ public class StudentDTO {
         this.detail = detail;
         this.user = user;
     }
+
+
 }

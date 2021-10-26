@@ -68,7 +68,7 @@ public class TeacherRegisterDTO {
     private String major;
     private double star;
 
-    @ColumnDefault("FALSE")
+
     private String certification;
     private MultipartFile authFile;
 
