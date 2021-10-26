@@ -153,10 +153,10 @@ public class UserApiController {
     @PostMapping("/login")
     public Object UserLogin(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response) {
         log.debug("\n---- 로그인 ----\n");
-        String str = userRegisterService.userLogin(loginDTO);
-        if (!str.equals(" ")) {
-            response.setHeader(AUTHORIZATION, BEARER + " " + jwtController.makeJwtToken(loginDTO.getId(), str));
-            return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "로그인되었습니다.",  new LoginReturnDTO(loginDTO.getId(), str));
+        Map<String, String> map = userRegisterService.userLogin(loginDTO);
+        if (!map.get("grade").equals(" ")) {
+            response.setHeader(AUTHORIZATION, BEARER + " " + jwtController.makeJwtToken(loginDTO.getId(), map.get("grade")));
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "로그인되었습니다.",  new LoginReturnDTO(loginDTO.getId(), map.get("name"), map.get("grade")));
         }
         return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(),"일치하는 계정 정보가 존재하지 않습니다.");
     }
@@ -208,7 +208,7 @@ public class UserApiController {
 
     /**자녀추가**/
     @PostMapping("/user/child")
-    public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, ChildDTO childDTO){
+    public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, @RequestBody ChildDTO childDTO){
         String id = userRegisterService.plusChild(parentId, childDTO);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),id+"로 자녀를 신청하였습니다.");
     }

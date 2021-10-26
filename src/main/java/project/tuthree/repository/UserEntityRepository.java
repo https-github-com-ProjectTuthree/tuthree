@@ -1,5 +1,6 @@
 package project.tuthree.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static project.tuthree.domain.user.QStudent.student;
 import static project.tuthree.domain.user.QTeacher.teacher;
@@ -45,34 +48,55 @@ public class UserEntityRepository {
     /**
      * id와 pw 일치하는 사용자 찾기
      */
-    public String studentFindByIdPwd(String id, String pwd) {
+    public Map<String, String> studentFindByIdPwd(String id, String pwd) {
+        Map<String, String> map = new HashMap<>();
         if(studentRepository.existsById(id)){
-            String s_pwd = jpaQueryFactory.select(student.pwd).from(student)
+            Tuple tuple = jpaQueryFactory.select(student.name, student.pwd).from(student)
                     .where(student.id.eq(id)).fetchOne();
-            if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.STUDENT.getStrType();
-            return " ";
+            String name = tuple.get(0, String.class);
+            String sPwd = tuple.get(1, String.class);
+            if(bCryptPasswordEncoder.matches(pwd, sPwd)) {
+                map.put("name", name);
+                map.put("grade", Grade.STUDENT.getStrType());
+                return map;
+            }
         }
-        return " ";
+        map.put("grade", " ");
+        return map;
     }
 
-    public String parentFindByIdPwd(String id, String pwd) {
+    public Map<String, String> parentFindByIdPwd(String id, String pwd) {
+        Map<String, String> map = new HashMap<>();
         if(userRepository.existsById(id)){
-            String s_pwd = jpaQueryFactory.select(user.pwd).from(user)
+            Tuple tuple = jpaQueryFactory.select(user.name, user.pwd).from(user)
                     .where(user.id.eq(id)).fetchOne();
-            if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.PARENT.getStrType();
-            return " ";
+            String name = tuple.get(0, String.class);
+            String sPwd = tuple.get(1, String.class);
+            if(bCryptPasswordEncoder.matches(pwd, sPwd)) {
+                map.put("name", name);
+                map.put("grade", Grade.PARENT.getStrType());
+                return map;
+            }
         }
-        return " ";
+        map.put("grade", " ");
+        return map;
     }
 
-    public String teacherFindByIdPwd(String id, String pwd) {
+    public Map<String, String> teacherFindByIdPwd(String id, String pwd) {
+        Map<String, String> map = new HashMap<>();
         if(teacherRepository.existsById(id)){
-            String s_pwd = jpaQueryFactory.select(teacher.pwd).from(teacher)
+            Tuple tuple = jpaQueryFactory.select(teacher.name, teacher.pwd).from(teacher)
                     .where(teacher.id.eq(id)).fetchOne();
-            if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.TEACHER.getStrType();
-            return " ";
+            String name = tuple.get(0, String.class);
+            String sPwd = tuple.get(1, String.class);
+            if(bCryptPasswordEncoder.matches(pwd, sPwd)) {
+                map.put("name", name);
+                map.put("grade", Grade.TEACHER.getStrType());
+                return map;
+            }
         }
-        return " ";
+        map.put("grade", " ");
+        return map;
     }
 
     /** 지역 정보 저장 */
@@ -123,5 +147,6 @@ public class UserEntityRepository {
                 .where(student.user.id.eq(id))
                 .fetch();
     }
+
 
 }

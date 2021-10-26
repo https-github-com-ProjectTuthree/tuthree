@@ -65,8 +65,6 @@ public class StudyRoomRepository {
     /**
      * 수업 계획서 수정하기 */
     public void infoUpdate(StudyRoomInfo studyRoomInfo) {
-
-        log.info("===============" + studyRoomInfo.getId().getStudentId().getId());
         StudyRoomInfo info = em.find(StudyRoomInfo.class, studyRoomInfo.getId());
         info.infoUpdate(studyRoomInfo);
     }

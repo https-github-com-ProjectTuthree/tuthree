@@ -31,12 +31,18 @@ public class ChatDTO {
         this.read = read;
     }
 
-    public void update(ChatRoom chatRoom, String userId, String name, String content) {
+    public ChatDTO(ChatRoom chatRoom, String userId, String name, String content) {
         this.room = chatRoom;
         this.userId = userId;
         this.name = name;
         this.chatAt = new Date();
         this.content = content;
+        this.read = false;
+    }
+
+    public void update(ChatRoom chatRoom) {
+        this.room = chatRoom;
+        this.chatAt = new Date();
         this.read = false;
     }
 

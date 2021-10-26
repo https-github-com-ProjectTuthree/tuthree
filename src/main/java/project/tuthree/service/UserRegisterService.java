@@ -12,9 +12,7 @@ import project.tuthree.repository.UserFileRepository;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -69,20 +67,20 @@ public class UserRegisterService {
     }
 
     /** 로그인 */
-    public String userLogin(LoginDTO loginDTO) {
+    public Map<String, String> userLogin(LoginDTO loginDTO) {
         String id = loginDTO.getId();
         String pwd = loginDTO.getPwd();
-        String str = userEntityRepository.studentFindByIdPwd(id, pwd);
-        if(str.equals(" ")){
-            str = userEntityRepository.teacherFindByIdPwd(id, pwd);
-            if(str.equals(" ")){
-                str = userEntityRepository.parentFindByIdPwd(id, pwd);
-                if(str.equals(" ")){
-                    return " ";
+        Map<String, String> map = userEntityRepository.studentFindByIdPwd(id, pwd);
+        if(map.get("grade").equals(" ")){
+            map = userEntityRepository.teacherFindByIdPwd(id, pwd);
+            if(map.get("grade").equals(" ")){
+                map = userEntityRepository.parentFindByIdPwd(id, pwd);
+                if(map.get("grade").equals(" ")){
+                    return map;
                 }
             }
         }
-        return str;
+        return map;
     }
 
     /**학부모 회원가입**/

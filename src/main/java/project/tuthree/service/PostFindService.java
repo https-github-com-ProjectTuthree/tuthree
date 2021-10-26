@@ -52,7 +52,6 @@ public class PostFindService {
     public PostFindTeacherCountListDTO findTeacherList(int page, PostFindSearchCondition condition) throws IOException {
         //postfind
         JPAQuery<PostFind> query = postFindRepository.findTeacherQuery(condition);
-        log.info("===============lgolog" + query.toString());
 
         List<PostFind> teacher = postFindRepository.findTeacherFindList(page, query);
         Long teacherHasRow = postFindRepository.findTeacherHasRow(query);

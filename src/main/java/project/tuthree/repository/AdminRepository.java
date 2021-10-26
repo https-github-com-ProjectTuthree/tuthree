@@ -12,7 +12,9 @@ import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static project.tuthree.domain.user.QAdmin.admin;
 
@@ -34,17 +36,24 @@ public class AdminRepository {
     }
 
     /** id, pwd 일치하는 관리자 찾기 */
-    public String findByIdPwd(String id, String pwd) {
+    public Map<String, String> findByIdPwd(String id, String pwd) {
+        Map<String, String> map = new HashMap<>();
         try {
             String s_pwd = jpaQueryFactory.select(admin.pwd)
                     .from(admin)
                     .where(admin.id.eq(id))
                     .fetchOne();
-            if (bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
+            if (bCryptPasswordEncoder.matches(pwd, s_pwd)) {
+                map.put("name", "관리자");
+                map.put("grade", Grade.ADMIN.getStrType());
+            } else {
+                map.put("grade", " ");
+            }
         } catch (NullPointerException e) {
-            log.info("return================");
+            e.printStackTrace();
+        }finally {
+            return map;
         }
-        return " ";
     }
 
     public List<User> userByPage(int page) {
