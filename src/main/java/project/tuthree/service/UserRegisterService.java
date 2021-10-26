@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
+import project.tuthree.repository.AdminRepository;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
@@ -32,22 +33,28 @@ public class UserRegisterService {
     private final UserEntityRepository userEntityRepository;
     private final UserFileRepository userFileRepository;
     private final ChildRepository childRepository;
+    private final AdminRepository adminRepository;
 
     private final PostFindService postFindService;
 
     /** 아이디 중복 확인 */
     public boolean checkId(String id){
+        //아이디 중복이면 true, 아니면 false
         boolean parent = userRepository.existsById(id);
         boolean student = studentRepository.existsById(id);
         boolean teacher = teacherRepository.existsById(id);
+        Long admin = adminRepository.existById(id);
 
         boolean result = TRUE;
 
+        //중복이 아니면
         if(parent == FALSE) {
             if (student == FALSE) {
                 if (teacher == FALSE) {
-                    result = FALSE;
-                    return result;
+                    if(admin == 0L)
+                        result = FALSE;
+                        return result;
+
                 }
             }
         }else {

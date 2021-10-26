@@ -31,10 +31,6 @@ public class AdminApiController {
 
     private final AdminService adminService;
     private final JwtController jwtController;
-    private final UserRepository userRepository;
-    private final TeacherRepository teacherRepository;
-    private final StudentRepository studentRepository;
-    private final AdminRepository adminRepository;
 
     @PostMapping("/admin/in")
     public NonValueNotExistDataResultResponse adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
@@ -61,7 +57,7 @@ public class AdminApiController {
         Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
 
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
+                "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
     }
 
 
