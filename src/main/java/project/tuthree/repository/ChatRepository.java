@@ -49,9 +49,9 @@ public class ChatRepository {
     private final UserFileRepository userFileRepository;
 
     /** 채팅방 개설 */
-    public Long makeChatRoom(ChatRoom chatRoom) {
+    public ChatRoom makeChatRoom(ChatRoom chatRoom) {
         em.persist(chatRoom);
-        return chatRoom.getId();
+        return chatRoom;
     }
 
     public ChatRoom findChatRoomByRoomId(Long id) {
@@ -117,7 +117,7 @@ public class ChatRepository {
         Map<Long, Long> map = new HashMap<>();
         List<Tuple> fetch = jpaQueryFactory.select(chat.room.id, chat.count()).from(chat)
                 .where((chat.room.user1.eq(userId).or(chat.room.user2.eq(userId)))
-                        .and(chat.userId.notEqualsIgnoreCase(userId))
+                        .and(chat.userId.equalsIgnoreCase(userId))
                         .and(chat.read.eq(false)))
                 .groupBy(chat.room).fetch();
 

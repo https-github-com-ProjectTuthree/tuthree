@@ -58,8 +58,12 @@ public class ChatService {
     public Long addChatRoomByIds(String sender, String receiver) {
         Long id = chatRepository.findChatRoomByIds(sender, receiver);
         //채팅방이 없을 경우 만들기
-        return (id != -1) ? id :
-            chatRepository.makeChatRoom(chatRoomMapper.toEntity(new ChatroomDTO(sender, receiver)));
+        if(id == -1L) {
+            ChatRoom chatRoom = chatRepository.makeChatRoom(chatRoomMapper.toEntity(new ChatroomDTO(sender, receiver)));
+            sendChat(new ChatDTO(chatRoom, "tuthree10", "관리자", "채팅이 시작되었습니다"));
+            return chatRoom.getId();
+        }
+        return id;
     }
 
     /** 이전 채팅 목록 불러오기 */
@@ -70,12 +74,11 @@ public class ChatService {
     }
 
     /** 전체 채팅방 + 마지막 채팅 + 읽지 않은 채팅 수 */
-    public List<chatRoomListDTO> findChatNotRead(String userId) throws ParseException {
-        List<ChatRoom> chatRooms = chatRepository.findChatRoomById(userId);
+    public List<chatRoomListDTO> findChatNotRead(String userId) {
         List<chatRoomListDTO> chatRoomById = chatRepository.findChatRoomWLogById(userId);
         Map<Long, Long> notRead = chatRepository.findChatNotReadByUserId(userId);
         chatRoomById.stream().forEach(m -> m.chatList.updateNotRead(
-                (notRead.get(m.roomId)==null)?0L:notRead.get(m.roomId)));
+                (notRead.get(m.roomId) == null) ? 0L : notRead.get(m.roomId)));
         return chatRoomById;
     }
     //아마 채팅 하나하나마다 bool 체크를 해서 안 읽은 것 확인하는듯
