@@ -94,8 +94,10 @@ public class TeacherDTO {
 
     private byte[] authFile;
 
+    private Status userDel;
+
     @Builder
-    public TeacherDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date createDate, String region, Status registration, String subject, String cost, String school, SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail) {
+    public TeacherDTO(String id, String pwd, String name, String email, String tel, Sex sex, int birth, String post, Status notification, Grade grade, Date createDate, String region, Status registration, String subject, String cost, String school, SchoolStatus status, String major, double star, String certification, boolean certifyStatus, String detail, Status userDel) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -118,6 +120,7 @@ public class TeacherDTO {
         this.certification = certification;
         this.certifyStatus = certifyStatus;
         this.detail = detail;
+        this.userDel = userDel;
     }
 
     public TeacherDTO(Teacher entity, List<String> regionL, List<String> subjectL, List<StudyRoom> studentsIng, List<StudyRoom> studentsEnd, byte[] file, byte[] authFile) {
@@ -140,6 +143,7 @@ public class TeacherDTO {
         this.major = entity.getMajor();
         this.certification = entity.getCertification();
         this.detail = entity.getDetail();
+        this.userDel = entity.getUserDel();
         this.regionL = regionL;
         this.subjectL = subjectL;
         this.studentsIng = studentsIng;

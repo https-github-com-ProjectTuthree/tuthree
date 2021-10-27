@@ -59,6 +59,8 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final StringPath tel = createString("tel");
 
+    public final EnumPath<project.tuthree.domain.Status> userDel = createEnum("userDel", project.tuthree.domain.Status.class);
+
     public QTeacher(String variable) {
         super(Teacher.class, forVariable(variable));
     }
