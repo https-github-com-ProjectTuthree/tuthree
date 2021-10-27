@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 
         package project.tuthree.service;
 
@@ -24,6 +25,32 @@
         import static java.lang.Boolean.FALSE;
         import static java.lang.Boolean.TRUE;
         import static project.tuthree.repository.UserFileRepository.FileType.*;
+=======
+package project.tuthree.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import project.tuthree.domain.Status;
+import project.tuthree.domain.user.*;
+import project.tuthree.dto.user.*;
+import project.tuthree.repository.AdminRepository;
+import project.tuthree.repository.UserEntityRepository;
+import project.tuthree.repository.UserFileRepository;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static project.tuthree.repository.UserFileRepository.FileType.*;
+>>>>>>> master
 
 @Service
 @Slf4j
@@ -83,6 +110,10 @@ public class UserRegisterService {
     /**
      * 로그인
      */
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     public Map<String, String> userLogin(LoginDTO loginDTO) {
         String id = loginDTO.getId();
         String pwd = loginDTO.getPwd();

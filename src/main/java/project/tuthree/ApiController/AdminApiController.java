@@ -37,9 +37,12 @@ public class AdminApiController {
     private final AdminService adminService;
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
+<<<<<<< HEAD
 
 
     private final AdminRepository adminRepository;
+=======
+>>>>>>> master
 
 
     @PostMapping("/admin/in")

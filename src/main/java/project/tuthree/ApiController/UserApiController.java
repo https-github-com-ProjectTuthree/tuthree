@@ -36,8 +36,8 @@ public class UserApiController {
 
     private final String AUTHORIZATION = "Authorization";
     private final String BEARER = "Bearer";
-
     private final UserRegisterService userRegisterService;
+
     private final JwtController jwtController;
     private final UserRepository userRepository;
     private final AdminService adminService;
