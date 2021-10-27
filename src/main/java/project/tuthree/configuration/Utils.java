@@ -17,4 +17,6 @@ public class Utils {
     public static final Long EXPIRATION_TIME = 15 * 60 * 4 * 1000L;
 
 
+    /** EMAIL UTILS */
+    public static final String emailSender = "project.tuthree@gmail.com";
 }
