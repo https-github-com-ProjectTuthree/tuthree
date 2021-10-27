@@ -54,6 +54,10 @@ public class User implements Persistable<String>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
+    @Column(name= "user_del")
+    @Enumerated(EnumType.STRING)
+    private Status userDel;
+
 
 
     @Override
@@ -67,7 +71,7 @@ public class User implements Persistable<String>{
     }
 
    @Builder
-    public User(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date createDate) {
+    public User(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification, Grade grade, Date createDate, Status userDel) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -79,6 +83,7 @@ public class User implements Persistable<String>{
         this.notification = notification;
         this.grade = grade;
         this.createDate = createDate;
+        this.userDel = userDel;
     }
 
     public void updateInfo(String email, String tel,Integer birth, String post, Status notification){
@@ -92,5 +97,7 @@ public class User implements Persistable<String>{
     public void updateP(String pwd){
         this.pwd = new BCryptPasswordEncoder().encode(pwd);
     }
+
+    public void userDel(){this.userDel = Status.CLOSE;}
 }
 

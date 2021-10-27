@@ -14,6 +14,7 @@ import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
+import project.tuthree.service.UserRegisterService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,6 +31,7 @@ public class AdminApiController {
     private final String BEARER = "Bearer";
 
     private final AdminService adminService;
+    private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
 
     @PostMapping("/admin/in")
@@ -88,6 +90,14 @@ public class AdminApiController {
     public NotExistDataResultResponse checkTutorAuth(@RequestParam("tutorId") String tutorId){
         adminService.checkTutorAuth(tutorId);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), tutorId+"의 인증이 완료되었습니다.");
+    }
+
+    /**회원 탈퇴시키기**/
+    @DeleteMapping("/user/{grade}/{user_id}")
+    public NotExistDataResultResponse deleteUser(@PathVariable("grade") String grade,@PathVariable("user_id")String userId){
+        String id = userId;
+        String status = userRegisterService.quitUser(id, grade);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
 
