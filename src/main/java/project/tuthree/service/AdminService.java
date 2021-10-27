@@ -170,7 +170,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }
@@ -181,7 +181,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }
@@ -194,7 +194,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }else{
@@ -204,7 +204,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }
@@ -217,7 +217,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }else{
@@ -227,7 +227,7 @@ public class AdminService {
                         user -> new UserListDTO(
                                 user.getId(), user.getPwd(), user.getName(),
                                 user.getEmail(), user.getTel(), user.getSex(),
-                                user.getBirth(), user.getGrade(), user.getCreateDate()
+                                user.getBirth(), user.getGrade(), user.getCreateDate(), user.getUserDel()
                         ));
                 return userPageList;
             }

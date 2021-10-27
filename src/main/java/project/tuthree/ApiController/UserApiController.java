@@ -236,8 +236,8 @@ public class UserApiController {
     public NotExistDataResultResponse delete(@RequestHeader(value="Authorization") String AUTHORIZATION){
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
-        userRegisterService.quitUser(id, grade);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다.");
+        String status = userRegisterService.quitUser(id, grade);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
 
