@@ -25,11 +25,12 @@ public class UserListDTO {
     private Sex sex;
     private int birth;
     private Grade grade;
+    private Status userDel;
 
 
 
     @Builder
-    public UserListDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, Grade grade, Date createDate){
+    public UserListDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, Grade grade, Date createDate, Status userDel){
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -39,6 +40,7 @@ public class UserListDTO {
         this.birth = birth;
         this.grade = grade;
         this.createDate = createDate;
+        this.userDel = userDel;
 
     }
    /* @Builder

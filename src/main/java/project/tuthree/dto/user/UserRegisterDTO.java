@@ -57,6 +57,9 @@ public class UserRegisterDTO {
 
     private Date createDate = new Date();
 
+    @ColumnDefault("OPEN")
+    private Status userDel = Status.OPEN;
+
 
    @Builder
     public UserRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, MultipartFile file, Grade grade){
@@ -76,6 +79,7 @@ public class UserRegisterDTO {
        this.notification = Status.OPEN;
        this.grade = grade.PARENT;
        this.createDate = new Date();
+       this.userDel = Status.OPEN;
     }
 
     public User toEntity(){
@@ -91,6 +95,7 @@ public class UserRegisterDTO {
                 .notification(notification)
                 .grade(grade)
                 .createDate(createDate)
+                .userDel(userDel)
                 .build();
     }
 

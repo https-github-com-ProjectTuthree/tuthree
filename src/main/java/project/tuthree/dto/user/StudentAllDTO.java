@@ -33,6 +33,7 @@ public class StudentAllDTO {
     private List<StudyRoom> teachersIng;
     private List<StudyRoom> teachersEnd;
     private byte[] file;
+    private Status userDel;
 
 
     public StudentAllDTO(Student entity, List<String> regionL, List<String> subjectL, List<StudyRoom> teachersIng, List<StudyRoom> teachersEnd, byte[] file) {
@@ -51,6 +52,7 @@ public class StudentAllDTO {
         this.cost = entity.getCost();
         this.school = entity.getSchool();
         this.detail = entity.getDetail();
+        this.userDel = entity.getUserDel();
         this.regionL = regionL;
         this.subjectL = subjectL;
         this.teachersIng = teachersIng;
