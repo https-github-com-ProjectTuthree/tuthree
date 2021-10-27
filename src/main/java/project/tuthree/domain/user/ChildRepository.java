@@ -3,6 +3,8 @@ package project.tuthree.domain.user;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ChildRepository extends JpaRepository<Child, Long> {
 
@@ -10,8 +12,8 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     Child findByParentIdAndStudentId(String parentId, String studentId);
 
     /**자녀 요청 조회**/
-    Child findByStudentId(String studentId);
+    List<Child> findByStudentId(String studentId);
 
     /**자녀 찾기**/
-    Child findByParentIdAndStatusTrue(String parentId);
+    List<Child> findByParentIdAndStatusTrue(String parentId);
 }
