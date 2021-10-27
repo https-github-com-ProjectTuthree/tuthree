@@ -15,16 +15,16 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     boolean existsById(String id);
 
     /** 이메일로 아이디 찾기**/
-    Student findByNameAndEmail(String email, String name);
+    Optional<Student> findByNameAndEmail(String email, String name);
 
     /** 번호로 아이디 찾기**/
-    Student findByNameAndTel(String tel, String name);
+    Optional<Student> findByNameAndTel(String tel, String name);
 
     /**이메일로 비밀번호**/
-    Student findByIdAndNameAndEmail(String id, String email, String name);
+    Optional<Student> findByIdAndNameAndEmail(String id, String email, String name);
 
     /**번호로 비밀번호**/
-    Student findByIdAndNameAndTel(String id, String tel, String name);
+    Optional<Student> findByIdAndNameAndTel(String id, String tel, String name);
 
     Student findByIdAndName(String id, String name);
 

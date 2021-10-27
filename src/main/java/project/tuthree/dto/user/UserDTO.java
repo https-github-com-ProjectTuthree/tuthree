@@ -46,6 +46,7 @@ public class UserDTO {
     private Date createDate;
     private Child child;
     private byte[] file;
+    private Status userDel;
 
     @Builder
     public UserDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Grade grade, Date createDate){
@@ -67,6 +68,7 @@ public class UserDTO {
         this.tel = entity.getTel();
         this.sex = entity.getSex();
         this.birth = entity.getBirth();
+        this.userDel = entity.getUserDel();
         this.child = child;
         this.file = file;
     }
