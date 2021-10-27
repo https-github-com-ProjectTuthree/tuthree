@@ -13,16 +13,16 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     boolean existsById(String id);
 
     /** 이메일로 아이디 찾기**/
-    Teacher findByNameAndEmail(String email, String name);
+    Optional<Teacher> findByNameAndEmail(String email, String name);
 
     /** 번호로 아이디 찾기**/
-    Teacher findByNameAndTel(String tel, String name);
+    Optional<Teacher> findByNameAndTel(String tel, String name);
 
     /**이메일로 비밀번호**/
-    Teacher findByIdAndNameAndEmail(String id, String email, String name);
+    Optional<Teacher> findByIdAndNameAndEmail(String id, String email, String name);
 
     /**번호로 비밀번호**/
-    Teacher findByIdAndNameAndTel(String id, String tel, String name);
+    Optional<Teacher> findByIdAndNameAndTel(String id, String tel, String name);
 
     List<Teacher> findAll();
 
