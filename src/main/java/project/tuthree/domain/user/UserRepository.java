@@ -17,16 +17,16 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsById(String id);
 
     /** 이메일로 아이디 찾기**/
-    User findByNameAndEmail(String email, String name);
+    Optional<User> findByNameAndEmail(String email, String name);
 
     /** 번호로 아이디 찾기**/
-    User findByNameAndTel(String tel, String name);
+    Optional<User> findByNameAndTel(String tel, String name);
 
     /**이메일로 비밀번호**/
-    User findByIdAndNameAndEmail(String id, String email, String name);
+    Optional<User> findByIdAndNameAndEmail(String id, String email, String name);
 
     /**번호로 비밀번호**/
-    User findByIdAndNameAndTel(String id, String tel, String name);
+    Optional<User> findByIdAndNameAndTel(String id, String tel, String name);
 
     List<User> findAll();
 

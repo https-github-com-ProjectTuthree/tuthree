@@ -76,10 +76,13 @@ public class TeacherRegisterDTO {
     private boolean certifyStatus;
     private String detail;
 
+    @ColumnDefault("OPEN")
+    private Status userDel = Status.OPEN;
+
     @Builder
     public TeacherRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
                               String post, MultipartFile file, Status notification, Grade grade, List<String> regionL, Status registration, List<String> subjectL,
-                              String cost, String school, SchoolStatus status, String major, String certification, MultipartFile authFile, boolean certifyStatus, String detail) {
+                              String cost, String school, SchoolStatus status, String major, String certification, MultipartFile authFile, boolean certifyStatus, String detail, Status userDel) {
 
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
@@ -110,6 +113,7 @@ public class TeacherRegisterDTO {
         this.authFile = authFile;
         this.certifyStatus = false;
         this.detail = detail;
+        this.userDel = userDel;
     }
 
 /*    @Override
@@ -149,6 +153,7 @@ public class TeacherRegisterDTO {
                 .certification(certification)
                 .certifyStatus(certifyStatus)
                 .detail(detail)
+                .userDel(userDel)
                 .build();
     }
 

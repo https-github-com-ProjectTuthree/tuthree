@@ -26,7 +26,7 @@ public class StudentRegisterDTO {
 
     @Builder
     public StudentRegisterDTO(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth,
-                   String post, Grade grade, Status notification, String region, Status registration, String subject, String cost, School school, String detail) {
+                   String post, Grade grade, Status notification, String region, Status registration, String subject, String cost, School school, String detail, Status userDel) {
         //super(id, pwd, name, email, tel, sex, birth, post, grade);
         Assert.notNull(id, "id must not be blank");
         Assert.notNull(pwd, "pwd must not be blank");
@@ -49,6 +49,7 @@ public class StudentRegisterDTO {
         this.cost = cost;
         this.school = school;
         this.detail = detail;
+        this.userDel = Status.OPEN;
     }
 
     @NotBlank(message = "아이디를 입력해주세요")
@@ -90,6 +91,8 @@ public class StudentRegisterDTO {
     private String cost;
     private School school;
     private String detail;
+    @ColumnDefault("OPEN")
+    private Status userDel = Status.OPEN;
 
     public Student toEntity() {
         //super.toEntity();
@@ -109,6 +112,7 @@ public class StudentRegisterDTO {
                 .cost(cost)
                 .school(school)
                 .detail(detail)
+                .userDel(userDel)
                 .build();
     }
 
