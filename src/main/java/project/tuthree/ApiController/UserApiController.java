@@ -23,8 +23,7 @@ import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.AdminService;
 import project.tuthree.service.PostFindService;
 import project.tuthree.service.UserRegisterService;
-import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
-import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.EmbeddedResponse.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -222,6 +221,8 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),parentName+"님 께서 " +id+"로 자녀를 신청하였습니다.");
     }
 
+
+
     /**자녀수락**/
     @PostMapping("/user/parent")
     public NotExistDataResultResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId){
@@ -231,10 +232,10 @@ public class UserApiController {
 
     /**요청보기**/
     @GetMapping("/user/parent")
-    public ExistDataSuccessResponse AcceptChild(@RequestHeader(value="Authorization") String AUTHORIZATION){
+    public ExistListDataSuccessResponse AcceptChild(@RequestHeader(value="Authorization") String AUTHORIZATION){
         String studentId = CheckUserI(AUTHORIZATION).getId();
-        ChildDTO childDTO = userRegisterService.checkChild(studentId);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO);
+        List<ChildDTO> childDTO = userRegisterService.checkChild(studentId);
+        return new ExistListDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO.stream().count(), childDTO);
 
     }
 
@@ -247,13 +248,6 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
-
-/*    @GetMapping("/admin/userlist")
-    public EmbeddedResponse.ExistListDataSuccessResponse UserList (@PageableDefault(size=10, sort="createdate") Pageable pageRequest) {
-        Page<UserListDTO> userPageList = adminService.parentList(pageRequest);
-        return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
-    }*/
 
 
     /**헤더에서 사용자 정보 확인**/

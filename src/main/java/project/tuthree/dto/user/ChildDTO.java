@@ -14,6 +14,7 @@ import static java.lang.Boolean.FALSE;
 @NoArgsConstructor
 public class ChildDTO {
     private String parentId;
+    private String parentName;
     private String studentId;
     private String studentName;
 
@@ -21,8 +22,9 @@ public class ChildDTO {
     private boolean status;
 
     @Builder
-    public ChildDTO(String parentId, String studentId, String studentName, boolean status){
+    public ChildDTO(String parentId, String parentName, String studentId, String studentName, boolean status){
         this.parentId = parentId;
+        this.parentName = parentName;
         this.studentId = studentId;
         this.studentName = studentName;
         this.status = status;
