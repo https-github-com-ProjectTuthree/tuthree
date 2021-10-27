@@ -18,6 +18,7 @@ import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
+import project.tuthree.service.UserRegisterService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -34,13 +35,12 @@ public class AdminApiController {
     private final String BEARER = "Bearer";
 
     private final AdminService adminService;
+    private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
 
-    private final UserRepository userRepository;
-    private final TeacherRepository teacherRepository;
-    private final StudentRepository studentRepository;
 
     private final AdminRepository adminRepository;
+
 
     @PostMapping("/admin/in")
     public Object adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
@@ -67,7 +67,7 @@ public class AdminApiController {
 
         Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
-                "회원 목록이 조회되었습니다.", adminRepository.userHasRow() , userPageList);
+                "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
     }
 
 
@@ -98,6 +98,14 @@ public class AdminApiController {
     public NotExistDataResultResponse checkTutorAuth(@RequestParam("tutorId") String tutorId){
         adminService.checkTutorAuth(tutorId);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), tutorId+"의 인증이 완료되었습니다.");
+    }
+
+    /**회원 탈퇴시키기**/
+    @DeleteMapping("/user/{grade}/{user_id}")
+    public NotExistDataResultResponse deleteUser(@PathVariable("grade") String grade,@PathVariable("user_id")String userId){
+        String id = userId;
+        String status = userRegisterService.quitUser(id, grade);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
 

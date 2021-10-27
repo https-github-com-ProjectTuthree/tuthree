@@ -54,6 +54,8 @@ public class QStudent extends EntityPathBase<Student> {
 
     public final QUser user;
 
+    public final EnumPath<project.tuthree.domain.Status> userDel = createEnum("userDel", project.tuthree.domain.Status.class);
+
     public QStudent(String variable) {
         this(Student.class, forVariable(variable), INITS);
     }

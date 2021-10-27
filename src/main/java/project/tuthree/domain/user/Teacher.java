@@ -79,6 +79,10 @@ public class Teacher implements Persistable<String>{
 
     private String detail;
 
+    @Column(name= "user_del")
+    @Enumerated(EnumType.STRING)
+    private Status userDel;
+
     @Override
     public boolean isNew(){
         return createDate == null;
@@ -87,7 +91,7 @@ public class Teacher implements Persistable<String>{
     @Builder
     public Teacher(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post, Status notification,
                    Grade grade, Date createDate, Status registration, String cost, String school, SchoolStatus status, String major,
-                   double star, String certification, boolean certifyStatus, String detail) {
+                   double star, String certification, boolean certifyStatus, String detail, Status userDel) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -108,6 +112,7 @@ public class Teacher implements Persistable<String>{
         this.certification = certification;
         this.certifyStatus = certifyStatus;
         this.detail = detail;
+        this.userDel = userDel;
     }
 
     public void update(Status registration, String cost, String school,
@@ -141,4 +146,6 @@ public class Teacher implements Persistable<String>{
     public void updateAuth(){
         this.certifyStatus = true;
     }
+
+    public void userDel(){this.userDel = Status.CLOSE;}
 }

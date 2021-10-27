@@ -22,7 +22,7 @@ public class Student implements Persistable<String>{
 
     @Builder
     public Student(String id, String pwd, String name, String email, String tel, Sex sex, Integer birth, String post,
-                   Status notification, Grade grade, Date createDate, Status registration, String cost, School school, String detail, User user) {
+                   Status notification, Grade grade, Date createDate, Status registration, String cost, School school, String detail, User user, Status userDel) {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
@@ -39,6 +39,7 @@ public class Student implements Persistable<String>{
         this.school = school;
         this.detail = detail;
         this.user = user;
+        this.userDel = userDel;
     }
 
     @Id
@@ -94,6 +95,10 @@ public class Student implements Persistable<String>{
     @JoinColumn(name = "parent_id")
     private User user;
 
+    @Column(name= "user_del")
+    @Enumerated(EnumType.STRING)
+    private Status userDel;
+
     @Override
     public boolean isNew(){
         return createDate == null;
@@ -120,5 +125,7 @@ public class Student implements Persistable<String>{
     public void updateP(String pwd){
         this.pwd = new BCryptPasswordEncoder().encode(pwd);
     }
+
+    public void userDel(){this.userDel = Status.CLOSE;}
 }
 
