@@ -12,6 +12,7 @@ public class EmbeddedDTO {
     @AllArgsConstructor
     public static class LoginReturnDTO{
         String id;
+        String name;
         String grade;
     }
 

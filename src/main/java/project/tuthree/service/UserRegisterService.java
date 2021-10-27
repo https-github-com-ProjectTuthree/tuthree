@@ -1,3 +1,4 @@
+
 package project.tuthree.service;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import project.tuthree.repository.UserFileRepository;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -80,38 +82,39 @@ public class UserRegisterService {
     /**
      * 로그인
      */
-    public String userLogin(LoginDTO loginDTO) {
+
+    public Map<String, String> userLogin(LoginDTO loginDTO) {
         String id = loginDTO.getId();
         String pwd = loginDTO.getPwd();
-        String str = userEntityRepository.studentFindByIdPwd(id, pwd);
-        if (!str.equals(" ")) {
+        Map<String, String> map = userEntityRepository.studentFindByIdPwd(id, pwd);
+        if (!map.get("grade").equals(" ")) {
             Student student = studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
             if (student.getUserDel() == Status.CLOSE) {
-                str = " ";
+                map.put("grade", " ");
             }
         }
-        if (str.equals(" ")) {
-            str = userEntityRepository.teacherFindByIdPwd(id, pwd);
-            if (!str.equals(" ")) {
+        if (map.get("grade").equals(" ")) {
+            map = userEntityRepository.teacherFindByIdPwd(id, pwd);
+            if (!map.get("grade").equals(" ")) {
                 Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
                 if (teacher.getUserDel() == Status.CLOSE) {
-                    str = " ";
+                    map.put("grade", " ");
                 }
             }
-            if (str.equals(" ")) {
-                str = userEntityRepository.parentFindByIdPwd(id, pwd);
-                if (!str.equals(" ")) {
+            if (map.get("grade").equals(" ")) {
+                map = userEntityRepository.parentFindByIdPwd(id, pwd);
+                if (!map.get("grade").equals(" ")) {
                     User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
                     if (user.getUserDel() == Status.CLOSE) {
-                        str = " ";
+                        map.put("grade", " ");
                     }
                 }
-                if (str.equals(" ")) {
-                    return " ";
+                if (map.get("grade").equals(" ")) {
+                    return map;
                 }
             }
         }
-        return str;
+        return map;
     }
 
     /**
@@ -559,7 +562,5 @@ public class UserRegisterService {
         String encodeBase64String = Base64.encodeBase64String(rawHmac);
         return encodeBase64String;
     }
-
-
     ncp:sms:kr:272525568257:sms_checkphone*/
 }

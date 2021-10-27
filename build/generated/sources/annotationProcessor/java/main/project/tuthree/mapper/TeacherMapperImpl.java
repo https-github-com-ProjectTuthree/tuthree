@@ -11,7 +11,7 @@ import project.tuthree.dto.user.TeacherDTO.TeacherDTOBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-10-22T11:44:28+0900",
+    date = "2021-10-27T15:52:58+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.1.1.jar, environment: Java 1.8.0_291 (Oracle Corporation)"
 )
 @Component
@@ -75,6 +75,7 @@ public class TeacherMapperImpl implements TeacherMapper {
         teacherDTO.certification( teacher.getCertification() );
         teacherDTO.certifyStatus( teacher.isCertifyStatus() );
         teacherDTO.detail( teacher.getDetail() );
+        teacherDTO.userDel( teacher.getUserDel() );
 
         return teacherDTO.build();
     }
@@ -107,6 +108,7 @@ public class TeacherMapperImpl implements TeacherMapper {
         teacher.certification( teacherDTO.getCertification() );
         teacher.certifyStatus( teacherDTO.isCertifyStatus() );
         teacher.detail( teacherDTO.getDetail() );
+        teacher.userDel( teacherDTO.getUserDel() );
 
         return teacher.build();
     }
