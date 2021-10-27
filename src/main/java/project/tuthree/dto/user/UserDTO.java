@@ -17,6 +17,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -44,7 +45,7 @@ public class UserDTO {
     private String post;
     private Grade grade;
     private Date createDate;
-    private Child child;
+    private List<Child> child;
     private byte[] file;
     private Status userDel;
 
@@ -61,7 +62,7 @@ public class UserDTO {
         this.grade = grade.PARENT;
         this.createDate = new Date();
     }
-    public UserDTO(User entity, Child child, byte[] file){
+    public UserDTO(User entity, List<Child> child, byte[] file){
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();

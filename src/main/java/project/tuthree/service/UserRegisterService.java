@@ -15,10 +15,7 @@ import project.tuthree.repository.UserFileRepository;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -511,10 +508,27 @@ public class UserRegisterService {
 
     /**요청보기**/
     @Transactional
-    public ChildDTO checkChild(String studentId){
-        Long id = childRepository.findByStudentId(studentId).getId();
-        Child child = childRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 내용이 없습니다. id="+ id));
-        return new ChildDTO(child.getParentId(), child.getStudentId(), child.getStudentName(), child.isStatus());
+    public List<ChildDTO> checkChild(String studentId){
+        List<Child> childL = childRepository.findByStudentId(studentId);
+
+        /*Child child = childRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 내용이 없습니다. id="+ id));
+        User user = userRepository.findById(child.getParentId()).orElseThrow(() ->  new IllegalArgumentException("해당 내용이 없습니다. id="+ child.getParentId()));
+        String parentName = user.getName();*/
+
+
+        List<ChildDTO> childDTOS = new ArrayList<>();
+
+        for (Child child : childL) {
+            ChildDTO childDTO = ChildDTO.builder()
+                    .parentId(child.getParentId())
+                    .parentName(userRepository.findById(child.getParentId()).get().getName())
+                    .studentId(child.getStudentId())
+                    .studentName(child.getStudentName())
+                    .status(child.isStatus())
+                    .build();
+            childDTOS.add(childDTO);
+        }
+        return childDTOS;
     }
 
     /**회원 탈퇴**/ //그냥 회원상태인지 아닌상태인지를 만드는게 더 날듯
