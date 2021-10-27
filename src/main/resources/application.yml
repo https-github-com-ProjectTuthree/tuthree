@@ -5,14 +5,14 @@ devtools:
 #local / dev / prod
 spring:
   profiles:
-    active: prod
+    active: dev
     include: jwt
   mvc:
     hiddenmethod:
       filter:
         enabled: true
   mail:
-    host: stmp.gmail.com
+    host: smtp.gmail.com
     port: 587
     username: project.tuthree
     password: tuthree1234!

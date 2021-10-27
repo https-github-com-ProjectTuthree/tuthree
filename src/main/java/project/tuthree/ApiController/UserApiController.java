@@ -39,6 +39,7 @@ public class UserApiController {
 
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
+    private final UserRepository userRepository;
     private final AdminService adminService;
     private final AdminRepository adminRepository;
 
@@ -207,8 +208,8 @@ public class UserApiController {
 
     /**자녀추가**/
     @PostMapping("/user/child")
-    public NotExistDataResultResponse PlusChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId, @RequestBody ChildDTO childDTO){
-
+    public NotExistDataResultResponse PlusChild(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody ChildDTO childDTO){
+        String parentId = CheckUserI(AUTHORIZATION).getId();
         String id = userRegisterService.plusChild(parentId, childDTO);
         String parentName = userRepository.findById(parentId).get().getName();
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),parentName+"님 께서 " +id+"로 자녀를 신청하였습니다.");
