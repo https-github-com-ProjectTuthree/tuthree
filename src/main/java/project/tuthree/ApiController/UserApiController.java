@@ -258,7 +258,6 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
-
     /**헤더에서 사용자 정보 확인**/
     public CheckUser CheckUserI(String AUTHORIZATION){
         String[] requestToken = AUTHORIZATION.split(" ");
