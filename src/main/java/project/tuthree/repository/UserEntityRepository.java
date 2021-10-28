@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
@@ -43,6 +44,30 @@ public class UserEntityRepository {
     public Teacher teacherFindById(String id) {
         return em.find(Teacher.class, id);
     }
+
+
+    /** user id로 이름 찾기 */
+    public String findTeacherNameById(String id) {
+        return jpaQueryFactory.select(teacher.name)
+                .from(teacher)
+                .where(teacher.id.eq(id))
+                .fetchOne();
+    }
+
+    public String findStudentNameById(String id) {
+        return jpaQueryFactory.select(student.name)
+                .from(student)
+                .where(student.id.eq(id))
+                .fetchOne();
+    }
+
+    public String findParentNameById(String id) {
+        return jpaQueryFactory.select(user.name)
+                .from(user)
+                .where(user.id.eq(id))
+                .fetchOne();
+    }
+
 
     /**
      * id와 pw 일치하는 사용자 찾기
@@ -139,5 +164,22 @@ public class UserEntityRepository {
                         .and(userInfo.userId.eq(id)))
                 .fetch();
     }
+
+    /** 자녀 아이디 목록 찾기 */
+    public List<String> userFindChild(String id) {
+        return jpaQueryFactory.select(student.id).from(student)
+                .where(student.user.id.eq(id))
+                .fetch();
+    }
+
+    /**
+     * 자녀 아이디, 이름 목록 찾기
+     */
+    public List<Tuple> userFindChildIdandName(String id) {
+        return jpaQueryFactory.select(student.name, student.id).from(student)
+                .where(student.user.id.eq(id))
+                .fetch();
+    }
+
 
 }

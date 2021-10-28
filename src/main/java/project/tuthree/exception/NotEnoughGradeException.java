@@ -8,6 +8,6 @@ public class NotEnoughGradeException extends Exception {
     private String Message;
 
     public NotEnoughGradeException() {
-        Message = "NotEnoughGradeException";
+        this.Message = "옳지 않은 권한의 사용자입니다.";
     }
 }

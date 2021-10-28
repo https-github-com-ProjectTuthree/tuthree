@@ -56,6 +56,5 @@ public class UserInfo {
         for (String s : subject){
             this.subject = s;
         }
-
     }
 }

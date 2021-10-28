@@ -15,7 +15,6 @@ import java.util.Date;
 
 @Entity
 @Getter
-@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "teacher")
 public class Teacher implements Persistable<String>{
@@ -135,7 +134,7 @@ public class Teacher implements Persistable<String>{
     }
 
     public void updateStar(Long num, int star) {
-        double newStar=(this.star * num + star) / num;
+        double newStar = (this.star * (num - 1) + star) / num;
         this.star = (double) Math.round(newStar * 10) / 10;
     }
 

@@ -1,30 +1,36 @@
 package project.tuthree.ApiController;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
+import project.tuthree.dto.ChatDTO;
+import project.tuthree.dto.EmbeddedDTO;
+import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
+import project.tuthree.dto.user.AdminDTO;
+import project.tuthree.dto.user.UserListDTO;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
 import project.tuthree.service.UserRegisterService;
+import project.tuthree.service.push.ChatService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-import static project.tuthree.domain.user.QUser.user;
-
-@Controller
+@Slf4j
+@RestController
 @RequiredArgsConstructor
 public class AdminApiController {
     private final String AUTHORIZATION = "Authorization";
@@ -33,16 +39,20 @@ public class AdminApiController {
     private final AdminService adminService;
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
+    private final AdminRepository adminRepository;
+    private final ChatService chatService;
+
 
     @PostMapping("/admin/in")
-    public NonValueNotExistDataResultResponse adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
-        String grade = adminService.adminLogin(adminDTO);
-        if(!grade.equals(" ")){
-            response.setHeader(AUTHORIZATION,  BEARER+ " " + jwtController.makeJwtToken(adminDTO.getId(), grade));
-            return new NonValueNotExistDataResultResponse(true, StatusCode.OK.getCode(),
-                    "ID " + adminDTO.getId() + "(으)로 로그인되었습니다.");
+    public Object adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
+
+        Map<String, String> map = adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
+        if(!map.get("grade").equals(" ")){
+            response.setHeader(AUTHORIZATION,  BEARER+ " " + jwtController.makeJwtToken(adminDTO.getId(), map.get("grade")));
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+                    "ID " + adminDTO.getId() + "(으)로 로그인되었습니다.", new LoginReturnDTO(adminDTO.getId(), map.get("name"), map.get("grade")));
         }
-        return new NonValueNotExistDataResultResponse(false, StatusCode.CONFLICT.getCode(),
+        return new NotExistBadDataResultResponse(StatusCode.CONFLICT.getCode(),
                 "일치하는 계정 정보가 존재하지 않습니다.");
     }
 
@@ -57,7 +67,6 @@ public class AdminApiController {
     public EmbeddedResponse.ExistListDataSuccessResponse UserList (@RequestParam("grade") String grade, @RequestParam(value = "userId", required = false) String userId, @PageableDefault(size= 10, sort="createDate") Pageable pageRequest) {
 
         Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
-
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
     }
@@ -99,6 +108,5 @@ public class AdminApiController {
         String status = userRegisterService.quitUser(id, grade);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
-
 
 }
