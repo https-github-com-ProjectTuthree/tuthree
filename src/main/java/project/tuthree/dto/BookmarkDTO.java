@@ -7,9 +7,7 @@ import lombok.Getter;
 public class BookmarkDTO {
 
     private Long id;
-
     private String user1;
-
     private String user2;
 
     public BookmarkDTO(String user1, String user2) {

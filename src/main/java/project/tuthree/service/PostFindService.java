@@ -101,7 +101,6 @@ public class PostFindService {
     /** 특정 선생님 조회 */
     public PostFindTeacherDTO findTeacher(Long postId) throws IOException {
         String userId = postFindRepository.findTeacherById(postId);
-
         Teacher teacher = userEntityRepository.teacherFindById(userId);
 
         List<String> region = userEntityRepository.userFindRegion(userId);
@@ -148,14 +147,20 @@ public class PostFindService {
         return postFindRepository.addBookMark(bookMarkMapper.toEntity(bookmarkDTO));
     }
 
-    /** 북마크 리스트 불러오기 */
-    public List<BookmarkDTO> listBookMark(String userId) {
-        List<BookMark> bookMarks = postFindRepository.listBookMark(userId);
-        return bookMarks.stream()
-                .map(m -> bookMarkMapper.toDto(m))
-                .collect(Collectors.toList());
+    /** 북마크 리스트 불러오기 - 학생이 선생님꺼 불러오기*/
+    public List<PostFindTeacherListDTO> studentListBookMark(String userId) {
+        List<String> bookMarks = postFindRepository.listBookMark(userId);
+        List<PostFindTeacherListDTO> list = postFindRepository.findTeacherByuserId(bookMarks);
+        return list;
     }
 
+    /** 선생님이 학생을 불러오기 */
+    public List<PostFindStudentListDTO> teacherListBookMark(String userId) {
+        List<String> bookMarks = postFindRepository.listBookMark(userId);
+        List<PostFindStudentListDTO> list = postFindRepository.findStudentByuserId(bookMarks);
+        return list;
+
+    }
 
     @Getter
     @AllArgsConstructor
@@ -254,4 +259,5 @@ public class PostFindService {
         String detail;
         byte[] post;
     }
+
 }

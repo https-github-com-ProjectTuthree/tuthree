@@ -31,7 +31,7 @@ public class PostStudyService {
 
     /** 선생님, 학생 아이디로 스터디룸 보고서 전체 조회 */
     public List<StudyListDTO> findPostByStudyRoom(String teacherId, String studentId) {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         List<PostStudy> postStudy = postStudyRepository.findPostByStudyRoom(studyRoom);
         return postStudy.stream()
                 .map(m -> wrap(() -> new StudyListDTO(m.getId(), userFileRepository.unixToDate(m.getDate()), m.getNumber(), m.getStart(), m.getEnd(), m.getDetail())))
@@ -40,7 +40,7 @@ public class PostStudyService {
 
     /** 수업 보고서 등록하기 */
     public Long registerPost(String teacherId, String studentId, PoststudyDTO poststudyDTO) {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         poststudyDTO.updateDTO(studyRoom);
         return postStudyRepository.registerPost(postStudyMapper.toEntity(poststudyDTO));
     }

@@ -57,4 +57,9 @@ public class Chat {
         this.content = content;
         this.read = read;
     }
+
+    public Chat updateRead() {
+        this.read = true;
+        return this;
+    }
 }

@@ -13,6 +13,7 @@ import project.tuthree.domain.user.Grade;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class JwtController {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer("fresh_token")
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(EXPIRATION_TIME).toMillis()))
                 .claim(CLAIMUSERID, userId)
                 .claim(CLAIMGRADE, strGrade)
                 .signWith(SignatureAlgorithm.HS256, Utils.SECRET_KEY)

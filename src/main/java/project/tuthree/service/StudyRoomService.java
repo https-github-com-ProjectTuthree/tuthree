@@ -2,6 +2,7 @@ package project.tuthree.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,7 @@ import project.tuthree.domain.file.UserFile;
 import project.tuthree.domain.post.PostReview;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
-import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.Student;
-import project.tuthree.domain.user.Teacher;
+import project.tuthree.domain.user.*;
 import project.tuthree.dto.file.UserfileDTO;
 import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostreviewDTO;
@@ -56,6 +55,7 @@ public class StudyRoomService {
     private final ObjectMapper objectMapper;
     private final UserFileRepository userFileRepository;
     private final UserFileMapper userFileMapper;
+    private final ChildRepository childRepository;
 
     /** 스터디룸, 수업 계획서, 리뷰 */
 
@@ -92,7 +92,7 @@ public class StudyRoomService {
     /** 수업 계획서 수정하기 */
     public void roomUpdate(String teacherId, String studentId, StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
         /** teacherid, studentid로 스터디룸 찾기 */
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, true);
         studyroomInfoDTO.updateId(studyRoom);
 
         Map<String, Object> info = new HashMap<>();
@@ -105,21 +105,39 @@ public class StudyRoomService {
 
     /** 수업 계획서 조회하기 */
     public InfoListDTO findStudyRoomInfo(String teacherId, String studentId) throws JsonProcessingException {
-        StudyRoomInfo info = studyRoomRepository.findStudyRoomInfo(teacherId, studentId);
+        StudyRoomInfo info = studyRoomRepository.findStudyRoomInfo(teacherId, studentId, true, true);
         Map<String, Object> map = byteToObject(info.getInfo());
         return new InfoListDTO(info.getCost(), map, info.getDetail(), info.getCheckDate());
     }
 
-    /** 선생님 스케쥴 조회하기 */
-    public List<scheduleListDTO> findTeacherSchedule(String id) throws ParseException, JsonProcessingException {
+    /** 스케쥴 조회하기 */
+    public List<scheduleListDTO> findSchedule(String id, String grade) throws ParseException, JsonProcessingException {
         List<StudyRoomInfo> studyRoomSchedule = studyRoomRepository.findStudyRoomSchedule(id);
         List<scheduleListDTO> list = new ArrayList<>();
-        for (StudyRoomInfo i : studyRoomSchedule) {
-            list.add(new scheduleListDTO(i.getId().getStudentId().getName(),
-                    byteToObject(i.getInfo()).get("schedule")));
+        if(grade.toLowerCase(Locale.ROOT).equals(Grade.TEACHER.getStrType())){
+            for (StudyRoomInfo i : studyRoomSchedule) {
+                list.add(new scheduleListDTO(i.getId().getStudentId().getName(),
+                        byteToObject(i.getInfo()).get("schedule")));
+            }
+        } else if(grade.toLowerCase(Locale.ROOT).equals(Grade.STUDENT.getStrType())) {
+            for (StudyRoomInfo i : studyRoomSchedule) {
+                list.add(new scheduleListDTO(i.getId().getTeacherId().getName(),
+                        byteToObject(i.getInfo()).get("schedule")));
+            }
         }
         return list;
+    }
 
+    /** 부모의 자녀 스케쥴 조회 */
+    public List<childScheduleListDTO> findChildSchedule(String id) throws ParseException, JsonProcessingException {
+        List<Tuple> tuples = userEntityRepository.userFindChildIdandName(id);
+        List<childScheduleListDTO> list = new ArrayList<>();
+        for(Tuple t : tuples) {
+            log.info("================child :", t.get(0, String.class));
+            List<scheduleListDTO> schedule = findSchedule(t.get(1,String.class), Grade.STUDENT.getStrType());
+            list.add(new childScheduleListDTO(t.get(0, String.class), schedule));
+        }
+        return list;
     }
 
     /** 선생님 - 수업 리뷰 조회하기 */
@@ -134,18 +152,20 @@ public class StudyRoomService {
 
     /** 학생 - 수업 리뷰 작성하기 */
     public String writeReviewByStudyRoom(String teacherId, String studentId, PostreviewDTO postreviewDTO) {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         postreviewDTO.updateId(studyRoom);
         return studyRoomRepository.writeReview(postReviewMapper.toEntity(postreviewDTO));
     }
 
     /** 아이디 하나로 스터디룸 찾기 */
     public List<StudyRoomListDTO> findStudyRoomByOneId(String id, Status status) throws JsonProcessingException, ParseException {
+        //studyroom info는 무조건 true
+
         List<StudyRoom> studyRoomList = studyRoomRepository.findStudyRoomByOneId(id, status);
         List<StudyRoomListDTO> list = new ArrayList<>();
 
         for(StudyRoom s : studyRoomList) {
-            StudyRoomInfo studyRoomInfo = studyRoomRepository.findStudyRoomInfo(s.getTeacherId().getId(), s.getStudentId().getId());
+            StudyRoomInfo studyRoomInfo = studyRoomRepository.findStudyRoomInfo(s.getTeacherId().getId(), s.getStudentId().getId(), true, true);
             Object object = byteToObject(studyRoomInfo.getInfo()).get("subject");
             List<String> subject = objectMapper.convertValue(object, List.class);
             StudyRoomListDTO dto = new StudyRoomListDTO(s.getTeacherId().getId(), s.getTeacherId().getName(), s.getStudentId().getId(),
@@ -189,7 +209,7 @@ public class StudyRoomService {
 
     /** 특정 스터디룸 찾기 */
     public StudyroomDTO findStudyRoomByIds(String teacherId, String studentId) {
-        StudyRoom studyRoomDTO = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoomDTO = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         if(studyRoomDTO == null){
             throw new NullPointerException();
         }
@@ -198,7 +218,7 @@ public class StudyRoomService {
 
     /** 시험지 목록 불러오기 */
     public List<examListDTO> listTestPaper(String teacherId, String studentId) throws IOException {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         List<UserFile> fileList = studyRoomRepository.listTestPaper(studyRoom);
         List<examListDTO> list = new ArrayList<>();
         for (UserFile l : fileList) {
@@ -214,7 +234,7 @@ public class StudyRoomService {
         if(!file.getContentType().equals("application/pdf")){
             throw new HttpMediaTypeNotAcceptableException("pdf 형식의 파일을 입력해주세요.");
         }
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         String[] names = file.getOriginalFilename().split("\\.pdf");
 
         String real_title = studyRoomRepository.findSameNameTestPaper(studyRoom, names[0]);
@@ -297,8 +317,16 @@ public class StudyRoomService {
     @Getter
     @AllArgsConstructor
     public static class scheduleListDTO {
-        String studentName;
+        String name;
         Object schedule;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class childScheduleListDTO {
+        String childName;
+        List<scheduleListDTO> list;
+
     }
 
 }

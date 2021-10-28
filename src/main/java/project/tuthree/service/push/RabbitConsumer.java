@@ -21,13 +21,10 @@ public class RabbitConsumer {
     @RabbitListener(queues = "chat", concurrency = "6")
     public void pushChatConsumer(final ChatDTO chatDTO) {
         pushService.sendChatByToken(chatDTO);
-        chatRepository.saveChatLog(chatMapper.toEntity(chatDTO));
     }
 
     @RabbitListener(queues = "keyword", concurrency = "6")
     public void pushKeywordConsumer(final keywordPushDTO dto) {
-
-        log.info("keyword queue ==============");
         pushService.sendKeywordByToken(dto);
     }
 }

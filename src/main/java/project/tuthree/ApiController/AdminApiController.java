@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
+import project.tuthree.dto.ChatDTO;
 import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.AdminDTO;
@@ -19,6 +20,7 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
 import project.tuthree.service.UserRegisterService;
+import project.tuthree.service.push.ChatService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -37,12 +39,8 @@ public class AdminApiController {
     private final AdminService adminService;
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
-<<<<<<< HEAD
-
-
     private final AdminRepository adminRepository;
-=======
->>>>>>> master
+    private final ChatService chatService;
 
 
     @PostMapping("/admin/in")
@@ -110,6 +108,5 @@ public class AdminApiController {
         String status = userRegisterService.quitUser(id, grade);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
-
 
 }

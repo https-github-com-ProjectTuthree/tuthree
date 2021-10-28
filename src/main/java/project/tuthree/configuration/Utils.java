@@ -14,7 +14,7 @@ public class Utils {
     public static final String CLAIMGRADE = "Grade";
     public static final String REFRESHISSUE = "refresh_token";
     public static final String SECRET_KEY = "qweasdzxcqweasdzxc";
-    public static final Long EXPIRATION_TIME = 15 * 60 * 4 * 1000L;
+    public static final Long EXPIRATION_TIME = 60L;
 
 
     /** EMAIL UTILS */

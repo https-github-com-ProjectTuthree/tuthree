@@ -19,6 +19,7 @@ public class RabbitService {
     private final RabbitTemplate rabbitTemplate;
 
     public void rabbitChatProducer(ChatDTO chatDTO) {
+        log.info("=============chat : " + chatDTO.getRoom().getId());
         rabbitTemplate.convertAndSend(chatExchange, "messages." + String.valueOf(chatDTO.getRoom().getId()), chatDTO);
     }
 

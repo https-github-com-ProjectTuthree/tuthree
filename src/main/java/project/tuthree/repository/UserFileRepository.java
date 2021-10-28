@@ -127,6 +127,8 @@ public class UserFileRepository {
     public List<String> saveFile(List<MultipartFile> files, FileType type) throws NoSuchAlgorithmException, IOException {
         List<String> saveNames = new ArrayList<>();
         String path = System.getProperty("user.dir");
+        log.info("path : " + path);
+
         String savePath = path + "/src/main/resources/var" + type.getKortype();
 
         if (!new File(savePath).exists()) {
@@ -229,5 +231,6 @@ public class UserFileRepository {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return transFormat.format(unix);
     }
+
 
 }
