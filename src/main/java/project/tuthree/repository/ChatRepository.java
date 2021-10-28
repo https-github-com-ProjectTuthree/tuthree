@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Chat;
 import project.tuthree.domain.QChat;
 import project.tuthree.domain.room.ChatRoom;
+import project.tuthree.domain.user.StudentRepository;
+import project.tuthree.domain.user.TeacherRepository;
+import project.tuthree.domain.user.UserRepository;
+import project.tuthree.service.UserRegisterService;
 import project.tuthree.service.push.ChatService;
 import project.tuthree.service.push.ChatService.chatRoomDTO;
 import project.tuthree.service.push.ChatService.chatRoomDTO.chatListDTO;
@@ -33,7 +37,7 @@ import static project.tuthree.exception.ExceptionSupplierImpl.wrap;
 
 @Slf4j
 @Repository
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class ChatRepository {
 
@@ -47,6 +51,11 @@ public class ChatRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
     private final UserFileRepository userFileRepository;
+    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final AdminRepository adminRepository;
 
     /** 채팅방 개설 */
     public ChatRoom makeChatRoom(ChatRoom chatRoom) {
@@ -79,37 +88,59 @@ public class ChatRepository {
     }
 
     /** 이전 채팅 목록 불러오기 */
-    public List<Chat> findChatListByRoomId(Long id) {
-        return jpaQueryFactory.selectFrom(chat)
+    public List<Chat> findChatListByRoomId(Long id, String userId) {
+        List<Chat> fetch = jpaQueryFactory.selectFrom(chat)
                 .where(chat.room.id.eq(id))
+                .orderBy(chat.chatAt.asc())
                 .fetch();
+        for (Chat c : fetch) {
+            if(c.getUserId().equals(userId)) c.updateRead();
+        }
+        return fetch;
     }
 
     public List<ChatRoom> findChatRoomById(String id) {
-
         return jpaQueryFactory.selectFrom(chatRoom)
                 .where(chatRoom.user1.eq(id).or(chatRoom.user2.eq(id)))
                 .fetch();
-
     }
 
     /** 한명이 속한 채팅방 찾아서 마지막 채팅과 함께 반환 */
-    public List<chatRoomListDTO> findChatRoomWLogById(String id) {
-
+    public List<chatRoomListDTO> findChatRoomWLogById(String id) throws ParseException {
+        List<chatRoomListDTO> list = new ArrayList<>();
         QChat m = chat;
         QChat n = new QChat("n");
-        List<Chat> fetch = jpaQueryFactory.selectFrom(m)
+        List<Chat> fetch = jpaQueryFactory.selectFrom(m).distinct()
                 .where(m.chatAt.eq(jpaQueryFactory.select(n.chatAt.max())
                         .from(n)
                         .where((n.room.user1.eq(id).or(n.room.user2.eq(id)))
                                 .and(n.room.eq(m.room)))
                         .groupBy(n.room))
                 )
+                .orderBy(m.chatAt.desc())
                 .fetch();
 
-        return fetch.stream()
-                .map(t -> wrap(() -> new chatRoomListDTO(t.getRoom().getId(), new chatRoomListDTO.chatListDTO(t.getUserId(), t.getName(), t.getContent(), userFileRepository.unixToDate(t.getChatAt())))))
-                .collect(Collectors.toList());
+        for (Chat c : fetch) {
+            String userId = c.getRoom().getUser1();
+            String userName = "";
+
+            if(id.equals(c.getRoom().getUser1())){
+                userId = c.getRoom().getUser2();
+            }
+
+            if(teacherRepository.existsById(userId)){
+                userName = userEntityRepository.findTeacherNameById(userId);
+            }else if(studentRepository.existsById(userId)){
+                userName = userEntityRepository.findStudentNameById(userId);
+            }else if(userRepository.existsById(userId)){
+                userName = userEntityRepository.findParentNameById(userId);
+            }else if(adminRepository.existById(userId)){
+                userName = "관리자";
+            }
+            chatRoomListDTO chatRoomListDTO = new chatRoomListDTO(c.getRoom().getId(), new chatRoomListDTO.chatListDTO(userId, userName, c.getContent(), userFileRepository.unixToTimestamp(c.getChatAt())));
+            list.add(chatRoomListDTO);
+        }
+        return list;
     }
 
     /** 읽지 않은 채팅 수 */
@@ -124,6 +155,4 @@ public class ChatRepository {
         fetch.stream().forEach(m -> map.put(m.get(0, Long.class), m.get(1, Long.class)));
         return map;
     }
-
-
 }

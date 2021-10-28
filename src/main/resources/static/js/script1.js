@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 function connect() {
-    var socket = new SockJS('/tuthree-websocket');
+    var socket = new SockJS('http://localhost:8088/tuthree-websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);

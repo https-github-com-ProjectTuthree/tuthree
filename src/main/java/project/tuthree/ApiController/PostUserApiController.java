@@ -93,7 +93,7 @@ public class PostUserApiController {
 
     /** 게시글 수정 - 이미지도 수정하도록 */
     @PutMapping("/community/id/{post_id}")
-    public NotExistDataResultResponse CommunityUpdate(@PathVariable("post_id") Long id, @ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
+    public NotExistDataResultResponse updateCommunity(@PathVariable("post_id") Long id, @ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
         /** 이전에 그 글이랑 관련된 자료는 다 지우고 새로 수정하기?? 흠... */
         Long updatedId = postTestPaperService.updateCommunity(id, form);
         log.debug("\n---- 사용자 커뮤니티 글 수정 [ID : " + id + "] ----\n");
@@ -104,7 +104,7 @@ public class PostUserApiController {
      * 게시글 삭제 - 게시글과 관련된 이미지도 삭제하도록
      */
     @DeleteMapping("/community/id/{post_id}")
-    public NotExistDataResultResponse CommunityDelete(@PathVariable("post_id") Long id) {
+    public NotExistDataResultResponse deleteCommunity(@PathVariable("post_id") Long id) {
         Long deletedId = postTestPaperService.deleteCommunity(id);
         log.debug("\n---- 사용자 커뮤니티 글 삭제 [ID : " + deletedId + "] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), deletedId + "번 게시글이 삭제되었습니다.");
@@ -131,7 +131,7 @@ public class PostUserApiController {
 
     /** FAQ 조회수 up */
     @GetMapping("/faq/view/{faq_id}")
-    public NotExistDataResultResponse FaqViewUpdate(@PathVariable("faq_id") Long id) {
+    public NotExistDataResultResponse viewFaqUpdate(@PathVariable("faq_id") Long id) {
         Long updatedId = postFaqRepository.updateFaq(id);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 게시글의 조회수가 업로드됐습니다.");
     }

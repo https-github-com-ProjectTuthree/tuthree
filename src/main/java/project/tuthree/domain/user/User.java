@@ -12,11 +12,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
-@DynamicUpdate
 @Table(name = "parent")
-//@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements Persistable<String>{
 

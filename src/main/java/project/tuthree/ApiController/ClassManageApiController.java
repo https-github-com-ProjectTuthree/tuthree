@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.post.PostStudy;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.dto.post.PostAnswerDTO;
 import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostreviewDTO;
@@ -27,6 +27,7 @@ import project.tuthree.service.CalendarService.calendarFullListDTO;
 import project.tuthree.service.PostStudyService;
 import project.tuthree.service.StudyRoomService;
 import project.tuthree.service.StudyRoomService.StudyRoomListDTO;
+import project.tuthree.service.StudyRoomService.childScheduleListDTO;
 import project.tuthree.service.StudyRoomService.scheduleListDTO;
 
 import javax.validation.Valid;
@@ -48,13 +49,18 @@ public class ClassManageApiController {
     private final UserFileRepository userFileRepository;
     private final StudyRoomRepository studyRoomRepository;
 
-    /** 선생님 스케쥴 조회 */
-    @GetMapping("/tutor/schedule")
-    public ExistDataSuccessResponse FindTeacherSchedule(@RequestParam("id") String id) throws JsonProcessingException, ParseException {
-        List<scheduleListDTO> teacherSchedule = studyRoomService.findTeacherSchedule(id);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
-                "선생님 일정이 조회되었습니다.", teacherSchedule);
+    /** 학생, 선생, 자녀 스케쥴 조회 */
+    @GetMapping("/users/schedule")
+    public ExistDataSuccessResponse FindUserSchedule(@RequestParam("id") String id, @RequestParam("grade") String grade) throws JsonProcessingException, ParseException {
+        if (grade.toLowerCase(Locale.ROOT).equals(Grade.PARENT.getStrType())) {
+            List<childScheduleListDTO> childSchedule = studyRoomService.findChildSchedule(id);
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 일정이 조회되었습니다.", childSchedule);
+        } else{
+            List<scheduleListDTO> teacherSchedule = studyRoomService.findSchedule(id, grade);
+            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"일정이 조회되었습니다.", teacherSchedule);
+        }
     }
+
 
     /** 선생님에 대한 리뷰 작성 */
     @PostMapping("/room/review")
@@ -65,7 +71,7 @@ public class ClassManageApiController {
                 teacherName + " 선생님에 대한 리뷰가 작성되었습니다.");
     }
 
-    /** 계정별 스터디룸 찾기 - status : open, close */
+    /** 계정별 스터디룸 찾기 - status : open, close -> studyroom info는 무조건 true */
     @GetMapping("/room")
     public ExistDataSuccessResponse FindStudyRoomByOne(@RequestParam("id") String id, @RequestParam("status") String status) throws JsonProcessingException, ParseException {
         List<StudyRoomListDTO> studyroomDTOList = studyRoomService.findStudyRoomByOneId(id.trim(), Status.valueOf(status));
@@ -214,7 +220,7 @@ public class ClassManageApiController {
 
     /** 정답 비교 확인 - repository에서 바로 처리 , service 붙이기에는 복잡해짐 */
     @GetMapping("/room/exam/{post_id}")
-    public ExistDataSuccessResponse CheckAnswer(@PathVariable("post_id") Long id) throws IOException {
+    public ExistDataSuccessResponse CheckRealAnswer(@PathVariable("post_id") Long id) throws IOException {
         PostAnswerDTO postAnswerDTO = studyRoomRepository.scoreTestPaper(id);
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 id + "번 문제의 답안을 채점했습니다.", postAnswerDTO);

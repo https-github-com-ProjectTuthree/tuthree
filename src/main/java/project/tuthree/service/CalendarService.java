@@ -34,7 +34,7 @@ public class CalendarService {
 
     /** 선생님, 학생 아이디로 스터디룸 일정 전체 조회 */
     public List<calendarFullListDTO> findByStudyroomIds(String teacherId, String studentId) throws ParseException {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         List<calendarFullListDTO> list = new ArrayList<>();
         List<Calendar> calendars = calendarRepository.findByStudyroom(studyRoom);
         for(Calendar c : calendars) {
@@ -62,7 +62,7 @@ public class CalendarService {
 
     /** 일정 등록하기 /////////////////////////////// */
     public Long registerCalendar(String teacherId, String studentId, CalendarDTO calendarDTO) {
-        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         calendarDTO.updateDTO(studyRoom);
         return calendarRepository.registerCalendar(calendarMapper.toEntity(calendarDTO));
     }

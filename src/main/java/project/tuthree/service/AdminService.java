@@ -126,7 +126,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserDTO viewParent(String id) throws IOException{
         User user = userRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 사용자가 없습니다. id="+ id));
-        Child child = childRepository.findByParentIdAndStatusTrue(id);
+        List<Child> child = childRepository.findByParentIdAndStatusTrue(id);
         byte[] file = userFileRepository.transferUserFile(user.getPost());
         return new UserDTO(user, child, file);
     }

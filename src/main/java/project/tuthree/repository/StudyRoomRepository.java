@@ -1,7 +1,7 @@
 package project.tuthree.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.file.QUserFile;
 import project.tuthree.domain.file.UserFile;
 import project.tuthree.domain.post.PostReview;
 import project.tuthree.domain.post.QPostReview;
@@ -26,9 +25,7 @@ import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostExamDTO.ProblemDTO;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,45 +66,60 @@ public class StudyRoomRepository {
         info.infoUpdate(studyRoomInfo);
     }
 
+    private BooleanExpression statusTrue(boolean findTrue) {
+        return findTrue == true ? studyRoomInfo.status.eq(true) : null;
+    }
+
+    private BooleanExpression statusFalse(boolean findFalse) {
+        return findFalse == true ? studyRoomInfo.status.eq(false) : null;
+    }
+
     /** 수업 계획서 조회하기 */
-    public StudyRoomInfo findStudyRoomInfo(String teacherId, String studentId) {
+    public StudyRoomInfo findStudyRoomInfo(String teacherId, String studentId, boolean findTrue, boolean findFalse) {
         StudyRoomInfo studyRoomInfo = jpaQueryFactory.selectFrom(QStudyRoomInfo.studyRoomInfo)
                 .where(QStudyRoomInfo.studyRoomInfo.id.teacherId.id.eq(teacherId)
-                        .and(QStudyRoomInfo.studyRoomInfo.id.studentId.id.eq(studentId)))
+                        .and(QStudyRoomInfo.studyRoomInfo.id.studentId.id.eq(studentId))
+                        .and(statusTrue(findTrue).or(statusFalse(findFalse))))
                 .fetchOne();
         return studyRoomInfo;
     }
 
-    /** 선생님 아이디, 학생 아이디로 스터디룸 찾기 */
-    public StudyRoom findStudyRoomById(String teacherId, String studentId) {
+
+
+    /** 선생님 아이디, 학생 아이디로 스터디룸 찾기 - true/false 상관없음 & true*/
+    public StudyRoom findStudyRoomById(String teacherId, String studentId, boolean findOpen, boolean findClose) {
         StudyRoom studyRoom = jpaQueryFactory.selectFrom(QStudyRoom.studyRoom)
                 .where(QStudyRoom.studyRoom.teacherId.id.eq(teacherId)
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
         if(studyRoom == null) return null;
-        Boolean bool = jpaQueryFactory.select(studyRoomInfo.status)
-                .from(studyRoomInfo)
-                .where(studyRoomInfo.id.eq(studyRoom))
-                .fetchOne();
-        if(bool == true) {
-            return studyRoom;
-        }
+
+        boolean isExist = findStudyRoomInfo(teacherId, studentId, findOpen, findClose) != null;
+
+        if(isExist) return studyRoom;
+
         return null;
     }
 
-    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 일단 선생님만 */
+    /** 스터디룸 아이디로 수업정보 찾기 */
+
+
+    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 선생님, 학생 */
     public List<StudyRoomInfo> findStudyRoomSchedule(String id) {
         return jpaQueryFactory.selectFrom(studyRoomInfo)
-                .where(studyRoomInfo.id.teacherId.id.eq(id))
+                .where(studyRoomInfo.id.teacherId.id.eq(id)
+                        .or(studyRoomInfo.id.studentId.id.eq(id)))
                 .fetch();
     }
 
     /** 아이디 하나로 스터디룸 찾기 */
     public List<StudyRoom> findStudyRoomByOneId(String id, Status status) {
-        return jpaQueryFactory.selectFrom(studyRoom)
-                .where((studyRoom.teacherId.id.eq(id)
-                        .or(studyRoom.studentId.id.eq(id)))
-                        .and(studyRoom.Status.eq(status))
+        return jpaQueryFactory.select(studyRoom)
+                .from(studyRoom, studyRoomInfo)
+                .where(((studyRoom.teacherId.id.eq(id).or(studyRoom.studentId.id.eq(id)))
+                        .and(studyRoom.Status.eq(status)))
+                        .and(studyRoom.eq(studyRoomInfo.id))
+                        .and(studyRoomInfo.status.eq(true))
                 )
                 .fetch();
     }
@@ -146,7 +158,7 @@ public class StudyRoomRepository {
 
     /** 과외 정보 승낙하기 */
     public boolean acceptInfo(String teacherId, String studentId) {
-        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId);
+        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId, false, true);
         if(studyRoomInfo.isStatus() == true) {
             return false;
         }
@@ -155,20 +167,20 @@ public class StudyRoomRepository {
 
     /** 과외 정보 승낙 여부 확인 */
     public boolean isAcceptInfo(String teacherId, String studentId) {
-        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId);
+        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId, true, true);
         return studyRoomInfo.isStatus();
     }
 
     /** 수업 관리창 시작하기 */
     public boolean openStudyRoom(String teacherId, String studentId) {
-        StudyRoom studyRoom = findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = findStudyRoomById(teacherId, studentId, true, true);
         studyRoom.openStudyRoom();
         return true;
     }
 
     /** 수업 종료하기 */
     public void closeStudyRoom(String teacherId, String studentId) {
-        StudyRoom studyRoom = findStudyRoomById(teacherId, studentId);
+        StudyRoom studyRoom = findStudyRoomById(teacherId, studentId, true, false);
         studyRoom.closeStudyRoom();
     }
 

@@ -37,21 +37,19 @@ public class AdminRepository {
         return admin.getId();
     }
 
-    /**  */
-    public Long existById(String id){
-        Long count = jpaQueryFactory.selectFrom(admin)
+    /** admin과 일치하는 id가 있는지 여부 확인 */
+    public boolean existById(String id){
+        return jpaQueryFactory.selectFrom(admin)
                 .where(admin.id.eq(id))
-                .fetchCount();
-
-        return count;
+                .select(admin.id)
+                .fetchFirst() != null;
     }
 
     /** id, pwd 일치하는 관리자 찾기 */
     public Map<String, String> findByIdPwd(String id, String pwd) {
         Map<String, String> map = new HashMap<>();
         try {
-            String s_pwd = jpaQueryFactory.select(admin.pwd)
-                    .from(admin)
+            String s_pwd = jpaQueryFactory.select(admin.pwd).from(admin)
                     .where(admin.id.eq(id))
                     .fetchOne();
             if (bCryptPasswordEncoder.matches(pwd, s_pwd)) {
@@ -91,5 +89,7 @@ public class AdminRepository {
     public Long userHasRow() {
         return (Long) em.createQuery("select count(u) from User u").getSingleResult()+(Long) em.createQuery("select count(t) from Teacher t").getSingleResult()+(Long) em.createQuery("select count(s) from Student s").getSingleResult();
     }
+
+
 
 }
