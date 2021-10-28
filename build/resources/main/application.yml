@@ -12,7 +12,7 @@ spring:
       filter:
         enabled: true
   mail:
-    host: stmp.gmail.com
+    host: smtp.gmail.com
     port: 587
     username: project.tuthree
     password: tuthree1234!

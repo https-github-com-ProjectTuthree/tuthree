@@ -3,6 +3,7 @@ package project.tuthree.repository;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +13,14 @@ import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static project.tuthree.domain.file.QUserFile.userFile;
 import static project.tuthree.domain.user.QAdmin.admin;
 
+@Slf4j
 @Repository
 @Transactional
 @RequiredArgsConstructor
@@ -33,25 +37,32 @@ public class AdminRepository {
         return admin.getId();
     }
 
-    /**  */
-    public Long existById(String id){
-        Long count = jpaQueryFactory.selectFrom(admin)
+    /** admin과 일치하는 id가 있는지 여부 확인 */
+    public boolean existById(String id){
+        return jpaQueryFactory.selectFrom(admin)
                 .where(admin.id.eq(id))
-                .fetchCount();
-
-        return count;
+                .select(admin.id)
+                .fetchFirst() != null;
     }
 
     /** id, pwd 일치하는 관리자 찾기 */
-    public String findByIdPwd(String id, String pwd) {
-        String s_pwd = jpaQueryFactory.select(admin.pwd)
-                .from(admin)
-                .where(JPAExpressions.selectFrom(admin)
-                        .where(admin.id.eq(id)).exists()
-                        .and(admin.id.eq(id)))
-                .fetchOne();
-        if(bCryptPasswordEncoder.matches(pwd, s_pwd)) return Grade.ADMIN.getStrType();
-        return " ";
+    public Map<String, String> findByIdPwd(String id, String pwd) {
+        Map<String, String> map = new HashMap<>();
+        try {
+            String s_pwd = jpaQueryFactory.select(admin.pwd).from(admin)
+                    .where(admin.id.eq(id))
+                    .fetchOne();
+            if (bCryptPasswordEncoder.matches(pwd, s_pwd)) {
+                map.put("name", "관리자");
+                map.put("grade", Grade.ADMIN.getStrType());
+            } else {
+                map.put("grade", " ");
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }finally {
+            return map;
+        }
     }
 
     public List<User> userByPage(int page) {
@@ -78,5 +89,7 @@ public class AdminRepository {
     public Long userHasRow() {
         return (Long) em.createQuery("select count(u) from User u").getSingleResult()+(Long) em.createQuery("select count(t) from Teacher t").getSingleResult()+(Long) em.createQuery("select count(s) from Student s").getSingleResult();
     }
+
+
 
 }

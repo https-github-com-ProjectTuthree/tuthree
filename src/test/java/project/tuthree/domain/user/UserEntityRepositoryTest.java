@@ -103,7 +103,7 @@ public class UserEntityRepositoryTest {
                 .birth(birth)
                 .post(post)
                 .grade(grade)
-                .create_date(new Date())
+                .createDate(new Date())
                 .registration(registration)
                 .cost(cost)
                 .school(school)

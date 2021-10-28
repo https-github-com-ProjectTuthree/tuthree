@@ -11,6 +11,8 @@ import project.tuthree.domain.post.QPostStudy;
 import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.EntityManager;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class PostStudyRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
+    private final UserFileRepository userFileRepository;
 
     /** 스터디룸 보고서 전체 조회 */
     public List<PostStudy> findPostByStudyRoom(StudyRoom studyRoom) {
@@ -49,6 +52,24 @@ public class PostStudyRepository {
         return post.getId();
     }
 
+    /** 특정 날짜 수업 보고서 조회 */
+    public List<PostStudy> findPostByDate(String teacherId, String studentId, String date) throws ParseException {
+        List<PostStudy> fetch = jpaQueryFactory.selectFrom(postStudy)
+                .where(postStudy.studyRoomId.studentId.id.eq(studentId)
+                        .and(postStudy.studyRoomId.teacherId.id.eq(teacherId)))
+                .fetch();
+
+        if(fetch.isEmpty()) throw new NullPointerException("스터디룸에 등록된 보고서가 없습니다.");
+
+        List<PostStudy> list = new ArrayList<>();
+        for (PostStudy p : fetch) {
+            if(userFileRepository.unixToDate(p.getDate()).equals(date)) list.add(p);
+        }
+
+        if(list.isEmpty()) throw new NullPointerException("해당 날짜에 등록된 보고서가 없습니다.");
+        return list;
+    }
+
     /** 수업 보고서 삭제 */
     public Long deletePost(Long id) {
         em.remove(em.find(PostStudy.class, id));
@@ -59,7 +80,7 @@ public class PostStudyRepository {
     @AllArgsConstructor
     public static class StudyListDTO {
         Long id;
-        Date dateAt;
+        String dateAt;
         Long number;
         String start;
         String end;

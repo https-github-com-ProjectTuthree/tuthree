@@ -7,28 +7,30 @@ import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.ExistListDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
-import project.tuthree.dto.BookmarkDTO;
+import project.tuthree.configuration.Utils;
+import project.tuthree.controller.JwtController;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.dto.room.StudyroomInfoDTO;
 import project.tuthree.repository.PostFindRepository;
 import project.tuthree.repository.PostFindRepository.PostFindSearchCondition;
 import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.service.PostFindService;
 import project.tuthree.service.PostFindService.PostFindStudentCountListDTO;
+import project.tuthree.service.PostFindService.PostFindStudentCountListDTO.PostFindStudentListDTO;
 import project.tuthree.service.PostFindService.PostFindStudentDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO;
+import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO.PostFindTeacherListDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherDTO;
 import project.tuthree.service.StudyRoomService;
 import project.tuthree.service.StudyRoomService.InfoListDTO;
 import project.tuthree.service.StudyRoomService.ReviewListDTO;
-import project.tuthree.testlogic.ArrayToJson;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static project.tuthree.configuration.Utils.*;
 
 @Slf4j
 @RestController
@@ -39,7 +41,7 @@ public class ClassMatchingApiController {
     private final PostFindRepository postFindRepository;
     private final StudyRoomService studyRoomService;
     private final StudyRoomRepository studyRoomRepository;
-    private final ArrayToJson arrayToJson;
+    private final JwtController jwtController;
 
     /**
      * 선생님 과외 구하는 글 목록 조회
@@ -113,7 +115,7 @@ public class ClassMatchingApiController {
                 studentDTO.getName() + " 학생을 조회했습니다.", studentDTO);
     }
 
-    /** -수업 계획서 등록하기 */
+    /** 선생 -수업 계획서 등록하기 */
     @PostMapping("/room/create")
     public NotExistDataResultResponse createStudyRoomInfo(@RequestParam("teacherId") String teacherId,
                                                                            @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
@@ -121,10 +123,10 @@ public class ClassMatchingApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 생성과 계획서 작성이 완료되었습니다.");
     }
 
-    /** -수업 계획서 수정하기 */
+    /** 선생 -수업 계획서 수정하기 */
     @PutMapping("/room/alter")
-    public NotExistDataResultResponse alterStudyRoomInfo(@RequestParam("teacherId") String teacherId,
-                                   @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
+    public NotExistDataResultResponse updateStudyRoomInfo(@RequestParam("teacherId") String teacherId,
+                                                          @RequestParam("studentId") String studentId, @RequestBody @Valid StudyroomInfoDTO studyroomInfoDTO) throws JsonProcessingException {
         studyRoomService.roomUpdate(teacherId, studentId, studyroomInfoDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "스터디룸 계획서 수정이 완료되었습니다.");
     }
@@ -136,7 +138,7 @@ public class ClassMatchingApiController {
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "수업 계획서를 불러왔습니다.", infoListDTO);
     }
 
-    /** - 학생 - 최종 수락 */
+    /** - 학생, 선생 - 최종 수락 하기 / 최종 수락 여부 */
     @GetMapping("/room/info/accept")
     public Object StudyRoomAccept(@RequestParam("teacherId") String teacherId,
                                                       @RequestParam("studentId") String studentId, @RequestParam("grade") String grade) {
@@ -144,7 +146,7 @@ public class ClassMatchingApiController {
         return res;
     }
 
-    /** 수업 종료하기 */
+    /** 선생, 학생 - 수업 종료하기 */
     @GetMapping("/room/close")
     public NotExistDataResultResponse StudyRoomClose(@RequestParam("teacherId") String teacherId, @RequestParam("studentId") String studentId) {
         studyRoomRepository.closeStudyRoom(teacherId, studentId);
@@ -167,8 +169,15 @@ public class ClassMatchingApiController {
 
     /** 북마크 목록 불러오기 */
     @GetMapping("/bookmark")
-    public ExistDataSuccessResponse ListBookMark(@RequestParam("userId") String userId) {
-        List<BookmarkDTO> bookmarkDTO = postFindService.listBookMark(userId);
+    public ExistDataSuccessResponse ListBookMark(@RequestHeader(AUTHORIZATION) String token) {
+        String userId = jwtController.parseValueFromJwtToken(token, CLAIMUSERID);
+        String grade = jwtController.parseValueFromJwtToken(token, CLAIMGRADE);
+        Object bookmarkDTO = new Object();
+        if (grade.equals(Grade.TEACHER.getStrType())) {
+            bookmarkDTO = postFindService.teacherListBookMark(userId);
+        } else if (grade.equals(Grade.STUDENT.getStrType()) || grade.equals(Grade.PARENT.getStrType())) {
+            bookmarkDTO = postFindService.studentListBookMark(userId);
+        }
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
                 "북마크 목록을 불러왔습니다.", bookmarkDTO);
     }

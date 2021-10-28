@@ -22,6 +22,9 @@ import project.tuthree.domain.QBookMark;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.post.QPostFind;
 import project.tuthree.domain.user.*;
+import project.tuthree.service.PostFindService;
+import project.tuthree.service.PostFindService.PostFindStudentCountListDTO.PostFindStudentListDTO;
+import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO.PostFindTeacherListDTO;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -47,6 +50,7 @@ public class PostFindRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
+    private final UserEntityRepository userEntityRepository;
 
     @Getter
     @AllArgsConstructor
@@ -66,15 +70,13 @@ public class PostFindRepository {
         BooleanBuilder builder = new BooleanBuilder();
         if(condition.getRegion() != null && !condition.getRegion().isEmpty()){
             List<Predicate> list = new ArrayList<>();
-            condition.getRegion().stream().
-                    forEach(t -> list.add(n.region.contains(t)));
+            condition.getRegion().stream().forEach(t -> list.add(n.region.contains(t)));
             builder.and(ExpressionUtils.anyOf(list));
         }
 
         if(condition.getSubject() != null && !condition.getSubject().isEmpty()){
             List<Predicate> list = new ArrayList<>();
-            condition.getSubject().stream()
-                    .forEach(t -> list.add(m.subject.contains(t)));
+            condition.getSubject().stream().forEach(t -> list.add(m.subject.contains(t)));
             builder.and(ExpressionUtils.anyOf(list));
         }
         if(hasText(condition.getStart())){
@@ -82,8 +84,7 @@ public class PostFindRepository {
         }
         JPQLQuery<Teacher> where = JPAExpressions.select(postFind.teacherId).from(postFind, m, n).distinct()
                 .where(postFind.teacherId.id.eq(userInfo.userId)
-                        .and(m.userId.eq(n.userId))
-                        .and(builder));
+                        .and(m.userId.eq(n.userId)).and(builder));
 
         JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
                 .where(postFind.teacherId.in(where));
@@ -133,14 +134,12 @@ public class PostFindRepository {
 
         if(condition.getRegion() != null && !condition.getRegion().isEmpty()){
             List<Predicate> list = new ArrayList<>();
-            condition.getRegion().stream()
-                    .forEach(t -> list.add(n.region.contains(t)));
+            condition.getRegion().stream().forEach(t -> list.add(n.region.contains(t)));
             builder.and(ExpressionUtils.anyOf(list));
         }
         if(condition.getSubject() != null && !condition.getSubject().isEmpty()){
             List<Predicate> list = new ArrayList<>();
-            condition.getSubject().stream()
-                    .forEach(t -> list.add(m.subject.contains(t)));
+            condition.getSubject().stream().forEach(t -> list.add(m.subject.contains(t)));
             builder.and(ExpressionUtils.anyOf(list));
         }
         if(hasText(condition.getStart())){
@@ -149,8 +148,7 @@ public class PostFindRepository {
 
         JPQLQuery<Student> where = JPAExpressions.select(postFind.studentId).from(postFind, m, n).distinct()
                 .where(postFind.studentId.id.eq(userInfo.userId)
-                        .and(m.userId.eq(n.userId))
-                        .and(builder));
+                        .and(m.userId.eq(n.userId)).and(builder));
 
         JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
                 .where(postFind.studentId.in(where));
@@ -193,9 +191,28 @@ public class PostFindRepository {
     /** post id로 선생님 id 찾기 */
     public String findTeacherById(Long postId) {
         String teacherId = jpaQueryFactory.select(postFind.teacherId.id).from(postFind)
-                .where(postFind.id.eq(postId))
-                .fetchOne();
+                .where(postFind.id.eq(postId)).fetchOne();
         return teacherId;
+    }
+
+    /** 선생님 id로 post find 찾기 */
+    public List<PostFindTeacherListDTO> findTeacherByuserId(List<String> userId) {
+
+        List<PostFindTeacherListDTO> list = new ArrayList<>();
+
+        for(String s : userId) {
+            PostFind p = jpaQueryFactory.selectFrom(QPostFind.postFind)
+                    .where(QPostFind.postFind.teacherId.id.eq(s))
+                    .fetchOne();
+            Teacher t = p.getTeacherId();
+            List<String> region = userEntityRepository.userFindRegion(s);
+            List<String> subject = userEntityRepository.userFindSubject(s);
+            PostFindTeacherListDTO dto = new PostFindTeacherListDTO(p.getId(), t.getName(), t.getSchool(), t.getMajor(), t.getStar(), t.getCost(),
+                    t.getSex(), t.getRegistration(), region, subject, null);
+            list.add(dto);
+        }
+        return list;
+
     }
 
     /** post id로 학생 id 찾기 */
@@ -205,18 +222,34 @@ public class PostFindRepository {
         return userId;
     }
 
+    /** 학생 id로 post find 찾기 */
+    public List<PostFindStudentListDTO> findStudentByuserId(List<String> userId) {
+        List<PostFindStudentListDTO> list = new ArrayList<>();
+
+        for(String s : userId) {
+            PostFind p = jpaQueryFactory.selectFrom(QPostFind.postFind)
+                    .where(postFind.studentId.id.eq(s))
+                    .fetchOne();
+            Student t = p.getStudentId();
+            List<String> region = userEntityRepository.userFindRegion(s);
+            List<String> subject = userEntityRepository.userFindSubject(s);
+            PostFindStudentListDTO dto = new PostFindStudentListDTO(p.getId(), t.getName(), t.getCost(), t.getSex(),
+                   t.getRegistration(), region, subject, null);
+            list.add(dto);
+        }
+        return list;
+    }
+
     /** 선생님 게시글 갯수 */
     public Long teacherHasRow() {
         return jpaQueryFactory.selectFrom(postFind)
-                .where(postFind.teacherId.isNotNull())
-                .fetchCount();
+                .where(postFind.teacherId.isNotNull()).fetchCount();
     }
 
     /** 학생 게시글 갯수 */
     public Long studentHasRow() {
         return jpaQueryFactory.selectFrom(postFind)
-                .where(postFind.studentId.isNotNull())
-                .fetchCount();
+                .where(postFind.studentId.isNotNull()).fetchCount();
     }
 
     /**
@@ -241,8 +274,9 @@ public class PostFindRepository {
     }
 
     /** 북마크 리스트 불러오기 */
-    public List<BookMark> listBookMark(String userId) {
-        return jpaQueryFactory.selectFrom(bookMark)
+    public List<String> listBookMark(String userId) {
+        return jpaQueryFactory.select(bookMark.user2)
+                .from(bookMark)
                 .where(bookMark.user1.eq(userId))
                 .fetch();
     }

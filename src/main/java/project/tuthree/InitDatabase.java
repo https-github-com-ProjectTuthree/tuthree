@@ -15,6 +15,7 @@ import project.tuthree.dto.room.StudyroomInfoDTO;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.util.Date;
+import java.util.TimeZone;
 
 @Slf4j
 @Component
@@ -24,6 +25,8 @@ public class InitDatabase {
 
     @PostConstruct
     public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        log.info("\n==================================\n현재 시각 [Asia/Seoul] " + new Date() + "\n============================================\n");
         log.info("\n---------------------\n" +
                 "intiDatabase executing -- tuthree" +
                 "\n---------------------");

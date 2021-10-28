@@ -34,11 +34,13 @@ public class AdminService {
     private final UserFileRepository userFileRepository;
     private final ChildRepository childRepository;
 
-    public String adminLogin(AdminDTO adminDTO) {
-        return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
-    }
+//   @Transactional
+//    public String adminLogin(AdminDTO adminDTO) {
+//        return adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
+//    }
 
    /*@Transactional
+>>>>>>> master
     public List<UserListDTO> userList(int page) {
         List<User> userEntities = adminRepository.userByPage(page);
         List<Teacher> teacherEntites = adminRepository.teacherByPage(page);
