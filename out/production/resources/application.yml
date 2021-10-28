@@ -5,7 +5,11 @@ devtools:
 #local / dev / prod
 spring:
   profiles:
+<<<<<<< HEAD
     active: dev
+=======
+    active: local
+>>>>>>> 5dfd0ebfafc32d184cadb884062ade5a4105a111
     include: jwt
   mvc:
     hiddenmethod:
