@@ -4,10 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Student;
 import project.tuthree.domain.user.Teacher;
-import project.tuthree.domain.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -9,7 +9,6 @@ import project.tuthree.domain.user.Teacher;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.SchoolStatus;
-import project.tuthree.domain.user.Teacher;
 
 import java.util.List;
 

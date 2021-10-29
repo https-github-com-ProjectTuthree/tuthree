@@ -31,7 +31,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class PostUserApiController {
     private final PostFaqService postFaqService;
     private final PostNoticeService postNoticeService;

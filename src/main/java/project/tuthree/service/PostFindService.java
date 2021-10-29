@@ -2,13 +2,11 @@ package project.tuthree.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import project.tuthree.domain.BookMark;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.user.*;
@@ -27,12 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static project.tuthree.domain.post.QPostFind.postFind;
-import static project.tuthree.domain.user.QStudent.student;
-import static project.tuthree.domain.user.QTeacher.teacher;
 
 @Service
 @Slf4j

@@ -4,43 +4,36 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
-import project.tuthree.dto.ChatDTO;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.AdminDTO;
 import project.tuthree.dto.user.UserListDTO;
-import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.service.AdminService;
 import project.tuthree.service.UserRegisterService;
-import project.tuthree.service.push.ChatService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static project.tuthree.configuration.Utils.AUTHORIZATION;
+import static project.tuthree.configuration.Utils.BEARER;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AdminApiController {
-    private final String AUTHORIZATION = "Authorization";
-    private final String BEARER = "Bearer";
 
     private final AdminService adminService;
     private final UserRegisterService userRegisterService;
     private final JwtController jwtController;
     private final AdminRepository adminRepository;
-    private final ChatService chatService;
 
 
     @PostMapping("/admin/in")

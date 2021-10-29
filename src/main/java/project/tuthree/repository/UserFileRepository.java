@@ -1,6 +1,5 @@
 package project.tuthree.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
@@ -8,16 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import project.tuthree.domain.file.QUserFile;
 import project.tuthree.domain.file.UserFile;
-import project.tuthree.dto.user.StudentRegisterDTO;
-import project.tuthree.dto.user.TeacherRegisterDTO;
-import project.tuthree.dto.user.UserRegisterDTO;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;

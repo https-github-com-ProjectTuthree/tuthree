@@ -45,9 +45,8 @@ public class RabbitMqConfiguration {
 
     @Bean(name = "keywordTopicExchange")
     TopicExchange keywordExchange() {
-        return new TopicExchange(keywordExchange);}
-
-    //토픽, 다이렉트 어떤 걸로 갈지 모르겠다
+        return new TopicExchange(keywordExchange);
+    }
 
     @Bean
     Binding chatQueueBinding(@Named("chat") Queue queue, @Named("chatTopicExchange") TopicExchange exchange) {
@@ -88,18 +87,5 @@ public class RabbitMqConfiguration {
     public RabbitAdmin rabbitAdmin(ConnectionFactory factory) {
         return new RabbitAdmin(factory);
     }
-//
-//    @Bean
-//    SimpleMessageListenerContainer container() {
-//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-//        container.setConnectionFactory(connectionFactory());
-//        container.setQueueNames(chatQueue);
-//        container.setMessageListener(null);
-//        return container;
-//    }
 
-
-//https://github.com/Kim-SiHwan/ShMarket/blob/dev/src/main/java/kim/sihwan/daangn/config/rabbit/RabbitMqConfig.java
-//https://github.com/Kim-SiHwan/ShMarket/blob/dev/src/main/java/kim/sihwan/daangn/config/webSocket/StompHandler.java
-//https://github.com/Kim-SiHwan/ShMarket/blob/dev/src/main/java/kim/sihwan/daangn/config/webSocket/WebSocketConfig.java
 }

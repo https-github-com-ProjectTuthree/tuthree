@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.user.Sex;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

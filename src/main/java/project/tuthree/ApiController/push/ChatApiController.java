@@ -2,7 +2,6 @@ package project.tuthree.ApiController.push;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
@@ -11,7 +10,6 @@ import project.tuthree.configuration.Utils;
 import project.tuthree.controller.JwtController;
 import project.tuthree.controller.RedisTestService;
 import project.tuthree.dto.ChatDTO;
-import project.tuthree.dto.room.ChatroomDTO;
 import project.tuthree.service.push.ChatService;
 import project.tuthree.service.push.ChatService.chatRoomDTO;
 import project.tuthree.service.push.ChatService.chatRoomListDTO;

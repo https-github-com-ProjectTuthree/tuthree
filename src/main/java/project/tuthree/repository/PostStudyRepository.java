@@ -7,13 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostStudy;
-import project.tuthree.domain.post.QPostStudy;
 import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.EntityManager;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static project.tuthree.domain.post.QPostStudy.postStudy;
