@@ -111,15 +111,15 @@ public class StudyRoomService {
     }
 
     /** 스케쥴 조회하기 */
-    public List<scheduleListDTO> findSchedule(String id, String grade) throws ParseException, JsonProcessingException {
-        List<StudyRoomInfo> studyRoomSchedule = studyRoomRepository.findStudyRoomSchedule(id);
+    public List<scheduleListDTO> findSchedule(String id, Grade grade) throws ParseException, JsonProcessingException {
+        List<StudyRoomInfo> studyRoomSchedule = studyRoomRepository.findStudyRoomSchedule(id, grade);
         List<scheduleListDTO> list = new ArrayList<>();
-        if(grade.toLowerCase(Locale.ROOT).equals(Grade.TEACHER.getStrType())){
+        if(grade.equals(Grade.TEACHER)){
             for (StudyRoomInfo i : studyRoomSchedule) {
                 list.add(new scheduleListDTO(i.getId().getStudentId().getName(),
                         byteToObject(i.getInfo()).get("schedule")));
             }
-        } else if(grade.toLowerCase(Locale.ROOT).equals(Grade.STUDENT.getStrType())) {
+        } else if(grade.equals(Grade.STUDENT)) {
             for (StudyRoomInfo i : studyRoomSchedule) {
                 list.add(new scheduleListDTO(i.getId().getTeacherId().getName(),
                         byteToObject(i.getInfo()).get("schedule")));
@@ -134,7 +134,7 @@ public class StudyRoomService {
         List<childScheduleListDTO> list = new ArrayList<>();
         for(Tuple t : tuples) {
             log.info("================child :", t.get(0, String.class));
-            List<scheduleListDTO> schedule = findSchedule(t.get(1,String.class), Grade.STUDENT.getStrType());
+            List<scheduleListDTO> schedule = findSchedule(t.get(1,String.class), Grade.STUDENT);
             list.add(new childScheduleListDTO(t.get(0, String.class), schedule));
         }
         return list;

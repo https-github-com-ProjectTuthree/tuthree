@@ -18,6 +18,7 @@ import project.tuthree.domain.room.QStudyRoom;
 import project.tuthree.domain.room.QStudyRoomInfo;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.dto.post.PostAnswerDTO;
 import project.tuthree.dto.post.PostAnswerDTO.AnswerDTO;
@@ -115,12 +116,27 @@ public class StudyRoomRepository {
     /** 스터디룸 아이디로 수업정보 찾기 */
 
 
-    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 선생님, 학생 */
-    public List<StudyRoomInfo> findStudyRoomSchedule(String id) {
-        return jpaQueryFactory.selectFrom(studyRoomInfo)
-                .where(studyRoomInfo.id.teacherId.id.eq(id)
-                        .or(studyRoomInfo.id.studentId.id.eq(id)))
+    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 선생님, 학생 - studyroom open, studyroom info true*/
+    public List<StudyRoomInfo> findStudyRoomSchedule(String id, Grade grade) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(grade.equals(Grade.TEACHER)){
+            builder.and(studyRoomInfo.id.teacherId.id.eq(id));
+        } else {
+            builder.and(studyRoomInfo.id.studentId.id.eq(id));
+        }
+
+        List<StudyRoomInfo> fetch = jpaQueryFactory.select(studyRoomInfo)
+                .from(studyRoomInfo, studyRoom)
+                .where(studyRoomInfo.id.eq(studyRoom)
+                        .and(builder)
+                        .and(studyRoom.Status.eq(Status.OPEN))
+                        .and(studyRoomInfo.status.eq(true))
+                )
                 .fetch();
+
+        return fetch;
     }
 
     /** 아이디 하나로 스터디룸 찾기 */

@@ -56,7 +56,7 @@ public class ClassManageApiController {
             List<childScheduleListDTO> childSchedule = studyRoomService.findChildSchedule(id);
             return new ExistDataSuccessResponse(StatusCode.OK.getCode(), "자녀 일정이 조회되었습니다.", childSchedule);
         } else{
-            List<scheduleListDTO> teacherSchedule = studyRoomService.findSchedule(id, grade);
+            List<scheduleListDTO> teacherSchedule = studyRoomService.findSchedule(id, Grade.valueOf(grade.toUpperCase(Locale.ROOT)));
             return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"일정이 조회되었습니다.", teacherSchedule);
         }
     }
