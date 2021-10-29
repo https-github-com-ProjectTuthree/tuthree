@@ -85,9 +85,9 @@ public class UserFileRepository {
 
     /** object -> json 서버 저장 */
     public String saveJsonFile(Object object, String real, FileType type) throws NoSuchAlgorithmException, IOException {
-
+        String path = System.getProperty("user.dir");
+        String savePath = path + "/src/main/resources/var" + type.getKortype();
         ObjectMapper mapper = new ObjectMapper();
-        String savePath = "/home/seojaehui/tuthree/var" + type.getKortype();
 
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
@@ -110,8 +110,8 @@ public class UserFileRepository {
 
     /** multipartfile을 저장하는 로직 - 파일 하나 */
     public String saveFile(MultipartFile file, FileType type) throws NoSuchAlgorithmException, IOException {
-
-        String savePath = "/home/seojaehui/tuthree/var" + type.getKortype();
+        String path = System.getProperty("user.dir");
+        String savePath = path + "/src/main/resources/var" + type.getKortype();
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
         }
@@ -126,7 +126,10 @@ public class UserFileRepository {
     /** multipartfile을 저장하는 로직 - 파일 리스트 */
     public List<String> saveFile(List<MultipartFile> files, FileType type) throws NoSuchAlgorithmException, IOException {
         List<String> saveNames = new ArrayList<>();
-        String savePath = "/home/seojaehui/tuthree/var" + type.getKortype();
+        String path = System.getProperty("user.dir");
+        log.info("path : " + path);
+
+        String savePath = path + "/src/main/resources/var" + type.getKortype();
 
         if (!new File(savePath).exists()) {
             new File(savePath).mkdir();
@@ -223,5 +226,11 @@ public class UserFileRepository {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
         return transFormat.format(unix);
     }
+
+    public String unixToTimestamp(Date unix) throws ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return transFormat.format(unix);
+    }
+
 
 }

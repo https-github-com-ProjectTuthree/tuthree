@@ -21,11 +21,14 @@ import project.tuthree.repository.PostTestPaperRepository;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
+import static project.tuthree.exception.ExceptionSupplierImpl.wrap;
+
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,19 +66,15 @@ public class PostTestPaperService {
     public List<PostListDTO> communityFindByPage(int page) {
         List<PostTestPaper> list = testPaperRepository.findByPage(page);
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(),m.getWriteAt(), m.getView()))
+                .map(m -> wrap(() -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), userFileRepository.unixToDate(m.getWriteAt()), m.getView())))
                 .collect(Collectors.toList());
     }
 
-//            return list.stream()
-//                    .map(m -> postFaqMapper.toDto(m))
-//            .collect(Collectors.toList());
-
     /** 커뮤니티 글 id로 조회하기 */
-    public PostSingleContentDTO communityFindById(Long id) {
+    public PostSingleContentDTO communityFindById(Long id) throws ParseException {
         PostTestPaper postTestPaper = testPaperRepository.findById(id);
         PostSingleContentDTO postListDTO = new PostSingleContentDTO(postTestPaper.getId(), postTestPaper.getUserId().getId(),
-                postTestPaper.getTitle(), postTestPaper.getContent(), postTestPaper.getView(), postTestPaper.getWriteAt(), postTestPaper.getSecret());
+                postTestPaper.getTitle(), postTestPaper.getContent(), postTestPaper.getView(), userFileRepository.unixToDate(postTestPaper.getWriteAt()), postTestPaper.getSecret());
         return postListDTO;
     }
 
@@ -86,8 +85,8 @@ public class PostTestPaperService {
         List<PostTestPaper> list =testPaperRepository.findByKeyword(keyword, page);
         if(list.isEmpty()) throw new NullPointerException();
         return list.stream()
-                .map(m -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), m.getWriteAt(), m.getView()))
-                .collect(Collectors.toList());
+                .map(m -> wrap(() -> new PostListDTO(m.getId(), m.getUserId().getId(), m.getTitle(), userFileRepository.unixToDate(m.getWriteAt()), m.getView())))
+                        .collect(Collectors.toList());
     }
 
     /**
@@ -96,7 +95,6 @@ public class PostTestPaperService {
     public Long writeCommunity(PaperForm form) throws NoSuchAlgorithmException, IOException {
         Teacher teacher = userEntityRepository.teacherFindById(form.getUserId());
         PostTestPaperDTO postTestPaperDTO = new PostTestPaperDTO(null, teacher, form.getTitle(), form.getContent(), 0L, new Date(), null, form.getSecret());
-        log.info("======================" + teacher.getId());
 
         PostTestPaper post =  testPaperRepository.writeTestPaper(testPaperMapper.toEntity(postTestPaperDTO));
         List<String> saveNames = userFileRepository.saveFile(form.getFile(), POSTPAPER);
@@ -104,7 +102,6 @@ public class PostTestPaperService {
         for (int i = 0; i < saveNames.size(); i++) {
             UserfileDTO userfileDTO = new UserfileDTO(post, saveNames.get(i), form.getFile().get(i).getOriginalFilename());
             userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
-
         }
         return post.getId();
     }

@@ -29,7 +29,7 @@ public class ArrayToJson {
         list.add(dto);
         list.add(dto2);
 
-        PostExamDTO postExamDTO = new PostExamDTO(1L, list);
+        PostExamDTO postExamDTO = new PostExamDTO(1L, "2020-10-20", list);
 
         return userFileRepository.saveJsonFile(postExamDTO, "post_answer.json", POSTPAPER);
     }

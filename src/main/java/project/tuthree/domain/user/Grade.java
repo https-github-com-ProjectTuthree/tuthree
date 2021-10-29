@@ -9,7 +9,9 @@ public enum Grade {
     PARENT("parent"),
     STUDENT("student"),
     TEACHER("teacher"),
-    ADMIN("admin");
+    ADMIN("admin"),
+    ALL("all"),
+    USERALL("userall");
 
     private String strType;
 

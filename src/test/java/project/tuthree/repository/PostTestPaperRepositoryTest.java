@@ -45,7 +45,7 @@ class PostTestPaperRepositoryTest {
         list.add(dto);
         list.add(dto2);
 
-        PostExamDTO postExamDTO = new PostExamDTO(1L, list);
+        PostExamDTO postExamDTO = new PostExamDTO(1L , "2021-10-02", list);
 
         userFileRepository.saveJsonFile(postExamDTO, "answer.json", UserFileRepository.FileType.POSTPAPER);
 

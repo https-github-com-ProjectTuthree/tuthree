@@ -18,10 +18,27 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  rabbitmq:
+    host: localhost
+    username: tuthree1234
+    password: 1234
+    port: 5672
+    listener:
+      simple:
+        acknowledge-mode: manual
 
   jpa:
     hibernate:
       ddl-auto: none
+
+  redis:
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 0
+    port: 6379
+    host: localhost
 
 server:
   port: 8088

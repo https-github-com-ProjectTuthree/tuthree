@@ -9,6 +9,12 @@ spring:
     #hikari:
       #schema: classpath:src/main/resources/schema.sql
 
+  rabbitmq:
+    host: localhost
+    username: tuthree1234
+    password: 1234
+    port: 5672
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -17,6 +23,18 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+  redis:
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 0
+    port: 6379
+    host: localhost
+
+server:
+  port: 8088
 #logging:
 #  level:
 #    "[org.hibernate]": debug

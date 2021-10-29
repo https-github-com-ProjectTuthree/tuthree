@@ -8,12 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.ApiController.EmbeddedResponse.NonValueNotExistDataResultResponse;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
-import project.tuthree.domain.user.User;
 import project.tuthree.domain.user.UserRepository;
 import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
@@ -21,11 +18,12 @@ import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
 import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.AdminService;
+import project.tuthree.service.NoticeService;
+import project.tuthree.service.NoticeService.keywordPushDTO;
 import project.tuthree.service.PostFindService;
 import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -44,10 +42,9 @@ public class UserApiController {
 
     private final JwtController jwtController;
     private final UserRepository userRepository;
-    private final PostFindService postFindService;
-    private final UserFileRepository userFileRepository;
     private final AdminService adminService;
     private final AdminRepository adminRepository;
+    private final NoticeService noticeService;
 
     /** id체크 **/
     @GetMapping("/register/{id}/checkid")
@@ -63,6 +60,7 @@ public class UserApiController {
         if (id == "중복") {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
+        noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonPParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
@@ -76,6 +74,7 @@ public class UserApiController {
         if (id == "중복") {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
+        noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonSParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
@@ -90,6 +89,7 @@ public class UserApiController {
         if (id == "중복") {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
         }
+        noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonTParse(registerDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
@@ -127,7 +127,7 @@ public class UserApiController {
 
     /**정보 수정**/
     @PutMapping("/user/mypage")
-    public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody UserUpdateDTO updateDTO)throws NoSuchAlgorithmException, IOException{
+    public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @ModelAttribute UserUpdateDTO updateDTO)throws NoSuchAlgorithmException, IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
         String updatedId = userRegisterService.userUpdate(id, grade, updateDTO);
@@ -137,7 +137,7 @@ public class UserApiController {
 
     /**튜터 정보 수정**/
     @PutMapping("/user/tutorclass")
-    public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody TeacherUpdateDTO updateDTO) throws IOException, NoSuchAlgorithmException{
+    public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @ModelAttribute TeacherUpdateDTO updateDTO) throws IOException, NoSuchAlgorithmException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String updatedId =  userRegisterService.teacherUpdate(id, updateDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
@@ -193,8 +193,8 @@ public class UserApiController {
         String str;
         str = userRegisterService.findPwd(findIdDTO, method);
         if(!str.equals(" ")){
-            response.addHeader("Id", findIdDTO.getId());
-            response.addHeader("Grade", str);
+            response.setHeader("Id", findIdDTO.getId());
+            response.setHeader("Grade", str);
             return new NotExistDataResultResponse(StatusCode.OK.getCode(),
                     findIdDTO.getId()+"의 비밀번호를 변경합니다.");
         }
@@ -202,14 +202,22 @@ public class UserApiController {
                 "일치하는 계정 정보가 존재하지 않습니다.");
     }
 
-    /**비밀번호 변경**/
+    /**비밀번호 찾기 후 비밀번호 변경**/
     @PutMapping("/user/changepwd") //권한을 일시적으로 줘도 되나,,,
     public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, @RequestHeader(value="Id") String Id, @RequestHeader(value="Grade") String grade){
         //String userId = CheckUserI(request).getId();
         //String grade = CheckUserI(request).getGrade();
         userRegisterService.changePwd(pwdDTO, Id, grade);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
+    }
 
+    /**비밀번호 변경**/
+    @PutMapping("/user/changepw")
+    public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, @RequestHeader(value="Authorization") String AUTHORIZATION){
+        String userId = CheckUserI(AUTHORIZATION).getId();
+        String grade = CheckUserI(AUTHORIZATION).getGrade();
+        userRegisterService.changePwd(pwdDTO, userId, grade);
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
     }
 
     /**자녀추가**/
@@ -218,6 +226,7 @@ public class UserApiController {
         String parentId = CheckUserI(AUTHORIZATION).getId();
         String id = userRegisterService.plusChild(parentId, childDTO);
         String parentName = userRepository.findById(parentId).get().getName();
+        noticeService.ParentChildRegisterNotice(new keywordPushDTO(parentId, id, parentName, Grade.PARENT.getStrType()));
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),parentName+"님 께서 " +id+"로 자녀를 신청하였습니다.");
     }
 
@@ -226,8 +235,9 @@ public class UserApiController {
     /**자녀수락**/
     @PostMapping("/user/parent")
     public NotExistDataResultResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId){
-        String id = userRegisterService.acceptChild(parentId, studentId);
-        return new NotExistDataResultResponse(StatusCode.OK.getCode(), id+"가 부모로 등록되었습니다.");
+        String name = userRegisterService.acceptChild(parentId, studentId);
+        noticeService.ParentChildRegisterNotice(new keywordPushDTO(studentId, parentId, name, Grade.STUDENT.getStrType()));
+        return new NotExistDataResultResponse(StatusCode.OK.getCode(), parentId+"가 부모로 등록되었습니다.");
     }
 
     /**요청보기**/
@@ -248,8 +258,6 @@ public class UserApiController {
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
-
-
     /**헤더에서 사용자 정보 확인**/
     public CheckUser CheckUserI(String AUTHORIZATION){
         String[] requestToken = AUTHORIZATION.split(" ");
@@ -267,9 +275,6 @@ public class UserApiController {
 
         return checkUser;
     }
-
-
-
 }
 
 

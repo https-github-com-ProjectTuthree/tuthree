@@ -1,5 +1,6 @@
 package project.tuthree.dto.user;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import project.tuthree.domain.user.Teacher;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeacherUpdateDTO {
     private List<String> regionL;
     private Status registration;
