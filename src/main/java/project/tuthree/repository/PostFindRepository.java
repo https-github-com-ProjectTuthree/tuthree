@@ -3,41 +3,30 @@ package project.tuthree.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.jsonwebtoken.lang.Strings;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.BookMark;
-import project.tuthree.domain.QBookMark;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.post.QPostFind;
 import project.tuthree.domain.user.*;
-import project.tuthree.service.PostFindService;
 import project.tuthree.service.PostFindService.PostFindStudentCountListDTO.PostFindStudentListDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO.PostFindTeacherListDTO;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.lang.Strings.hasText;
 import static project.tuthree.domain.QBookMark.bookMark;
 import static project.tuthree.domain.post.QPostFind.postFind;
-import static project.tuthree.domain.user.QStudent.student;
-import static project.tuthree.domain.user.QTeacher.teacher;
 import static project.tuthree.domain.user.QUserInfo.userInfo;
 
 @Slf4j

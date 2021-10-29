@@ -1,18 +1,13 @@
 package project.tuthree.domain.file;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import project.tuthree.domain.post.PostTestPaper;
 import project.tuthree.domain.room.StudyRoom;
-import project.tuthree.domain.room.StudyRoomId;
-import project.tuthree.domain.user.Student;
-import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter

@@ -142,7 +142,7 @@ public class JwtApiController {
 //            "execution(* ClassManageApiController.Register*(..)) ||" +
 //            "execution(* ClassManageApiController.Update*(..)) ||" +
 //            "execution(* ClassManageApiController.Delete*(..)) ||" +
-//            "execution(* ClassMatchingApiController.StudyRoom*(..))")
+//            "execution(* ClassMatchingApiController.StudyRoom*(..))")/
 //    public Object CheckTeacherOrStudentUserFirst(final ProceedingJoinPoint joinPoint) throws Throwable {
 //        Map<String, Object> objectMap = new HashMap<>();
 //        try{

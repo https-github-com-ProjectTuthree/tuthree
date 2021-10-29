@@ -8,7 +8,6 @@ import project.tuthree.dto.user.TeacherDTO;
 import project.tuthree.mapper.TeacherMapper;
 import project.tuthree.repository.UserEntityRepository;
 
-import java.util.List;
 
 @Slf4j
 @Service

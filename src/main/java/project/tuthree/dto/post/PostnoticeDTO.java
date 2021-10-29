@@ -1,7 +1,6 @@
 package project.tuthree.dto.post;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.Assert;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.post.NoticeType;

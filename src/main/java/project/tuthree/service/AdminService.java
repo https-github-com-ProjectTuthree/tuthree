@@ -5,12 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.domain.Status;
 import project.tuthree.domain.room.StudyRoom;
-import project.tuthree.domain.room.StudyRoomId;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.user.*;
-import project.tuthree.repository.AdminRepository;
 import project.tuthree.repository.StudyRoomRepository;
 import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
@@ -24,8 +21,6 @@ import static project.tuthree.domain.Status.OPEN;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-
-    private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;

@@ -5,7 +5,6 @@ import lombok.Getter;
 import project.tuthree.domain.post.PostTestPaper;
 import project.tuthree.domain.room.StudyRoom;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter

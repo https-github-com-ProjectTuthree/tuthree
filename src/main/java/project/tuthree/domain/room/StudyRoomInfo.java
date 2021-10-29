@@ -3,15 +3,10 @@ package project.tuthree.domain.room;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Type;
-import project.tuthree.domain.Status;
-import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Getter

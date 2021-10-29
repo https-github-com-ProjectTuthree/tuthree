@@ -1,18 +1,14 @@
 package project.tuthree.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
-import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Child;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
 import project.tuthree.domain.user.User;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

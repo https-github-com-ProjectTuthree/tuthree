@@ -2,11 +2,9 @@ package project.tuthree.dto.user;
 
 import lombok.*;
 import project.tuthree.domain.Status;
-import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.user.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

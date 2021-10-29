@@ -55,7 +55,6 @@ public class StudyRoomService {
     private final ObjectMapper objectMapper;
     private final UserFileRepository userFileRepository;
     private final UserFileMapper userFileMapper;
-    private final ChildRepository childRepository;
 
     /** 스터디룸, 수업 계획서, 리뷰 */
 

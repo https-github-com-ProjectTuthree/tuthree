@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.room.StudyRoom;
-import project.tuthree.domain.user.Student;
-import project.tuthree.domain.user.Teacher;
 
 import java.util.Date;
 

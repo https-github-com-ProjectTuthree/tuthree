@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomId;
-import project.tuthree.domain.user.Teacher;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -1,7 +1,6 @@
 package project.tuthree.exception;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Controller;
 
 import java.text.ParseException;

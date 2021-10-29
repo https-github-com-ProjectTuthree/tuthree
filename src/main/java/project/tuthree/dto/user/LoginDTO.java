@@ -7,7 +7,6 @@ import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.User;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor

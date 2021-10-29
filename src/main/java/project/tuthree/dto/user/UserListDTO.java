@@ -3,13 +3,9 @@ package project.tuthree.dto.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

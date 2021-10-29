@@ -1,6 +1,5 @@
 package project.tuthree.domain.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Admin;

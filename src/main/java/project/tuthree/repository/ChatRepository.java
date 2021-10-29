@@ -1,9 +1,6 @@
 package project.tuthree.repository;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +12,6 @@ import project.tuthree.domain.room.ChatRoom;
 import project.tuthree.domain.user.StudentRepository;
 import project.tuthree.domain.user.TeacherRepository;
 import project.tuthree.domain.user.UserRepository;
-import project.tuthree.service.UserRegisterService;
-import project.tuthree.service.push.ChatService;
-import project.tuthree.service.push.ChatService.chatRoomDTO;
-import project.tuthree.service.push.ChatService.chatRoomDTO.chatListDTO;
 import project.tuthree.service.push.ChatService.chatRoomListDTO;
 
 import javax.persistence.EntityManager;
@@ -28,11 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static project.tuthree.domain.QChat.chat;
 import static project.tuthree.domain.room.QChatRoom.chatRoom;
-import static project.tuthree.exception.ExceptionSupplierImpl.wrap;
 
 
 @Slf4j

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import project.tuthree.domain.Status;
 
-import java.util.Date;
 
 public class EmbeddedDTO {
 
