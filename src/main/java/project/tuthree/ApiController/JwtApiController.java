@@ -8,8 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.junit.Assert;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 import project.tuthree.controller.JwtController;
@@ -69,6 +72,7 @@ public class JwtApiController {
      * postuserapi - alluser
      * userapi - alluser
      */
+
 //
 //    @Around("execution(* PostUserApiController.Community*(..)) ||" +
 //            "execution(* PostUserApiController.Faq*(..)) ||" +
@@ -152,14 +156,14 @@ public class JwtApiController {
 //        return result;
 //    }
 
-    @Around("execution(* AdminApiController.*(..)) ||" +
-            "execution(* PostAdminApiController.*(..))")
-    public Object CheckAdminFirst(final ProceedingJoinPoint joinPoint) throws Throwable {
-        Map<String, Object> objectMap = CheckUserGrade(Grade.ADMIN);
-        Object result = joinPoint.proceed();
-        makeRefreshToken(objectMap);
-        return result;
-    }
+//    @Around("execution(* AdminApiController.*(..)) ||" +
+//            "execution(* PostAdminApiController.*(..))")
+//    public Object CheckAdminFirst(final ProceedingJoinPoint joinPoint) throws Throwable {
+//        Map<String, Object> objectMap = CheckUserGrade(Grade.ADMIN);
+//        Object result = joinPoint.proceed();
+//        makeRefreshToken(objectMap);
+//        return result;
+//    }
 
 
     //호출하면 jooint가 되지 않는다.따로 만들기

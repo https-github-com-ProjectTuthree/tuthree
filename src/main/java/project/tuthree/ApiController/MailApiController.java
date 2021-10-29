@@ -23,8 +23,8 @@ public class MailApiController {
     /** 이메일 보내기 **/
     @GetMapping("/auth-email")
     public Object mailSending(@RequestParam("mail") String email) {
+        log.debug("\n---- 이메일 인증 [USER MAIL : " + email + "] ----\n");
         HashMap<String, Object> result = new HashMap<>();
-
         if (emailCheck(email) == 1)
             return new NotExistBadDataResultResponse(StatusCode.CONFLICT.getCode(), "이메일 형식이 아닙니다.");
 

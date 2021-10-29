@@ -1,6 +1,7 @@
 package project.tuthree.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,6 +18,7 @@ import project.tuthree.domain.room.QStudyRoom;
 import project.tuthree.domain.room.QStudyRoomInfo;
 import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
+import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Teacher;
 import project.tuthree.dto.post.PostAnswerDTO;
 import project.tuthree.dto.post.PostAnswerDTO.AnswerDTO;
@@ -65,21 +67,31 @@ public class StudyRoomRepository {
         StudyRoomInfo info = em.find(StudyRoomInfo.class, studyRoomInfo.getId());
         info.infoUpdate(studyRoomInfo);
     }
-
-    private BooleanExpression statusTrue(boolean findTrue) {
-        return findTrue == true ? studyRoomInfo.status.eq(true) : null;
-    }
-
-    private BooleanExpression statusFalse(boolean findFalse) {
-        return findFalse == true ? studyRoomInfo.status.eq(false) : null;
-    }
+//
+//    private BooleanExpression statusTrue(boolean findTrue) {
+//        return findTrue == true ? studyRoomInfo.status.eq(true) : null;
+//    }
+//
+//    private BooleanExpression statusFalse(boolean findFalse) {
+//        return findFalse == true ? studyRoomInfo.status.eq(false) : null;
+//    }
 
     /** 수업 계획서 조회하기 */
     public StudyRoomInfo findStudyRoomInfo(String teacherId, String studentId, boolean findTrue, boolean findFalse) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (findTrue == true && findFalse == false) {
+            builder.and(studyRoomInfo.status.eq(true));
+        }
+        else if (findTrue == true && findFalse == true) {
+            builder.and(studyRoomInfo.status.eq(true).or(studyRoomInfo.status.eq(false)));
+        }
+        else if (findTrue == false && findFalse == true) {
+            builder.and(studyRoomInfo.status.eq(false));
+        }
         StudyRoomInfo studyRoomInfo = jpaQueryFactory.selectFrom(QStudyRoomInfo.studyRoomInfo)
                 .where(QStudyRoomInfo.studyRoomInfo.id.teacherId.id.eq(teacherId)
                         .and(QStudyRoomInfo.studyRoomInfo.id.studentId.id.eq(studentId))
-                        .and(statusTrue(findTrue).or(statusFalse(findFalse))))
+                        .and(builder))
                 .fetchOne();
         return studyRoomInfo;
     }
@@ -104,12 +116,27 @@ public class StudyRoomRepository {
     /** 스터디룸 아이디로 수업정보 찾기 */
 
 
-    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 선생님, 학생 */
-    public List<StudyRoomInfo> findStudyRoomSchedule(String id) {
-        return jpaQueryFactory.selectFrom(studyRoomInfo)
-                .where(studyRoomInfo.id.teacherId.id.eq(id)
-                        .or(studyRoomInfo.id.studentId.id.eq(id)))
+    /** 아이디 하나로 전체 스터디룸 시간 찾기 - 선생님, 학생 - studyroom open, studyroom info true*/
+    public List<StudyRoomInfo> findStudyRoomSchedule(String id, Grade grade) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(grade.equals(Grade.TEACHER)){
+            builder.and(studyRoomInfo.id.teacherId.id.eq(id));
+        } else {
+            builder.and(studyRoomInfo.id.studentId.id.eq(id));
+        }
+
+        List<StudyRoomInfo> fetch = jpaQueryFactory.select(studyRoomInfo)
+                .from(studyRoomInfo, studyRoom)
+                .where(studyRoomInfo.id.eq(studyRoom)
+                        .and(builder)
+                        .and(studyRoom.Status.eq(Status.OPEN))
+                        .and(studyRoomInfo.status.eq(true))
+                )
                 .fetch();
+
+        return fetch;
     }
 
     /** 아이디 하나로 스터디룸 찾기 */
@@ -158,7 +185,8 @@ public class StudyRoomRepository {
 
     /** 과외 정보 승낙하기 */
     public boolean acceptInfo(String teacherId, String studentId) {
-        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId, false, true);
+        StudyRoomInfo studyRoomInfo = findStudyRoomInfo(teacherId, studentId, true, true);
+
         if(studyRoomInfo.isStatus() == true) {
             return false;
         }
