@@ -5,7 +5,7 @@ devtools:
 #local / dev / prod
 spring:
   profiles:
-    active: local
+    active: dev
     include: jwt
   mvc:
     hiddenmethod:
@@ -27,6 +27,10 @@ spring:
   security:
     user:
       password: 542ced02-3ec0-40cd-a5b7-0dbdeca9bcf1
+#  security:
+#    user:
+#      name: user
+#      password: 1111
 
 #---
 #spring:
