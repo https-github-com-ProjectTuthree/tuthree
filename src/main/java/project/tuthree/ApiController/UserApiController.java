@@ -234,10 +234,10 @@ public class UserApiController {
 
     /**자녀수락**/
     @PostMapping("/user/parent")
-    public NotExistDataResultResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId){
-        String name = userRegisterService.acceptChild(parentId, studentId);
-        noticeService.ParentChildRegisterNotice(new keywordPushDTO(studentId, parentId, name, Grade.STUDENT.getStrType()));
-        return new NotExistDataResultResponse(StatusCode.OK.getCode(), parentId+"가 부모로 등록되었습니다.");
+    public ExistDataSuccessResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId) throws IOException{
+        UserResponseDTO responseDTO = userRegisterService.acceptChild(parentId, studentId);
+        noticeService.ParentChildRegisterNotice(new keywordPushDTO(studentId, parentId, responseDTO.getName(), Grade.STUDENT.getStrType()));
+        return new ExistDataSuccessResponse(StatusCode.OK.getCode(), responseDTO.getId()+"가 부모로 등록되었습니다.", responseDTO);
     }
 
     /**요청보기**/
