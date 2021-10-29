@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class StudentUpdateDTO {
-    private String id;
     private List<String> regionL;
     private Status registration;
     private List<String> subjectL;
@@ -21,9 +20,8 @@ public class StudentUpdateDTO {
     private String detail;
 
     @Builder
-    public StudentUpdateDTO(String id, List<String> regionL, Status registration, List<String> subjectL,
+    public StudentUpdateDTO(List<String> regionL, Status registration, List<String> subjectL,
                             String cost, School school, String detail) {
-        this.id = id;
         this.regionL = regionL;
         this.registration = registration;
         this.subjectL = subjectL;

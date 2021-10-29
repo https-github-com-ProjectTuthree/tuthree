@@ -7,10 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+import project.tuthree.domain.room.StudyRoomInfo;
 import project.tuthree.domain.user.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,6 @@ public class UserEntityRepository {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
-    private final UserInfoRepository userInfoRepository;
 
     /** user id로 찾기 */
     public Student studentFindById(String id) {
@@ -106,14 +107,22 @@ public class UserEntityRepository {
         }
     }
 
+
+    /**지역정보 수정**/
     public void userUpdateRegion(String userId, List<String> region) {
-        //userInfoRepository.deleteByUserId(userId);
-        //userInfoRepository.flush();
+        List<UserInfo> regionL=jpaQueryFactory.select(userInfo).from(userInfo)
+                .where(userInfo.userId.eq(userId))
+                .fetch();
+        for(Object o : regionL){
+            em.remove(o);
+        }
+        em.flush();
         for (String r : region) {
             UserInfo userInfo = new UserInfo(userId, r, null);
             em.persist(userInfo);
         }
     }
+
 
     /** 지역 정보 찾기 */
     public List<String> userFindRegion(String id) {
@@ -125,6 +134,14 @@ public class UserEntityRepository {
 
     /** 과목 정보 저장 */
     public void userSaveSubject(String userId, List<String> subject) {
+        for(String s : subject) {
+            UserInfo userInfo = new UserInfo(userId, null, s);
+            em.persist(userInfo);
+        }
+    }
+
+    /** 과목 정보 수정 */
+    public void userUpdateSubject(String userId, List<String> subject) {
         for(String s : subject) {
             UserInfo userInfo = new UserInfo(userId, null, s);
             em.persist(userInfo);
