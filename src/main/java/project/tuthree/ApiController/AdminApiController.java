@@ -45,7 +45,7 @@ public class AdminApiController {
 
     @PostMapping("/admin/in")
     public Object adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
-
+        log.debug("\n---- 관리자 로그인 ----\n");
         Map<String, String> map = adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
         if(!map.get("grade").equals(" ")){
             response.setHeader(AUTHORIZATION,  BEARER+ " " + jwtController.makeJwtToken(adminDTO.getId(), map.get("grade")));
@@ -58,6 +58,7 @@ public class AdminApiController {
 
     @GetMapping("/admin/out")
     public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
+        log.debug("\n---- 관리자 로그아웃 ----\n");
         response.setHeader(AUTHORIZATION, BEARER + " ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
@@ -65,7 +66,7 @@ public class AdminApiController {
     /**회원목록 조회**/
     @GetMapping("/admin/userlist")
     public EmbeddedResponse.ExistListDataSuccessResponse UserList (@RequestParam("grade") String grade, @RequestParam(value = "userId", required = false) String userId, @PageableDefault(size= 10, sort="createDate") Pageable pageRequest) {
-
+        log.debug("\n---- 관리자 " + grade + " 회원 목록 조회 [PAGE : " + pageRequest + 1 + "] ----\n");
         Page<UserListDTO> userPageList = adminService.userList(grade, pageRequest, userId);
         return new EmbeddedResponse.ExistListDataSuccessResponse(StatusCode.OK.getCode(),
                 "회원 목록이 조회되었습니다.", userPageList.getTotalElements() , userPageList);
@@ -76,6 +77,7 @@ public class AdminApiController {
     /**회원조회**/
     @GetMapping("/user/{grade}/{user_id}")
     public ExistDataSuccessResponse viewUser(@PathVariable("grade") String grade, @PathVariable("user_id")String userId) throws IOException {
+        log.debug("\n---- 관리자 회원 조회 [USER ID : " + userId + "] ----\n");
         if (Objects.equals(grade, "parent")) {
             UserDTO userDTO = adminService.viewParent(userId);
             return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
@@ -97,6 +99,7 @@ public class AdminApiController {
     /**학교인증**/
     @GetMapping("/tutor/auth")
     public NotExistDataResultResponse checkTutorAuth(@RequestParam("tutorId") String tutorId){
+        log.debug("\n---- 관리자 선생님 회원 인증 [USER ID : " + tutorId + "] ----\n");
         adminService.checkTutorAuth(tutorId);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), tutorId+"의 인증이 완료되었습니다.");
     }
@@ -104,9 +107,9 @@ public class AdminApiController {
     /**회원 탈퇴시키기**/
     @DeleteMapping("/user/{grade}/{user_id}")
     public NotExistDataResultResponse deleteUser(@PathVariable("grade") String grade,@PathVariable("user_id")String userId){
-        String id = userId;
-        String status = userRegisterService.quitUser(id, grade);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
+        log.debug("\n---- 관리자 회원 삭제 [USER ID : " + userId + "] ----\n");
+        String status = userRegisterService.quitUser(userId, grade);
+        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "관리자 권한으로" + userId + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
 
 }

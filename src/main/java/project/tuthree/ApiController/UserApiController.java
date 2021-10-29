@@ -3,24 +3,18 @@ package project.tuthree.ApiController;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.tuthree.configuration.Utils;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.UserRepository;
-import project.tuthree.dto.EmbeddedDTO;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
 import project.tuthree.repository.AdminRepository;
-import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.AdminService;
 import project.tuthree.service.NoticeService;
 import project.tuthree.service.NoticeService.keywordPushDTO;
-import project.tuthree.service.PostFindService;
 import project.tuthree.service.UserRegisterService;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 
@@ -31,19 +25,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
+import static project.tuthree.configuration.Utils.AUTHORIZATION;
+import static project.tuthree.configuration.Utils.BEARER;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserApiController {
 
-    private final String AUTHORIZATION = "Authorization";
-    private final String BEARER = "Bearer";
     private final UserRegisterService userRegisterService;
 
     private final JwtController jwtController;
     private final UserRepository userRepository;
-    private final AdminService adminService;
-    private final AdminRepository adminRepository;
     private final NoticeService noticeService;
 
     /** id체크 **/
@@ -55,7 +48,7 @@ public class UserApiController {
     /** 학부모 회원가입 **/
     @PostMapping("/register/parent")
     public NotExistDataResultResponse ParentRegister(@ModelAttribute @Valid UserRegisterDTO registerDTO) {
-        log.debug("\n---- 학부모 회원 가입 ----\n");
+        log.debug("\n---- 학부모 회원 가입 [USER ID : " + registerDTO.getId() + "] ----\n");
         String id = userRegisterService.createParent(registerDTO);
         if (id == "중복") {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
@@ -69,7 +62,7 @@ public class UserApiController {
     /**학생 회원가입**/
     @PostMapping("/register/tutee")
     public NotExistDataResultResponse StudentRegister(@ModelAttribute @Valid StudentRegisterDTO registerDTO) throws IOException {
-        log.debug("\n---- 학생 회원 가입 ----\n");
+        log.debug("\n---- 학생 회원 가입 [USER ID : " + registerDTO.getId() + "] ----\n");
         String id = userRegisterService.createStudent(registerDTO);
         if (id == "중복") {
             return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
@@ -83,7 +76,7 @@ public class UserApiController {
     /**선생님 회원가입**/
     @PostMapping("/register/tutor")
     public NotExistDataResultResponse TeacherRegister(@ModelAttribute @Valid TeacherRegisterDTO registerDTO) {
-        log.debug("\n---- 선생님 회원 가입 ----\n");
+        log.debug("\n---- 선생님 회원 가입 [USER ID : " + registerDTO.getId() + "] ----\n");
         String id = userRegisterService.createTeacher(registerDTO);
 
         if (id == "중복") {
@@ -100,8 +93,8 @@ public class UserApiController {
     public ExistDataSuccessResponse findUserInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) throws IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
+        log.debug("\n---- 사용자 기본 정보 조회 [USER ID : " + id + "] ----\n");
         UserResponseDTO responseDTO = userRegisterService.findByInfo(id, grade);
-        log.debug("\n---- 기본정보조회 ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 정보를 조회합니다.", responseDTO);
 
     }
@@ -111,7 +104,7 @@ public class UserApiController {
     public ExistDataSuccessResponse findTutorInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) throws IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         TeacherResponseDTO responseDTO = userRegisterService.findTutorId(id);
-        log.debug("\n---- 과외정보조회 ----\n");
+        log.debug("\n---- TUTOR 과외 정보 조회 [USER ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
 
     }
@@ -121,7 +114,7 @@ public class UserApiController {
     public ExistDataSuccessResponse findTuteeInfo(@RequestHeader(value="Authorization") String AUTHORIZATION) {
         String id = CheckUserI(AUTHORIZATION).getId();
         StudentResponseDTO responseDTO = userRegisterService.findTuTeeId(id);
-        log.debug("\n---- 과외정보조회 ----\n");
+        log.debug("\n---- TUTEE 과외 정보 조회 [USER ID : " + id + "] ----\n");
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), id + "의 과외정보를 조회합니다.", responseDTO);
     }
 
@@ -130,6 +123,7 @@ public class UserApiController {
     public NotExistDataResultResponse update(@RequestHeader(value="Authorization") String AUTHORIZATION, @ModelAttribute UserUpdateDTO updateDTO)throws NoSuchAlgorithmException, IOException{
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
+        log.debug("\n---- 기본 정보 수정 [USER ID : " + id + "] ----\n");
         String updatedId = userRegisterService.userUpdate(id, grade, updateDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
 
@@ -139,6 +133,7 @@ public class UserApiController {
     @PutMapping("/user/tutorclass")
     public NotExistDataResultResponse teacherUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @ModelAttribute TeacherUpdateDTO updateDTO) throws IOException, NoSuchAlgorithmException{
         String id = CheckUserI(AUTHORIZATION).getId();
+        log.debug("\n---- TUTOR 과외 정보 수정 [USER ID : " + id + "] ----\n");
         String updatedId =  userRegisterService.teacherUpdate(id, updateDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
 
@@ -148,6 +143,7 @@ public class UserApiController {
     @PutMapping("/user/tuteeclass")
     public NotExistDataResultResponse studentUpdate(@RequestHeader(value="Authorization") String AUTHORIZATION, @RequestBody StudentUpdateDTO updateDTO) {
         String id = CheckUserI(AUTHORIZATION).getId();
+        log.debug("\n---- TUTEE 과외 정보 수정 [USER ID : " + id + "] ----\n");
         String updatedId =  userRegisterService.studentUpdate(id, updateDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "의 정보가 수정되었습니다.");
 
@@ -158,7 +154,7 @@ public class UserApiController {
      */
     @PostMapping("/login")
     public Object UserLogin(@RequestBody @Valid LoginDTO loginDTO, HttpServletResponse response) {
-        log.debug("\n---- 로그인 ----\n");
+        log.debug("\n----  사용자 로그인 [USER ID : " + loginDTO.getId() + "] ----\n");
         Map<String, String> map = userRegisterService.userLogin(loginDTO);
         if (!map.get("grade").equals(" ")) {
             response.setHeader(AUTHORIZATION, BEARER + " " + jwtController.makeJwtToken(loginDTO.getId(), map.get("grade")));
@@ -172,6 +168,7 @@ public class UserApiController {
      */
     @GetMapping("/logout")
     public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
+        log.debug("\n----  사용자 로그아웃 ----\n");
         response.setHeader(AUTHORIZATION, BEARER + " ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
     }
@@ -180,6 +177,7 @@ public class UserApiController {
     @PostMapping("/user/findid/{method}")
     public NotExistDataResultResponse FindId(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method){
         String id = userRegisterService.findId(findIdDTO, method);
+        log.debug("\n----  사용자 아이디 찾기 [USER ID : " + id + "] ----\n");
         if (!id.equals(" ")) {
             return new NotExistDataResultResponse(StatusCode.OK.getCode(), "id는"+id+"입니다.");
         }
@@ -190,8 +188,8 @@ public class UserApiController {
     /**비밀번호 찾기**/
     @PostMapping("/user/findpwd/{method}") //여기서 그다음 어떻게 넘겨주지.. 토큰을 줘야되나
     public NotExistDataResultResponse FindPwd(@RequestBody FindIdDTO findIdDTO, @PathVariable("method") String method, HttpServletResponse response){
-        String str;
-        str = userRegisterService.findPwd(findIdDTO, method);
+        String str = userRegisterService.findPwd(findIdDTO, method);
+        log.debug("\n----  사용자 비밀번호 찾기 [USER ID : " + findIdDTO.getId() + "] ----\n");
         if(!str.equals(" ")){
             response.setHeader("Id", findIdDTO.getId());
             response.setHeader("Grade", str);
@@ -207,6 +205,7 @@ public class UserApiController {
     public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, @RequestHeader(value="Id") String Id, @RequestHeader(value="Grade") String grade){
         //String userId = CheckUserI(request).getId();
         //String grade = CheckUserI(request).getGrade();
+        log.debug("\n----  사용자 비밀번호 찾기 후 변경 [USER ID : " + Id + "] ----\n");
         userRegisterService.changePwd(pwdDTO, Id, grade);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
     }
@@ -216,6 +215,7 @@ public class UserApiController {
     public NotExistDataResultResponse ChangePwd(@RequestBody ChangePwdDTO pwdDTO, @RequestHeader(value="Authorization") String AUTHORIZATION){
         String userId = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
+        log.debug("\n----  사용자 비밀번호 변경 [USER ID : " + userId + "] ----\n");
         userRegisterService.changePwd(pwdDTO, userId, grade);
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),"비밀번호가 변경되었습니다.");
     }
@@ -226,6 +226,7 @@ public class UserApiController {
         String parentId = CheckUserI(AUTHORIZATION).getId();
         String id = userRegisterService.plusChild(parentId, childDTO);
         String parentName = userRepository.findById(parentId).get().getName();
+        log.debug("\n----  자녀 등록 요청 [PARENT ID : " + parentId + "] [STUDENT ID : " + id + "] ----\n");
         noticeService.ParentChildRegisterNotice(new keywordPushDTO(parentId, id, parentName, Grade.PARENT.getStrType()));
         return new NotExistDataResultResponse(StatusCode.OK.getCode(),parentName+"님 께서 " +id+"로 자녀를 신청하였습니다.");
     }
@@ -235,6 +236,7 @@ public class UserApiController {
     /**자녀수락**/
     @PostMapping("/user/parent")
     public ExistDataSuccessResponse AcceptChild(@RequestParam("parentId") String parentId, @RequestParam("studentId") String studentId) throws IOException{
+        log.debug("\n----  자녀 등록 수락 [PARENT ID : " + parentId + "] [STUDENT ID : " + studentId + "] ----\n");
         UserResponseDTO responseDTO = userRegisterService.acceptChild(parentId, studentId);
         noticeService.ParentChildRegisterNotice(new keywordPushDTO(studentId, parentId, responseDTO.getName(), Grade.STUDENT.getStrType()));
         return new ExistDataSuccessResponse(StatusCode.OK.getCode(), responseDTO.getId()+"가 부모로 등록되었습니다.", responseDTO);
@@ -244,6 +246,7 @@ public class UserApiController {
     @GetMapping("/user/parent")
     public ExistListDataSuccessResponse AcceptChild(@RequestHeader(value="Authorization") String AUTHORIZATION){
         String studentId = CheckUserI(AUTHORIZATION).getId();
+        log.debug("\n----  자녀 등록 요청 조회 [USER ID : " + studentId + "] ----\n");
         List<ChildDTO> childDTO = userRegisterService.checkChild(studentId);
         return new ExistListDataSuccessResponse(StatusCode.OK.getCode(), "자녀 요청의 정보가 조회되었습니다.", childDTO.stream().count(), childDTO);
 
@@ -254,6 +257,7 @@ public class UserApiController {
     public NotExistDataResultResponse delete(@RequestHeader(value="Authorization") String AUTHORIZATION){
         String id = CheckUserI(AUTHORIZATION).getId();
         String grade = CheckUserI(AUTHORIZATION).getGrade();
+        log.debug("\n----  회원 탈퇴 [USER ID : " + id + "] ----\n");
         String status = userRegisterService.quitUser(id, grade);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "회원 탈퇴가 완료되었습니다. 상태: " +status);
     }
