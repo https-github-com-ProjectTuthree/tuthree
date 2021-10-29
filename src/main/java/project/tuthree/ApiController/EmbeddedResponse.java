@@ -52,14 +52,6 @@ public class EmbeddedResponse {
     }
 
     @Getter
-    @AllArgsConstructor
-    public static class NonValueNotExistDataResultResponse {
-        private Boolean Success;
-        int StatusCode;
-        String Message;
-    }
-
-    @Getter
     public static class RestResponse {
         private boolean success;
         private Category data;
@@ -68,6 +60,4 @@ public class EmbeddedResponse {
             this.data = data;
         }
     }
-
-
 }

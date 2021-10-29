@@ -24,6 +24,16 @@ repositories {
 }
 
 dependencies {
+	// https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+	compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	//external broker
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-reactor-netty'
+	implementation 'com.google.firebase:firebase-admin:8.1.0'
 	//rabbitmq
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'

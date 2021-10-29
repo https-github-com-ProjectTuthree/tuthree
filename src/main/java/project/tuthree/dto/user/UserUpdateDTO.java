@@ -1,5 +1,6 @@
 package project.tuthree.dto.user;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Sex;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserUpdateDTO {
     private String id;
     private String email;

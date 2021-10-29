@@ -21,6 +21,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static project.tuthree.repository.UserFileRepository.FileType.*;
 
+
 @Service
 @Slf4j
 @Transactional(readOnly = true)
@@ -45,7 +46,7 @@ public class UserRegisterService {
         boolean parent = userRepository.existsById(id);
         boolean student = studentRepository.existsById(id);
         boolean teacher = teacherRepository.existsById(id);
-        Long admin = adminRepository.existById(id);
+        boolean admin = adminRepository.existById(id);
 
         boolean result = TRUE;
 
@@ -53,7 +54,7 @@ public class UserRegisterService {
         if (parent == FALSE) {
             if (student == FALSE) {
                 if (teacher == FALSE) {
-                    if (admin == 0L)
+                    if (admin == FALSE)
                         result = FALSE;
                     return result;
 
@@ -79,7 +80,6 @@ public class UserRegisterService {
     /**
      * 로그인
      */
-
     public Map<String, String> userLogin(LoginDTO loginDTO) {
         String id = loginDTO.getId();
         String pwd = loginDTO.getPwd();
@@ -245,8 +245,9 @@ public class UserRegisterService {
      **/
     @Transactional
     public String userUpdate(String id, String grade, UserUpdateDTO updateDto) throws NoSuchAlgorithmException, IOException {
+//        log.info(updateDto.getFile().getOriginalFilename());
         if (Objects.equals(grade, "parent")) {
-            if (!updateDto.getFile().isEmpty()) {
+            if (!(updateDto.getFile().isEmpty())) {
                 String post = userFileRepository.saveFile(updateDto.getFile(), PARENT);
                 updateDto.updatePost(post);
             }
@@ -288,8 +289,8 @@ public class UserRegisterService {
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
 
-        userEntityRepository.userSaveRegion(updateDTO.getId(), updateDTO.getRegionL());
-        userEntityRepository.userSaveSubject(updateDTO.getId(), updateDTO.getSubjectL());
+        userEntityRepository.userSaveRegion(id, updateDTO.getRegionL());
+        userEntityRepository.userSaveSubject(id, updateDTO.getSubjectL());
 
         return id;
     }
@@ -308,8 +309,8 @@ public class UserRegisterService {
 
         teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail(), updateDTO.getCertification());
 
-        userEntityRepository.userSaveRegion(updateDTO.getId(), updateDTO.getRegionL());
-        userEntityRepository.userSaveSubject(updateDTO.getId(), updateDTO.getSubjectL());
+        userEntityRepository.userSaveRegion(id, updateDTO.getRegionL());
+        userEntityRepository.userSaveSubject(id, updateDTO.getSubjectL());
 
         return id;
     }
@@ -499,11 +500,12 @@ public class UserRegisterService {
     @Transactional
     public String acceptChild(String parentId, String studentId){
         Child child = childRepository.findByParentIdAndStudentId(parentId, studentId);
+        log.info("===============child : " + child.getStudentName());
         child.accept();
         User user = userRepository.findById(parentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ parentId));
         Student student = studentRepository.findById(studentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ studentId));;
         student.accept(user);
-        return child.getParentId();
+        return student.getName();
     }
 
     /**요청보기**/

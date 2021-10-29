@@ -4,12 +4,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.tuthree.ApiController.EmbeddedResponse;
-import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
-import project.tuthree.ApiController.StatusCode;
 import project.tuthree.domain.post.PostFaq;
 import project.tuthree.exception.NotFoundRequestData;
-import project.tuthree.mapper.PostFaqMapper;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -21,7 +17,6 @@ public class PostFaqRepository {
     /** faq_repository */
     private final int setPage =  10;
     private final EntityManager em;
-    private final JPAQueryFactory jpaQueryFactory;
 
     /** faq 목록 출력 */
     public List<PostFaq> findByPage(int page) {
@@ -68,6 +63,13 @@ public class PostFaqRepository {
 
         PostFaq faq = em.find(PostFaq.class, id);
         faq.updateFaq(postFaq);
+        return id;
+    }
+
+    /** faq 조회수 업로드 */
+    public Long updateFaq(Long id) {
+        PostFaq faq = em.find(PostFaq.class, id);
+        faq.updateView();
         return id;
     }
 

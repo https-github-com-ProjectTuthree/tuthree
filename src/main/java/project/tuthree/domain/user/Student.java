@@ -15,7 +15,6 @@ import java.util.Date;
 
 @Entity
 @Getter
-@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "student")
 public class Student implements Persistable<String>{
