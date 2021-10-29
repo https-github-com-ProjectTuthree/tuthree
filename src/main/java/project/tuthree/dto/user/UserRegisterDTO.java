@@ -11,10 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.Sex;
-import project.tuthree.domain.user.Teacher;
 import project.tuthree.domain.user.User;
 
-import javax.persistence.EntityManager;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

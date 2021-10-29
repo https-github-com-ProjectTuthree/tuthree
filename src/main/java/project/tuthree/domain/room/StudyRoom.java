@@ -1,6 +1,5 @@
 package project.tuthree.domain.room;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,11 +12,8 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 
-import static javax.persistence.FetchType.*;
-
 @Entity
 @Getter
-//@IdClass(StudyRoomId.class)
 @Table(name = "study_room")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyRoom implements Serializable {

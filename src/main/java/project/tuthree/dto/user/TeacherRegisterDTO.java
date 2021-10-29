@@ -2,10 +2,6 @@ package project.tuthree.dto.user;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;

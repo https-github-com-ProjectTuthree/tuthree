@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.School;
-import project.tuthree.domain.user.SchoolStatus;
 
 import java.util.List;
 

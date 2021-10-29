@@ -20,7 +20,6 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class PostAdminApiController {
 
     private final PostFaqService postFaqService;

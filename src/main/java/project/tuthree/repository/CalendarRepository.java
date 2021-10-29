@@ -1,20 +1,16 @@
 package project.tuthree.repository;
 
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.room.Calendar;
-import project.tuthree.domain.room.QCalendar;
 import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.EntityManager;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static project.tuthree.domain.room.QCalendar.calendar;

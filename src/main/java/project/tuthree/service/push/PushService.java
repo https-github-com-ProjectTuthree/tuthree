@@ -8,16 +8,12 @@ import project.tuthree.service.NoticeService.keywordPushDTO;
 import project.tuthree.controller.RedisTestService;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.dto.ChatDTO;
-import project.tuthree.repository.UserEntityRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PushService {
-    private final UserEntityRepository userEntityRepository;
     private final RedisTestService redisTestService;
-
-    //String fcmToken = "e4XGMOVOQhY:APA91bEdPah3AuW5pshLafwEYOQxWvm2Pb8KDhn850kcmJvziZvZjfOsl1YytOUh3Cuf93b7i1CXM0gPV16GXsH5MN-sYMF29a-K6hNqmrbgXAyeBQnrWoaVsihHxc5WHlTPzE_McK5D";
 
     /** 토큰 조회 */
     public String getFcmToken(String userId) {

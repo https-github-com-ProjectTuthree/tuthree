@@ -1,13 +1,9 @@
 package project.tuthree.dto.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @AllArgsConstructor

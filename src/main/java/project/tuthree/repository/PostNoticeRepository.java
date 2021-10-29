@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.post.PostNotice;
-import project.tuthree.mapper.PostNoticeMapper;
 
 import javax.persistence.EntityManager;
 import java.util.List;

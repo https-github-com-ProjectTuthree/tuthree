@@ -1,7 +1,6 @@
 package project.tuthree.dto.post;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.Assert;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.post.FaqType;
@@ -9,8 +8,6 @@ import project.tuthree.domain.user.Admin;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
