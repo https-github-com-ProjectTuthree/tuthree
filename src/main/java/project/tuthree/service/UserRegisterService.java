@@ -1,4 +1,3 @@
-
 package project.tuthree.service;
 
 import lombok.RequiredArgsConstructor;
@@ -289,8 +288,8 @@ public class UserRegisterService {
 
         student.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getDetail());
 
-        userEntityRepository.userSaveRegion(id, updateDTO.getRegionL());
-        userEntityRepository.userSaveSubject(id, updateDTO.getSubjectL());
+        userEntityRepository.userUpdateRegion(id, updateDTO.getRegionL());
+        userEntityRepository.userUpdateSubject(id, updateDTO.getSubjectL());
 
         return id;
     }
@@ -309,8 +308,8 @@ public class UserRegisterService {
 
         teacher.update(updateDTO.getRegistration(), updateDTO.getCost(), updateDTO.getSchool(), updateDTO.getStatus(), updateDTO.getMajor(), updateDTO.getDetail(), updateDTO.getCertification());
 
-        userEntityRepository.userSaveRegion(id, updateDTO.getRegionL());
-        userEntityRepository.userSaveSubject(id, updateDTO.getSubjectL());
+        userEntityRepository.userUpdateRegion(id, updateDTO.getRegionL());
+        userEntityRepository.userUpdateSubject(id, updateDTO.getSubjectL());
 
         return id;
     }
@@ -498,15 +497,18 @@ public class UserRegisterService {
 
     /**자녀수락**/
     @Transactional
-    public String acceptChild(String parentId, String studentId){
+    public UserResponseDTO acceptChild(String parentId, String studentId) throws IOException{
         Child child = childRepository.findByParentIdAndStudentId(parentId, studentId);
         log.info("===============child : " + child.getStudentName());
         child.accept();
         User user = userRepository.findById(parentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ parentId));
         Student student = studentRepository.findById(studentId).orElseThrow(()-> new IllegalArgumentException("해당 사용자가 없습니다. id="+ studentId));;
         student.accept(user);
-        return student.getName();
+        byte[] file = userFileRepository.transferUserFile(user.getPost());
+
+        return new UserResponseDTO(user, file);
     }
+
 
     /**요청보기**/
     @Transactional
