@@ -1,9 +1,8 @@
 package project.tuthree.ApiController;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,6 @@ import project.tuthree.configuration.Utils;
 
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -26,11 +24,12 @@ public class MailApiController {
 
     /** 이메일 보내기 **/
     @GetMapping("/auth-email")
+    @ResponseStatus(HttpStatus.OK)
     public Object mailSending(@RequestParam("mail") @Valid String email) {
         log.debug("\n---- 이메일 인증 [USER MAIL : " + email + "] ----\n");
         HashMap<String, Object> result = new HashMap<>();
         if (emailCheck(email) == 1)
-            return new NotExistBadDataResultResponse(StatusCode.CONFLICT.getCode(), "이메일 형식이 아닙니다.");
+            throw new NullPointerException("이메일 형식이 아닙니다.");
 
         Random rand = new Random();
         String numStr = "";
@@ -59,10 +58,10 @@ public class MailApiController {
 
             mailSender.send(message);
 
-            return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), numStr);
+            return new NotExistDataResultResponse(HttpStatus.CREATED.value(), numStr);
         } catch (Exception e) {
             e.printStackTrace();
-            return new NotExistBadDataResultResponse(StatusCode.NO_CONTENT.getCode(), "인증 번호 발급에 실패했습니다.");
+            throw new NullPointerException("인증 번호 발급에 실패했습니다.");
         }
     }
 
