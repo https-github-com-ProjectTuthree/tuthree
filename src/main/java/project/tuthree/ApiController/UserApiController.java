@@ -3,16 +3,14 @@ package project.tuthree.ApiController;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.tuthree.configuration.Utils;
 import project.tuthree.controller.JwtController;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.domain.user.UserRepository;
 import project.tuthree.dto.EmbeddedDTO.LoginReturnDTO;
 import project.tuthree.dto.user.*;
-import project.tuthree.repository.AdminRepository;
-import project.tuthree.service.AdminService;
 import project.tuthree.service.NoticeService;
 import project.tuthree.service.NoticeService.keywordPushDTO;
 import project.tuthree.service.UserRegisterService;
@@ -51,12 +49,12 @@ public class UserApiController {
         log.debug("\n---- 학부모 회원 가입 [USER ID : " + registerDTO.getId() + "] ----\n");
         String id = userRegisterService.createParent(registerDTO);
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(HttpStatus.CONFLICT.value(), "중복된 아이디입니다.");
         }
         noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonPParse(registerDTO);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
+        return new NotExistDataResultResponse(HttpStatus.CREATED.value(), id + "님 안녕하세요.");
     }
 
     /**학생 회원가입**/
@@ -65,12 +63,12 @@ public class UserApiController {
         log.debug("\n---- 학생 회원 가입 [USER ID : " + registerDTO.getId() + "] ----\n");
         String id = userRegisterService.createStudent(registerDTO);
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(HttpStatus.CONFLICT.value(), "중복된 아이디입니다.");
         }
         noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonSParse(registerDTO);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
+        return new NotExistDataResultResponse(HttpStatus.CREATED.value(), id + "님 안녕하세요.");
     }
 
     /**선생님 회원가입**/
@@ -80,12 +78,12 @@ public class UserApiController {
         String id = userRegisterService.createTeacher(registerDTO);
 
         if (id == "중복") {
-            return new NotExistDataResultResponse(StatusCode.CONFLICT.getCode(), "중복된 아이디입니다.");
+            return new NotExistDataResultResponse(HttpStatus.CONFLICT.value(), "중복된 아이디입니다.");
         }
         noticeService.SignUpAdminNotice(id);
         /**json파일 저장**/
         //userFileRepository.jsonTParse(registerDTO);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "님 안녕하세요.");
+        return new NotExistDataResultResponse(HttpStatus.CREATED.value(), id + "님 안녕하세요.");
     }
 
     /**기본정보조회**/

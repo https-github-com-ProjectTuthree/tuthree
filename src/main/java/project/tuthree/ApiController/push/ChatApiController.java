@@ -2,10 +2,10 @@ package project.tuthree.ApiController.push;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
-import project.tuthree.ApiController.StatusCode;
 import project.tuthree.configuration.Utils;
 import project.tuthree.controller.JwtController;
 import project.tuthree.controller.RedisTestService;
@@ -15,6 +15,7 @@ import project.tuthree.service.push.ChatService.chatRoomDTO;
 import project.tuthree.service.push.ChatService.chatRoomListDTO;
 import project.tuthree.service.push.ChatService.chatRoomNameDTO;
 
+import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.List;
 
@@ -38,10 +39,11 @@ public class ChatApiController {
  * 읽지 않은 채팅 수 조회
  * */
     @PostMapping("/send")
-    public NotExistDataResultResponse sendChat(@RequestBody ChatDTO chatDTO) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public NotExistDataResultResponse sendChat(@RequestBody @Valid ChatDTO chatDTO) {
         //valid
         chatService.sendChat(chatDTO);
-        return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), "채팅 전송 완료");
+        return new NotExistDataResultResponse(HttpStatus.CREATED.value(), "채팅 전송 완료");
     }
 
     /**
@@ -54,10 +56,11 @@ public class ChatApiController {
      * 이후 채팅창에서 채팅하기를 하면 채팅방이 이미 만들어졌고, 번호도 아는 상태
      * */
     @PostMapping
-    public NotExistDataResultResponse addChatRoom(@RequestBody chatRoomNameDTO dto) throws Exception {
+    @ResponseStatus(HttpStatus.CREATED)
+    public NotExistDataResultResponse addChatRoom(@RequestBody @Valid chatRoomNameDTO dto) throws Exception {
         try{
             chatService.addChatRoomByIds(dto);
-            return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),"채팅방이 생성되었습니다.");
+            return new NotExistDataResultResponse(HttpStatus.CREATED.value(), "채팅방이 생성되었습니다.");
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("잘못된 요청입니다");
@@ -68,10 +71,11 @@ public class ChatApiController {
 
     /** (채팅방 채팅 목록) 채팅 내역 불러오기*/
     @GetMapping("/{roomId}")
+    @ResponseStatus(HttpStatus.OK)
     public ExistDataSuccessResponse getChatByRoomId(@RequestHeader(AUTHORIZATION) String token, @PathVariable("roomId") Long id) {
         String userId = jwtController.parseValueFromJwtToken(token, CLAIMUSERID);
         chatRoomDTO chatListByRoomId = chatService.findChatListByRoomId(id, userId);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+        return new ExistDataSuccessResponse(HttpStatus.OK.value(),
                 "채팅 목록을 불러왔습니다.", chatListByRoomId);
     }
 
@@ -81,10 +85,11 @@ public class ChatApiController {
      * 알림 쌓인 걸 어떻게 해야할 지 모르겟다..
      * */
     @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
     public ExistDataSuccessResponse findChatRoomByOneId(@RequestHeader(AUTHORIZATION) String token) throws ParseException {
         String userId = jwtController.parseValueFromJwtToken(token, Utils.CLAIMUSERID);
         List<chatRoomListDTO> chatNotRead = chatService.findChatNotRead(userId);
-        return new ExistDataSuccessResponse(StatusCode.OK.getCode(),"채팅방을 조회했습니다.", chatNotRead);
+        return new ExistDataSuccessResponse(HttpStatus.OK.value(), "채팅방을 조회했습니다.", chatNotRead);
     }
 
     /** fcm token 저장 api */
