@@ -6,16 +6,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tuthree.domain.room.StudyRoom;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostreviewDTO {
 
+
     private StudyRoom id;
 
+    @NotBlank(message = "평점 입력값 필요")
+    @Min(value = 0)
+    @Max(value = 5)
     private int star;
 
+    @NotBlank(message = "후기 내용 입력값 필요")
     private String content;
 
     private Date writeAt;

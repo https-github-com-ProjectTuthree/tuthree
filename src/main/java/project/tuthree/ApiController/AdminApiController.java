@@ -51,6 +51,7 @@ public class AdminApiController {
 
     @GetMapping("/admin/out")
     public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
+        /** 토큰 확인하기 */
         log.debug("\n---- 관리자 로그아웃 ----\n");
         response.setHeader(AUTHORIZATION, BEARER + " ");
         return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");

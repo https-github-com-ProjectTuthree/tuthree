@@ -23,6 +23,7 @@ import project.tuthree.service.UserFileService;
 import project.tuthree.service.UserFileService.FileIdName;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -74,9 +75,8 @@ public class PostUserApiController {
     }
 
     /**
-     * 파일 다운로드 테스트
+     * 파일 다운로드
      */
-    @ResponseBody
     @GetMapping("/community/download/{file_id}")
     public void DownloadFile(HttpServletResponse response, @PathVariable("file_id") Long id) throws IOException {
         userFileRepository.downloadUserFile(response, id);
@@ -84,7 +84,7 @@ public class PostUserApiController {
     
     /** 커뮤니티 게시글 작성 -> post_testpaper & user_file*/
     @PostMapping("/community/write")
-    public NotExistDataResultResponse writeCommunity(@ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
+    public NotExistDataResultResponse writeCommunity(@ModelAttribute @Valid PaperForm form) throws NoSuchAlgorithmException, IOException {
         Long id = postTestPaperService.writeCommunity(form);
         log.debug("\n---- 사용자 커뮤니티 글 작성 [ID : " + id + "] ----\n");
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 게시글이 작성되었습니다.");
@@ -92,7 +92,7 @@ public class PostUserApiController {
 
     /** 게시글 수정 - 이미지도 수정하도록 */
     @PutMapping("/community/id/{post_id}")
-    public NotExistDataResultResponse updateCommunity(@PathVariable("post_id") Long id, @ModelAttribute PaperForm form) throws NoSuchAlgorithmException, IOException {
+    public NotExistDataResultResponse updateCommunity(@PathVariable("post_id") Long id, @ModelAttribute @Valid PaperForm form) throws NoSuchAlgorithmException, IOException {
         /** 이전에 그 글이랑 관련된 자료는 다 지우고 새로 수정하기?? 흠... */
         Long updatedId = postTestPaperService.updateCommunity(id, form);
         log.debug("\n---- 사용자 커뮤니티 글 수정 [ID : " + id + "] ----\n");

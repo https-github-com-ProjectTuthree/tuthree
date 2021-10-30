@@ -26,7 +26,6 @@ repositories {
 dependencies {
 	// https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
 	compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	//thymeleaf
@@ -52,7 +51,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	//sdk
+	//mail auth service - sdk
 	implementation 'net.nurigo:javaSDK:2.2'
 	//spring security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -60,8 +59,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	//Spring data jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	//validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//json
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

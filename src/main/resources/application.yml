@@ -6,7 +6,7 @@ devtools:
 spring:
   profiles:
     active: dev
-    include: jwt
+    include: jwt, oauth
   mvc:
     hiddenmethod:
       filter:
@@ -24,20 +24,4 @@ spring:
           starttls:
             enable: true
             required: true
-  security:
-    user:
-      password: 542ced02-3ec0-40cd-a5b7-0dbdeca9bcf1
-#  security:
-#    user:
-#      name: user
-#      password: 1111
 
-#---
-#spring:
-#  profiles:
-#    active: dev
-
-#---
-#spring:
-#  profiles:
-#    active: prod //aws
