@@ -8,6 +8,7 @@ import project.tuthree.domain.user.Admin;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -17,17 +18,17 @@ public class PostnoticeDTO {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "관리자 아이디 입력값 필요")
     private Admin adminId;
 
-    @NotNull
+    @NotNull(message = "공지사항 타입 입력값 필요 : [NORMAL, IMPORTANT]")
     @Enumerated(EnumType.STRING)
     private NoticeType type;
 
-    @NotNull
+    @NotBlank(message = "공지사항 제목 입력값 필요")
     private String title;
 
-    @NotNull
+    @NotBlank(message = "공지사항 내용 입력값 필요")
     private String content;
 
     private Long view = 0L;
@@ -36,7 +37,7 @@ public class PostnoticeDTO {
 
     private Date alterAt;
 
-    @NotNull
+    @NotNull(message = "공지사항 비밀글 여부 입력값 필요 : [OPEN, CLOSE]")
     private Status secret;
 
     @Builder

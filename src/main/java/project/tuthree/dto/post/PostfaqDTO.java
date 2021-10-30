@@ -8,6 +8,8 @@ import project.tuthree.domain.user.Admin;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -16,15 +18,16 @@ import java.util.Date;
 public class PostfaqDTO {
 
     private Long id;
-    @NotNull
+    @NotNull(message = "FAQ 작성자 아이디 입력값 필요")
     private Admin adminId;
 
-    @NotNull
+    @NotNull(message = "FAQ 타입 입력값 필요")
     @Enumerated(EnumType.STRING)
     private FaqType type;
-    @NotNull
+
+    @NotBlank(message = "FAQ 제목 입력값 필요")
     private String title;
-    @NotNull
+    @NotBlank(message = "FAQ 내용 입력값 필요")
     private String content;
 
     private Long view = 0L;
@@ -33,18 +36,11 @@ public class PostfaqDTO {
 
     private Date alterAt;
 
-    @NotNull
+    @NotNull(message = "FAQ 비밀글 여부 입력값 필요")
     private Status secret;
 
     @Builder
     public PostfaqDTO(Long id, Admin adminId, FaqType type, String title, String content, Status secret) {
-        Assert.notNull(adminId, "adminId must not be blank");
-        Assert.notNull(type, "type must not be blank");
-        Assert.hasText(title, "title must not be blank");
-        Assert.hasText(content, "content must not be blank");
-        //Assert.notNull(view, "view must not be blank");
-        //Assert.notNull(writeAt, "writeAt must not be blank");
-        Assert.notNull(secret, "secret must not be blank");
         this.id = id;
         this.adminId = adminId;
         this.type = type;

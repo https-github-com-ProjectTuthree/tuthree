@@ -1,5 +1,7 @@
 package project.tuthree.ApiController;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +12,8 @@ import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse
 import project.tuthree.configuration.Utils;
 
 import javax.mail.internet.MimeMessage;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -22,7 +26,7 @@ public class MailApiController {
 
     /** 이메일 보내기 **/
     @GetMapping("/auth-email")
-    public Object mailSending(@RequestParam("mail") String email) {
+    public Object mailSending(@RequestParam("mail") @Valid String email) {
         log.debug("\n---- 이메일 인증 [USER MAIL : " + email + "] ----\n");
         HashMap<String, Object> result = new HashMap<>();
         if (emailCheck(email) == 1)
@@ -64,9 +68,7 @@ public class MailApiController {
 
     public int emailCheck(String e_mail) {
         if (e_mail.contains("@")) {
-            if (e_mail.split("@")[1].contains(".")) {
-                return 0;
-            }
+            if (e_mail.split("@")[1].contains(".")) return 0;
         } return 1;
     }}
 

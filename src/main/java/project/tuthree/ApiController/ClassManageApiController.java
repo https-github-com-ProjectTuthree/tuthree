@@ -3,11 +3,13 @@ package project.tuthree.ApiController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.tuthree.ApiController.EmbeddedResponse.ExistDataSuccessResponse;
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
+import project.tuthree.ApiController.ValidationGroups.PostExamTeacherGroup;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.user.Grade;
 import project.tuthree.dto.post.PostAnswerDTO;
@@ -129,7 +131,7 @@ public class ClassManageApiController {
     /** 일정 등록 */
     @PostMapping("/room/calendar")
     public NotExistDataResultResponse RegisterCalendarByStudyRoom(@RequestParam("teacherId") String teacherId,
-                                                                  @RequestParam("studentId") String studentId, @RequestBody CalendarDTO calendarDTO) {
+                                                                  @RequestParam("studentId") String studentId, @RequestBody @Valid CalendarDTO calendarDTO) {
         log.debug("\n---- 일정 등록 [TEACHER ID : " + teacherId + "] [STUDENT ID : " + studentId + "] ----\n");
         Long registedId = calendarService.registerCalendar(teacherId.trim(), studentId.trim(), calendarDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),registedId + "번 일정이 등록되었습니다.");
@@ -137,7 +139,7 @@ public class ClassManageApiController {
 
     /** 일정 수정 */
     @PutMapping("/room/calendar/{cal_id}")
-    public NotExistDataResultResponse UpdateCalendarById(@PathVariable("cal_id") Long id, @RequestBody CalendarDTO calendarDTO){
+    public NotExistDataResultResponse UpdateCalendarById(@PathVariable("cal_id") Long id, @RequestBody @Valid CalendarDTO calendarDTO){
         log.debug("\n---- 일정 수정 [CAL ID : " + id + "] ----\n");
         Long updatedId = calendarService.updateCalendar(id, calendarDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), updatedId + "번 일정이 수정되었습니다");
@@ -154,7 +156,7 @@ public class ClassManageApiController {
     /** 수업 보고서 등록 */
     @PostMapping("/room/post")
     public NotExistDataResultResponse RegisterPostStudyByStudyRoom(@RequestParam("teacherId") String teacherId,
-                                                                   @RequestParam("studentId") String studentId, @RequestBody PoststudyDTO poststudyDTO) {
+                                                                   @RequestParam("studentId") String studentId, @RequestBody @Valid PoststudyDTO poststudyDTO) {
         log.debug("\n---- 수업 보고서 등록 [TEACHER ID : " + teacherId + "] [STUDENT ID : " + studentId + "] ----\n");
         Long registeredId = postStudyService.registerPost(teacherId.trim(), studentId.trim(), poststudyDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), registeredId + "번 보고서가 등록되었습니다.");
@@ -171,7 +173,7 @@ public class ClassManageApiController {
 
     /** 수업 보고서 수정 */
     @PutMapping("/room/post/{post_id}")
-    public NotExistDataResultResponse UpdatePostById(@PathVariable("post_id") Long id, @RequestBody PoststudyDTO poststudyDTO) {
+    public NotExistDataResultResponse UpdatePostById(@PathVariable("post_id") Long id, @RequestBody @Valid PoststudyDTO poststudyDTO) {
         log.debug("\n---- 수업 보고서 수정 [POST ID : " + id + "] ----\n");
         Long updatedId = postStudyService.updatePost(id, poststudyDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(),updatedId + "번 보고서가 수정되었습니다.");
@@ -219,7 +221,7 @@ public class ClassManageApiController {
      */
     @PostMapping(value = "/room/exam/{post_id}")
     public NotExistDataResultResponse RegisterAnswerById(@PathVariable("post_id") Long id, @RequestParam("grade") String grade,
-                                                         @RequestBody PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
+                                                         @RequestBody @Validated(PostExamTeacherGroup.class) PostExamDTO postExamDTO) throws NoSuchAlgorithmException, IOException {
         log.debug("\n---- 답안지 등록 [POST ID : " + id + "] [GRADE : " + grade + "] ----\n");
         String fileName = studyRoomService.saveRealAnswer(id, grade.trim(), postExamDTO);
         return new NotExistDataResultResponse(StatusCode.CREATED.getCode(), id + "번 문제지에 대한 답안이 입력되었습니다. : " + fileName);
