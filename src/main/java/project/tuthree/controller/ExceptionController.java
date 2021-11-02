@@ -52,7 +52,7 @@ public class ExceptionController {
     public NotExistBadDataResultResponse IllegalArgumentController(IllegalArgumentException e) {
         HttpStatus status = HttpStatus.FORBIDDEN;
         log.info(new ExceptionResponse(status.value(), status.getReasonPhrase(), "찾으시는 정보가 없거나 잘못된 정보를 입력하셨습니다.").toString());
-        return new NotExistBadDataResultResponse(HttpStatus.FORBIDDEN.value(), "찾으시는 정보가 없거나 잘못된 정보를 입력하셨습니다.");
+        return new NotExistBadDataResultResponse(HttpStatus.FORBIDDEN.value(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

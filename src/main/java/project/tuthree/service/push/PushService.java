@@ -22,6 +22,7 @@ public class PushService {
 
     public void sendChatByToken(ChatDTO chatDTO) {
         String fcmToken = getFcmToken(chatDTO.getUserId());
+        log.info("hello============" + fcmToken);
         if (fcmToken != null) {
             WebpushNotification notification = WebpushNotification.builder()
                     .setTitle(chatDTO.getName() + "님으로부터 메시지가 왔습니다.")

@@ -151,4 +151,9 @@ public class TeacherDTO {
         this.file = file;
         this.authFile = authFile;
     }
+
+    public TeacherDTO updatePwdToNull() {
+        this.pwd = "";
+        return this;
+    }
 }

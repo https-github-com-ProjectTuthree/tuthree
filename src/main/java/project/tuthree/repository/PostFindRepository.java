@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.BookMark;
+import project.tuthree.domain.QBookMark;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.post.QPostFind;
 import project.tuthree.domain.user.*;
@@ -184,49 +185,12 @@ public class PostFindRepository {
         return teacherId;
     }
 
-    /** 선생님 id로 post find 찾기 */
-    public List<PostFindTeacherListDTO> findTeacherByuserId(List<String> userId) {
-
-        List<PostFindTeacherListDTO> list = new ArrayList<>();
-
-        for(String s : userId) {
-            PostFind p = jpaQueryFactory.selectFrom(QPostFind.postFind)
-                    .where(QPostFind.postFind.teacherId.id.eq(s))
-                    .fetchOne();
-            Teacher t = p.getTeacherId();
-            List<String> region = userEntityRepository.userFindRegion(s);
-            List<String> subject = userEntityRepository.userFindSubject(s);
-            PostFindTeacherListDTO dto = new PostFindTeacherListDTO(p.getId(), t.getName(), t.getSchool(), t.getMajor(), t.getStar(), t.getCost(),
-                    t.getSex(), t.getRegistration(), region, subject, null);
-            list.add(dto);
-        }
-        return list;
-
-    }
 
     /** post id로 학생 id 찾기 */
     public String findStudentById(Long postId) {
         String userId = jpaQueryFactory.select(postFind.studentId.id).from(postFind)
                 .where(postFind.id.eq(postId)).fetchOne();
         return userId;
-    }
-
-    /** 학생 id로 post find 찾기 */
-    public List<PostFindStudentListDTO> findStudentByuserId(List<String> userId) {
-        List<PostFindStudentListDTO> list = new ArrayList<>();
-
-        for(String s : userId) {
-            PostFind p = jpaQueryFactory.selectFrom(QPostFind.postFind)
-                    .where(postFind.studentId.id.eq(s))
-                    .fetchOne();
-            Student t = p.getStudentId();
-            List<String> region = userEntityRepository.userFindRegion(s);
-            List<String> subject = userEntityRepository.userFindSubject(s);
-            PostFindStudentListDTO dto = new PostFindStudentListDTO(p.getId(), t.getName(), t.getCost(), t.getSex(),
-                   t.getRegistration(), region, subject, null);
-            list.add(dto);
-        }
-        return list;
     }
 
     /** 선생님 게시글 갯수 */
@@ -263,9 +227,8 @@ public class PostFindRepository {
     }
 
     /** 북마크 리스트 불러오기 */
-    public List<String> listBookMark(String userId) {
-        return jpaQueryFactory.select(bookMark.user2)
-                .from(bookMark)
+    public List<BookMark> listBookMark(String userId) {
+        return jpaQueryFactory.selectFrom(bookMark)
                 .where(bookMark.user1.eq(userId))
                 .fetch();
     }

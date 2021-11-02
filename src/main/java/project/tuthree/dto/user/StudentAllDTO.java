@@ -62,5 +62,9 @@ public class StudentAllDTO {
     }
 
 
+    public StudentAllDTO updatePwdToNull() {
+        this.pwd = "";
+        return this;
+    }
 
 }

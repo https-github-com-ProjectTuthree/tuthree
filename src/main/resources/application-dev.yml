@@ -3,10 +3,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@3.35.214.91:1521:xe
-    #username: admin
     username: tuthree1234
     password: 1234
-    #aws-oracle
     driver-class-name: oracle.jdbc.OracleDriver
 
   rabbitmq:

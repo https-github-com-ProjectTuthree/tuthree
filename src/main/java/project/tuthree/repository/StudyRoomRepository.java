@@ -103,13 +103,13 @@ public class StudyRoomRepository {
                 .where(QStudyRoom.studyRoom.teacherId.id.eq(teacherId)
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
-        if(studyRoom == null) return null;
+        if(studyRoom == null) throw new NullPointerException("일치하는 스터디룸을 찾을 수 없습니다.");
 
         boolean isExist = findStudyRoomInfo(teacherId, studentId, findOpen, findClose) != null;
 
         if(isExist) return studyRoom;
 
-        return null;
+        throw new NullPointerException("일치하는 스터디룸을 찾을 수 없습니다.");
     }
 
     /** 스터디룸 아이디로 수업정보 찾기 */
@@ -264,10 +264,9 @@ public class StudyRoomRepository {
     }
 
     /** 스터디룸 아이디으로 파일 이름 겹치는 지 확인 */
-    public String findSameNameTestPaper(StudyRoom studyRoom, String name){
-        Long count = jpaQueryFactory.selectFrom(userFile)
+    public Long findSameNameTestPaper(StudyRoom studyRoom, String name){
+        return jpaQueryFactory.selectFrom(userFile)
                 .where(userFile.studyRoomId.eq(studyRoom)
                         .and(userFile.realTitle.contains(name))).fetchCount();
-        return (count > 0) ? name + "(" + count + ")" : name;
     }
 }
