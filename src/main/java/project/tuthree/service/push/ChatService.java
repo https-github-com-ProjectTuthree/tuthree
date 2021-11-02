@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import project.tuthree.domain.Chat;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.room.ChatRoom;
 import project.tuthree.dto.ChatDTO;
 import project.tuthree.dto.room.ChatroomDTO;
@@ -133,13 +134,15 @@ public class ChatService {
         public static class chatListDTO {
             String senderId;
             String name;
+            Status registration;
             String chat;
             String date;
             Long notRead;
 
-            public chatListDTO(String senderId, String name, String chat, String date) {
+            public chatListDTO(String senderId, String name, Status registration, String chat, String date) {
                 this.senderId = senderId;
                 this.name = name;
+                this.registration = registration;
                 this.chat = chat;
                 this.date = date;
                 this.notRead = 0L;

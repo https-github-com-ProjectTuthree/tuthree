@@ -94,8 +94,6 @@ public class UserFileRepository {
 
     /** json -> object */
     public Object changeJsonFile(String path) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-
         FileInputStream in = new FileInputStream(new File(path));
         Object object = objectMapper.readValue(in, Object.class);
         return object;

@@ -27,6 +27,7 @@ public class CorsConfiguration implements WebMvcConfigurer, Filter {
             log.info("OriginalURL 1==>" + originalURL  );
 
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+//        response.setHeader("Access-Control-Allow-Origin", request.getHeader("*"));
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, Origin, content-type, Authorization, Id, Grade");

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.tuthree.domain.Chat;
 import project.tuthree.domain.QChat;
+import project.tuthree.domain.Status;
 import project.tuthree.domain.room.ChatRoom;
 import project.tuthree.domain.user.StudentRepository;
 import project.tuthree.domain.user.TeacherRepository;
@@ -114,21 +115,27 @@ public class ChatRepository {
         for (Chat c : fetch) {
             String userId = c.getRoom().getUser1();
             String userName = "";
+            Status userReg = Status.CLOSE;
 
             if(id.equals(c.getRoom().getUser1())){
                 userId = c.getRoom().getUser2();
             }
 
             if(teacherRepository.existsById(userId)){
-                userName = userEntityRepository.findTeacherNameById(userId);
+                Tuple tuple = userEntityRepository.findTeacherNameByIdnReg(userId);
+                userReg = tuple.get(0, Status.class);
+                userName = tuple.get(1, String.class);
             }else if(studentRepository.existsById(userId)){
-                userName = userEntityRepository.findStudentNameById(userId);
+                Tuple tuple = userEntityRepository.findStudentNameByIdnReg(userId);;
+                userReg = tuple.get(0, Status.class);
+                userName = tuple.get(1, String.class);
             }else if(userRepository.existsById(userId)){
-                userName = userEntityRepository.findParentNameById(userId);
+                userReg = Status.CLOSE;
+                userName = userEntityRepository.findParentNameByIdnReg(userId);
             }else if(adminRepository.existById(userId)){
                 userName = "관리자";
             }
-            chatRoomListDTO chatRoomListDTO = new chatRoomListDTO(c.getRoom().getId(), new chatRoomListDTO.chatListDTO(userId, userName, c.getContent(), userFileRepository.unixToTimestamp(c.getChatAt())));
+            chatRoomListDTO chatRoomListDTO = new chatRoomListDTO(c.getRoom().getId(), new chatRoomListDTO.chatListDTO(userId, userName, userReg, c.getContent(), userFileRepository.unixToTimestamp(c.getChatAt())));
             list.add(chatRoomListDTO);
         }
         return list;
