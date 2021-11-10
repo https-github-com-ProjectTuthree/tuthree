@@ -29,7 +29,6 @@ public class CalendarRepository {
     /** 스터디룸 캘린더 전체 조회 - 일정, 보고서 */
 
     public List<Calendar> findByStudyroom(StudyRoom studyRoom){
-
         return jpaQueryFactory.selectFrom(calendar)
                 .where(calendar.studyRoomId.eq(studyRoom))
                 .fetch();
@@ -48,6 +47,7 @@ public class CalendarRepository {
         for (Calendar c : fetch) {
             if (userFileRepository.unixToDate(c.getDateAt()).equals(date)) list.add(c);
         }
+
         if(list.isEmpty()) throw new NullPointerException("해당 날짜에 등록된 일정이 없습니다.");
         return list;
     }

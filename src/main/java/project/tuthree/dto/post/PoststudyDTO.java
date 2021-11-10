@@ -4,8 +4,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import project.tuthree.domain.room.StudyRoom;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -15,12 +18,16 @@ public class PoststudyDTO {
 
     private StudyRoom studyRoomId;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "수업 보고서 날짜 입력값 필요")
     private Date date;
+
+    @NotBlank(message = "수업 보고서 차수 입력값 필요")
     private Long number;
 
     private String start;
     private String end;
-
+    @NotBlank(message = "수업 보고서 내용 입력값 필요")
     private String detail;
 
     @Builder

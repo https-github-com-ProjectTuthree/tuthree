@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.tuthree.domain.user.Category;
 
-import java.util.HashMap;
-import java.util.List;
-
 @RestController
 public class EnumController {
 

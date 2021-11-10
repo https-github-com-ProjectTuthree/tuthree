@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import project.tuthree.ApiController.EmbeddedResponse.*;
 import project.tuthree.controller.JwtController;
@@ -37,23 +38,26 @@ public class AdminApiController {
 
 
     @PostMapping("/admin/in")
+    @ResponseStatus(HttpStatus.OK)
     public Object adminLogin(@RequestBody @Valid AdminDTO adminDTO, HttpServletResponse response) {
         log.debug("\n---- 관리자 로그인 ----\n");
         Map<String, String> map = adminRepository.findByIdPwd(adminDTO.getId(), adminDTO.getPwd());
         if(!map.get("grade").equals(" ")){
             response.setHeader(AUTHORIZATION,  BEARER+ " " + jwtController.makeJwtToken(adminDTO.getId(), map.get("grade")));
-            return new ExistDataSuccessResponse(StatusCode.OK.getCode(),
+            return new ExistDataSuccessResponse(HttpStatus.OK.value(),
                     "ID " + adminDTO.getId() + "(으)로 로그인되었습니다.", new LoginReturnDTO(adminDTO.getId(), map.get("name"), map.get("grade")));
         }
-        return new NotExistBadDataResultResponse(StatusCode.CONFLICT.getCode(),
+        return new NotExistBadDataResultResponse(HttpStatus.CONFLICT.value(),
                 "일치하는 계정 정보가 존재하지 않습니다.");
     }
 
     @GetMapping("/admin/out")
+    @ResponseStatus(HttpStatus.OK)
     public NotExistDataResultResponse UserLogout(HttpServletResponse response) {
+        /** 토큰 확인하기 */
         log.debug("\n---- 관리자 로그아웃 ----\n");
         response.setHeader(AUTHORIZATION, BEARER + " ");
-        return new NotExistDataResultResponse(StatusCode.OK.getCode(), "로그아웃되었습니다.");
+        return new NotExistDataResultResponse(HttpStatus.OK.value(), "로그아웃되었습니다.");
     }
 
     /**회원목록 조회**/

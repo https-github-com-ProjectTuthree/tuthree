@@ -25,6 +25,7 @@ import static project.tuthree.exception.ExceptionSupplierImpl.wrap;
 
 
 import javax.persistence.EntityManager;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -52,13 +53,15 @@ public class PostTestPaperService {
     @AllArgsConstructor
     @Builder
     public static class PaperForm {
-        @NotNull
+        @NotBlank(message = "작성자 아이디 입력값 필요")
         String userId;
-        @NotNull
+        @NotBlank(message = "게시글 제목 입력값 필요")
         String title;
-        @NotNull
+        @NotBlank(message = "게시글 내용 입력값 필요")
         String content;
+        @NotNull(message = "게시글 비밀글 여부 입력값 필요 : [OPEN, CLOSE]")
         Status secret;
+        @NotNull(message = "게시글 파일 첨부 필요 : [pdf]")
         List<MultipartFile> file;
     }
 
