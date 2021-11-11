@@ -77,7 +77,8 @@ public class PostFindRepository {
                         .and(m.userId.eq(n.userId)).and(builder));
 
         JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
-                .where(postFind.teacherId.in(where));
+                .where(postFind.teacherId.in(where))
+                .orderBy(postFind.teacherId.registration.desc());
 
         //정렬
         if(condition.getSort() != null && !condition.getSort().isEmpty()){
@@ -89,16 +90,16 @@ public class PostFindRepository {
                     query.orderBy(postFind.teacherId.createDate.asc());
                     break;
                 case "hprice" :
-                    query.orderBy(postFind.teacherId.cost.desc());
+                    query.orderBy(postFind.teacherId.cost.desc(), postFind.teacherId.createDate.desc());
                     break;
                 case "lprice" :
-                    query.orderBy(postFind.teacherId.cost.asc());
+                    query.orderBy(postFind.teacherId.cost.asc(), postFind.teacherId.createDate.desc());
                     break;
                 case "hstar" :
-                    query.orderBy(postFind.teacherId.star.desc());
+                    query.orderBy(postFind.teacherId.star.desc(), postFind.teacherId.createDate.desc());
                     break;
                 case "lstar" :
-                    query.orderBy(postFind.teacherId.star.asc());
+                    query.orderBy(postFind.teacherId.star.asc(), postFind.teacherId.createDate.desc());
                     break;
                 default:
                     break;
@@ -107,7 +108,8 @@ public class PostFindRepository {
         return query;
     }
     public List<PostFind> findTeacherFindList(int page, JPAQuery<PostFind> query){
-        return query.offset(setPage * (page - 1))
+        return query.orderBy(postFind.teacherId.name.asc())
+                .offset(setPage * (page - 1))
                 .limit(setPage).fetch();
     }
 
@@ -141,7 +143,8 @@ public class PostFindRepository {
                         .and(m.userId.eq(n.userId)).and(builder));
 
         JPAQuery<PostFind> query = jpaQueryFactory.selectFrom(postFind)
-                .where(postFind.studentId.in(where));
+                .where(postFind.studentId.in(where))
+                .orderBy(postFind.studentId.registration.desc());
 
         //정렬
         if(condition.getSort() != null && !condition.getSort().isEmpty()){
@@ -153,10 +156,10 @@ public class PostFindRepository {
                     query.orderBy(postFind.studentId.createDate.asc());
                     break;
                 case "hprice" :
-                    query.orderBy(postFind.studentId.cost.desc());
+                    query.orderBy(postFind.studentId.cost.desc(), postFind.studentId.createDate.desc());
                     break;
                 case "lprice" :
-                    query.orderBy(postFind.studentId.cost.asc());
+                    query.orderBy(postFind.studentId.cost.asc(), postFind.studentId.createDate.desc());
                     break;
                 default:
                     break;
@@ -165,7 +168,8 @@ public class PostFindRepository {
         return query;
     }
     public List<PostFind> findStudentFindList(int page, JPAQuery<PostFind> query){
-        return query.offset(setPage * (page - 1))
+        return query.orderBy(postFind.studentId.name.asc())
+                .offset(setPage * (page - 1))
                 .limit(setPage).fetch();
     }
 
@@ -185,12 +189,20 @@ public class PostFindRepository {
         return teacherId;
     }
 
-
     /** post id로 학생 id 찾기 */
     public String findStudentById(Long postId) {
         String userId = jpaQueryFactory.select(postFind.studentId.id).from(postFind)
                 .where(postFind.id.eq(postId)).fetchOne();
         return userId;
+    }
+
+    /** 사용자 아이디로 게시글 아이디 찾기 */
+    public PostFind findPostByUserId(String userId) {
+        PostFind postFind = jpaQueryFactory.selectFrom(QPostFind.postFind)
+                .where(QPostFind.postFind.teacherId.id.eq(userId)
+                        .or(QPostFind.postFind.studentId.id.eq(userId)))
+                .fetchOne();
+        return postFind;
     }
 
     /** 선생님 게시글 갯수 */

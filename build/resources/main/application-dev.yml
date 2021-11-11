@@ -2,22 +2,11 @@
 
 spring:
   datasource:
-    #url: jdbc:oracle:thin:@tuthree-database.cuhft9d20wyq.ap-northeast-2.rds.amazonaws.com:1521/DATABASE
-    url: jdbc:oracle:thin:@3.35.214.91:1521:xe
-    #username: admin
+    url: jdbc:oracle:thin:@3.35.18.73:1521:xe
     username: tuthree1234
-    #password: tuthree1234
     password: 1234
-    #driver-class-name: oracle.jdbc.driver.OracleDriver
     driver-class-name: oracle.jdbc.OracleDriver
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+
   rabbitmq:
     host: localhost
     username: tuthree1234
@@ -25,7 +14,7 @@ spring:
     port: 5672
     listener:
       simple:
-        acknowledge-mode: manual
+        acknowledge-mode: none
 
   jpa:
     hibernate:

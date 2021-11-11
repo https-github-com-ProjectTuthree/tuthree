@@ -263,7 +263,15 @@ public class ClassManageApiController {
     @ResponseStatus(HttpStatus.OK)
     public ExistDataSuccessResponse CheckRealAnswer(@PathVariable("post_id") Long id) throws IOException {
         log.debug("\n---- 답안지 채점 [POST ID : " + id + "] ----\n");
-        PostAnswerDTO postAnswerDTO = studyRoomRepository.scoreTestPaper(id);
+        //정답 찾기
+        PostAnswerDTO postAnswerDTO = studyRoomService.sendTestScore(id);
         return new ExistDataSuccessResponse(HttpStatus.OK.value(), id + "번 문제의 답안을 채점했습니다.", postAnswerDTO);
+    }
+
+    @PutMapping("/room/exam/{file_id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public NotExistDataResultResponse updateTestScore(@PathVariable("file_id") Long id, @RequestBody PostAnswerDTO postAnswerDTO) throws IOException {
+        Long aLong = studyRoomService.updateTestScore(id, postAnswerDTO);
+        return new NotExistDataResultResponse(HttpStatus.CREATED.value(), id + "번 문제의 답안을 수정했습니다.");
     }
 }
