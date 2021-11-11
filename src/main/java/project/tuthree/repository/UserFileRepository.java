@@ -10,7 +10,9 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.tuthree.domain.file.QUserFile;
 import project.tuthree.domain.file.UserFile;
+import project.tuthree.domain.room.StudyRoom;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
@@ -69,6 +71,14 @@ public class UserFileRepository {
         return em.find(UserFile.class, id);
     }
 
+    /** 파일 찾기 */
+    public UserFile userFileFindByStudyroomnName(StudyRoom studyRoom, String name) {
+        return jpaQueryFactory.selectFrom(QUserFile.userFile)
+                .where(QUserFile.userFile.studyRoomId.eq(studyRoom)
+                        .and(QUserFile.userFile.realTitle.eq(name)))
+                .fetchOne();
+    }
+
     /** post_id로 파일 찾기 (커뮤니티에 등록된 파일 목록) */
     public List<UserFile> userFileFindByPostId(Long id) {
         return jpaQueryFactory.selectFrom(userFile)
@@ -92,12 +102,25 @@ public class UserFileRepository {
         return savePath;
     }
 
+    /** 파일 덮어쓰기 */
+    public String saveNewFile(String path, Object object) throws IOException {
+        File file = new File(path);
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IllegalArgumentException("파일 삭제 실패");
+            }
+        }
+        objectMapper.writeValue(file, object);
+        return path;
+    }
+
     /** json -> object */
     public Object changeJsonFile(String path) throws IOException {
         FileInputStream in = new FileInputStream(new File(path));
         Object object = objectMapper.readValue(in, Object.class);
         return object;
     }
+
 
     /** multipartfile을 저장하는 로직 - 파일 하나 */
     public String saveFile(MultipartFile file, FileType type) throws NoSuchAlgorithmException, IOException {
@@ -222,6 +245,4 @@ public class UserFileRepository {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return transFormat.format(unix);
     }
-
-
 }

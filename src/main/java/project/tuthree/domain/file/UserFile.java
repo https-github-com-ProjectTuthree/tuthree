@@ -54,4 +54,5 @@ public class UserFile {
         this.saveTitle = saveTitle;
         this.realTitle = realTitle;
     }
+
 }

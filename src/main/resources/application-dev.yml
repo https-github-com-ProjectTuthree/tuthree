@@ -2,7 +2,7 @@
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@3.35.214.91:1521:xe
+    url: jdbc:oracle:thin:@3.35.18.73:1521:xe
     username: tuthree1234
     password: 1234
     driver-class-name: oracle.jdbc.OracleDriver

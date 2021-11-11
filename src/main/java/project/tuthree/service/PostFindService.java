@@ -111,10 +111,8 @@ public class PostFindService {
     public PostFindStudentDTO findStudent(Long postId) throws IOException {
 
         String userId = postFindRepository.findStudentById(postId);
-
         Student student = userEntityRepository.studentFindById(userId);
         List<String> region = userEntityRepository.userFindRegion(userId);
-
         List<String> subject = userEntityRepository.userFindSubject(userId);
         byte[] file = userFileRepository.transferUserFile(student.getPost());
 
@@ -145,7 +143,14 @@ public class PostFindService {
     public List<BookMarkListDTO> studentListBookMark(String userId) {
         List<BookMark> bookMarks = postFindRepository.listBookMark(userId);
         List<BookMarkListDTO> dtoList = new ArrayList<>();
-        bookMarks.stream().forEach(m -> wrap(() -> dtoList.add(new BookMarkListDTO(m.getId(), adminService.viewTeacher(m.getUser2()).updatePwdToNull()))));
+        for (BookMark b : bookMarks) {
+            PostFind p = postFindRepository.findPostByUserId(b.getUser2());
+            Teacher t = p.getTeacherId();
+            List<String> region = userEntityRepository.userFindRegion(b.getUser2());
+            List<String> subject = userEntityRepository.userFindSubject(b.getUser2());
+            dtoList.add(new BookMarkListDTO(b.getId(), new PostFindTeacherDTO(t.getId(), p.getId(), t.getName(), t.getSex(), t.getBirth(), t.getCost(), t.getSchool(),
+                    t.getStatus().getKortype(), t.getStar(), t.getCost(),  t.getRegistration(), region, subject, t.getDetail(), null)));
+        }
         return dtoList;
     }
 
@@ -153,9 +158,16 @@ public class PostFindService {
     public List<BookMarkListDTO> teacherListBookMark(String userId) {
         List<BookMark> bookMarks = postFindRepository.listBookMark(userId);
         List<BookMarkListDTO> dtoList = new ArrayList<>();
-        bookMarks.stream().forEach(m -> wrap(() -> dtoList.add(new BookMarkListDTO(m.getId(), adminService.viewStudent(m.getUser2()).updatePwdToNull()))));
-        return dtoList;
 
+        for (BookMark b : bookMarks) {
+            PostFind p = postFindRepository.findPostByUserId(b.getUser2());
+            Student s = p.getStudentId();
+            List<String> region = userEntityRepository.userFindRegion(b.getUser2());
+            List<String> subject = userEntityRepository.userFindSubject(b.getUser2());
+            dtoList.add(new BookMarkListDTO(b.getId(), new PostFindStudentDTO(s.getId(), p.getId(), s.getName(), s.getSex(), s.getBirth(), s.getCost(), s.getSchool().getKorStatus(),
+                    s.getRegistration(), region, subject, s.getDetail(), null)));
+        }
+        return dtoList;
     }
 
     @Getter
