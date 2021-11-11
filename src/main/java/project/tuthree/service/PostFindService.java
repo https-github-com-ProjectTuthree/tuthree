@@ -1,17 +1,19 @@
 package project.tuthree.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import project.tuthree.domain.BookMark;
 import project.tuthree.domain.Status;
 import project.tuthree.domain.post.PostFind;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.BookmarkDTO;
 import project.tuthree.dto.post.PostfindDTO;
+import project.tuthree.dto.user.StudentDTO;
+import project.tuthree.dto.user.TeacherDTO;
 import project.tuthree.mapper.BookMarkMapper;
 import project.tuthree.mapper.PostFindMapper;
 import project.tuthree.repository.PostFindRepository;
@@ -21,6 +23,7 @@ import project.tuthree.repository.UserFileRepository;
 import project.tuthree.service.PostFindService.PostFindStudentCountListDTO.PostFindStudentListDTO;
 import project.tuthree.service.PostFindService.PostFindTeacherCountListDTO.PostFindTeacherListDTO;
 
+import static project.tuthree.exception.ExceptionSupplierImpl.wrap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +39,7 @@ public class PostFindService {
     private final PostFindMapper postFindMapper;
     private final UserEntityRepository userEntityRepository;
     private final BookMarkMapper bookMarkMapper;
-    private final ObjectMapper objectMapper;
+    private final AdminService adminService;
 
     /**
      * 선생님 postfind 목록 조회  - registration 상관x
@@ -51,7 +54,6 @@ public class PostFindService {
         List<PostFindTeacherListDTO> list = new ArrayList<>();
 
         for (PostFind f : teacher) {
-
             /** 검색 후에 또 지역을 끌어옴... */
             List<String> region = userEntityRepository.userFindRegion(f.getTeacherId().getId());
             List<String> subject = userEntityRepository.userFindSubject(f.getTeacherId().getId());
@@ -109,10 +111,8 @@ public class PostFindService {
     public PostFindStudentDTO findStudent(Long postId) throws IOException {
 
         String userId = postFindRepository.findStudentById(postId);
-
         Student student = userEntityRepository.studentFindById(userId);
         List<String> region = userEntityRepository.userFindRegion(userId);
-
         List<String> subject = userEntityRepository.userFindSubject(userId);
         byte[] file = userFileRepository.transferUserFile(student.getPost());
 
@@ -140,18 +140,34 @@ public class PostFindService {
     }
 
     /** 북마크 리스트 불러오기 - 학생이 선생님꺼 불러오기*/
-    public List<PostFindTeacherListDTO> studentListBookMark(String userId) {
-        List<String> bookMarks = postFindRepository.listBookMark(userId);
-        List<PostFindTeacherListDTO> list = postFindRepository.findTeacherByuserId(bookMarks);
-        return list;
+    public List<BookMarkListDTO> studentListBookMark(String userId) {
+        List<BookMark> bookMarks = postFindRepository.listBookMark(userId);
+        List<BookMarkListDTO> dtoList = new ArrayList<>();
+        for (BookMark b : bookMarks) {
+            PostFind p = postFindRepository.findPostByUserId(b.getUser2());
+            Teacher t = p.getTeacherId();
+            List<String> region = userEntityRepository.userFindRegion(b.getUser2());
+            List<String> subject = userEntityRepository.userFindSubject(b.getUser2());
+            dtoList.add(new BookMarkListDTO(b.getId(), new PostFindTeacherDTO(t.getId(), p.getId(), t.getName(), t.getSex(), t.getBirth(), t.getCost(), t.getSchool(),
+                    t.getStatus().getKortype(), t.getStar(), t.getCost(),  t.getRegistration(), region, subject, t.getDetail(), null)));
+        }
+        return dtoList;
     }
 
     /** 선생님이 학생을 불러오기 */
-    public List<PostFindStudentListDTO> teacherListBookMark(String userId) {
-        List<String> bookMarks = postFindRepository.listBookMark(userId);
-        List<PostFindStudentListDTO> list = postFindRepository.findStudentByuserId(bookMarks);
-        return list;
+    public List<BookMarkListDTO> teacherListBookMark(String userId) {
+        List<BookMark> bookMarks = postFindRepository.listBookMark(userId);
+        List<BookMarkListDTO> dtoList = new ArrayList<>();
 
+        for (BookMark b : bookMarks) {
+            PostFind p = postFindRepository.findPostByUserId(b.getUser2());
+            Student s = p.getStudentId();
+            List<String> region = userEntityRepository.userFindRegion(b.getUser2());
+            List<String> subject = userEntityRepository.userFindSubject(b.getUser2());
+            dtoList.add(new BookMarkListDTO(b.getId(), new PostFindStudentDTO(s.getId(), p.getId(), s.getName(), s.getSex(), s.getBirth(), s.getCost(), s.getSchool().getKorStatus(),
+                    s.getRegistration(), region, subject, s.getDetail(), null)));
+        }
+        return dtoList;
     }
 
     @Getter
@@ -250,6 +266,13 @@ public class PostFindService {
         List<String> subject;
         String detail;
         byte[] post;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class BookMarkListDTO {
+        private Long bookmarkId;
+        private Object object;
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import project.tuthree.domain.room.StudyRoom;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
@@ -18,7 +19,7 @@ public class CalendarDTO {
 
     private StudyRoom studyRoomId;
 
-    @NotBlank(message = "스터디룸 일정 날짜 입력값 필요")
+    @NotNull(message = "스터디룸 일정 날짜 입력값 필요")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateAt;
 

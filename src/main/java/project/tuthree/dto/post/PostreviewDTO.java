@@ -9,6 +9,7 @@ import project.tuthree.domain.room.StudyRoom;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -18,7 +19,7 @@ public class PostreviewDTO {
 
     private StudyRoom id;
 
-    @NotBlank(message = "평점 입력값 필요")
+    @NotNull(message = "평점 입력값 필요")
     @Min(value = 0)
     @Max(value = 5)
     private int star;

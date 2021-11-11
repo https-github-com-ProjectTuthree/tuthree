@@ -56,7 +56,7 @@ public class ClassMatchingApiController {
     @ResponseStatus(HttpStatus.OK)
     public ExistListDataSuccessResponse findTutorList(@PathVariable("page") int page, @RequestParam(value = "region", required = false) ArrayList<String> region,
                                                       @RequestParam(value = "subject", required = false) ArrayList<String> subject, @RequestParam(value = "start", required = false) String start,
-                                                      @RequestParam(value = "end", required = false) String end, @RequestParam(value = "sort", required = false) String sort) throws IOException {
+                                                      @RequestParam(value = "end", required = false) String end, @RequestParam(value = "sort", defaultValue = "latest",required = false) String sort) throws IOException {
         log.debug("\n---- TUTOR 목록 조회 [PAGE : " + page + "] ----\n");
         PostFindSearchCondition condition = new PostFindSearchCondition(region, subject, start, end, sort);
         PostFindTeacherCountListDTO list = postFindService.findTeacherList(page, condition);

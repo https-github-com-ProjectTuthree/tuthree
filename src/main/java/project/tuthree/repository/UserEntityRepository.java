@@ -43,21 +43,23 @@ public class UserEntityRepository {
 
 
     /** user id로 이름 찾기 */
-    public String findTeacherNameById(String id) {
-        return jpaQueryFactory.select(teacher.name)
+    public Tuple findTeacherNameByIdnReg(String id) {
+        Tuple tuple = jpaQueryFactory.select(teacher.registration, teacher.name)
                 .from(teacher)
                 .where(teacher.id.eq(id))
                 .fetchOne();
+        return tuple;
     }
 
-    public String findStudentNameById(String id) {
-        return jpaQueryFactory.select(student.name)
+    public Tuple findStudentNameByIdnReg(String id) {
+        Tuple tuple = jpaQueryFactory.select(student.registration, student.name)
                 .from(student)
                 .where(student.id.eq(id))
                 .fetchOne();
+        return tuple;
     }
 
-    public String findParentNameById(String id) {
+    public String findParentNameByIdnReg(String id) {
         return jpaQueryFactory.select(user.name)
                 .from(user)
                 .where(user.id.eq(id))

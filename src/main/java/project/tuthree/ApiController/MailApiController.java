@@ -10,10 +10,16 @@ import project.tuthree.ApiController.EmbeddedResponse.NotExistBadDataResultRespo
 import project.tuthree.ApiController.EmbeddedResponse.NotExistDataResultResponse;
 import project.tuthree.configuration.Utils;
 
+import javax.annotation.PostConstruct;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Random;
+import java.util.ResourceBundle;
 
 @Slf4j
 @RestController
@@ -39,9 +45,9 @@ public class MailApiController {
 
         String title = "TuThree 과외 플랫폼 회원가입 인증"; // 제목
         String content = System.getProperty("line.separator") +
-                "Tuthree 과외 플랫폼 회원가입을 위한 인증번호입니다." +
+                "TuThree 과외 플랫폼 회원가입을 위한 인증번호입니다." +
                 System.getProperty("line.separator") +
-                "아래의 4자리 숫자 를 인증 번호 확인란에 입력해주세요." +
+                "아래의 4자리 숫자를 인증 번호 확인란에 입력해주세요." +
                 System.getProperty("line.separator") +
                 numStr +
                 System.getProperty("line.separator");
@@ -69,6 +75,8 @@ public class MailApiController {
         if (e_mail.contains("@")) {
             if (e_mail.split("@")[1].contains(".")) return 0;
         } return 1;
-    }}
+    }
+
+}
 
 

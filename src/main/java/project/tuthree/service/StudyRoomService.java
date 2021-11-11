@@ -20,6 +20,7 @@ import project.tuthree.domain.room.StudyRoom;
 import project.tuthree.domain.room.StudyRoomInfo;
 import project.tuthree.domain.user.*;
 import project.tuthree.dto.file.UserfileDTO;
+import project.tuthree.dto.post.PostAnswerDTO;
 import project.tuthree.dto.post.PostExamDTO;
 import project.tuthree.dto.post.PostreviewDTO;
 import project.tuthree.dto.room.StudyroomDTO;
@@ -35,12 +36,15 @@ import project.tuthree.repository.UserEntityRepository;
 import project.tuthree.repository.UserFileRepository;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static project.tuthree.repository.UserFileRepository.FileType.POSTPAPER;
 
 @Slf4j
 @Service
@@ -236,8 +240,9 @@ public class StudyRoomService {
         StudyRoom studyRoom = studyRoomRepository.findStudyRoomById(teacherId, studentId, true, false);
         String[] names = file.getOriginalFilename().split("\\.pdf");
 
-        String real_title = studyRoomRepository.findSameNameTestPaper(studyRoom, names[0]);
-        String save_title = userFileRepository.saveFile(file, UserFileRepository.FileType.POSTPAPER);
+        Long count = studyRoomRepository.findSameNameTestPaper(studyRoom, names[0]);
+        String real_title = (count > 0) ? names[0] + "(" + count + ")" : names[0];
+        String save_title = userFileRepository.saveFile(file, POSTPAPER);
         UserfileDTO userfileDTO = new UserfileDTO(studyRoom, save_title, real_title + ".pdf");
         return userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
     }
@@ -250,7 +255,17 @@ public class StudyRoomService {
         if(name.contains(".pdf")) {
             name = name.split("\\.pdf")[0];
         }
-        return studyRoomRepository.findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json");
+        return objectMapper.convertValue(studyRoomRepository.findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json"), PostExamDTO.class);
+    }
+
+    public PostAnswerDTO sendTestScore(Long id) throws IOException {
+        UserFile userFile = userFileRepository.userFileFindByFileId(id);
+        String name = userFile.getRealTitle();
+
+        if(name.contains(".pdf")) {
+            name = name.split("\\.pdf")[0];
+        }
+        return objectMapper.convertValue(studyRoomRepository.findExamByIdnName(userFile.getStudyRoomId(), name + "_answer.json"), PostAnswerDTO.class);
     }
 
     /** 시험지 답안 등록 */
@@ -266,11 +281,29 @@ public class StudyRoomService {
         if(Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.TEACHER) || Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.STUDENT)){
             saveName = real + "_" + grade.toLowerCase(Locale.ROOT) + "_answer.json";
         }
-        String saved = userFileRepository.saveJsonFile(postExamDTO, saveName, UserFileRepository.FileType.POSTPAPER);
-        //user_file 테이블에 저장하기
-        UserfileDTO userfileDTO = new UserfileDTO(userFile.getStudyRoomId(), saved, saveName);
-        userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
-        return saveName;
+        boolean notExist = studyRoomRepository.findSameNameTestPaper(userFile.getStudyRoomId(), saveName) == 0;
+        if(notExist){
+            String saved = userFileRepository.saveJsonFile(postExamDTO, saveName, POSTPAPER);
+            //user_file 테이블에 저장하기
+            UserfileDTO userfileDTO = new UserfileDTO(userFile.getStudyRoomId(), saved, saveName);
+            userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO));
+            if (Grade.valueOf(grade.toUpperCase(Locale.ROOT)).equals(Grade.STUDENT)) {
+                PostAnswerDTO postAnswerDTO = studyRoomRepository.scoreTestPaper(id);
+                String answer = userFileRepository.saveJsonFile(postAnswerDTO, real + "_answer.json", POSTPAPER);
+                UserfileDTO userfileDTO1 = new UserfileDTO(userFile.getStudyRoomId(), answer, real + "_answer.json");
+                userFileRepository.userFileSave(userFileMapper.toEntity(userfileDTO1));
+            }
+            return saveName;
+        }
+        throw new IllegalArgumentException("이미 입력된 답안지가 존재합니다.");
+    }
+
+    public Long updateTestScore(Long id, PostAnswerDTO answerDTO) throws IOException {
+        UserFile userFile = userFileRepository.userFileFindByFileId(id);
+        String name = userFile.getRealTitle().split("\\.pdf")[0];
+        UserFile userFile1 = userFileRepository.userFileFindByStudyroomnName(userFile.getStudyRoomId(), name + "_answer.json");
+        userFileRepository.saveNewFile(userFile1.getSaveTitle(), answerDTO);
+        return userFile1.getId();
     }
 
 

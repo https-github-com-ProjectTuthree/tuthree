@@ -47,6 +47,7 @@ public class StudyRoomRepository {
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
     private final UserFileRepository userFileRepository;
+    private final ObjectMapper objectMapper;
 
     /** 스터디룸 개설하기 */
     public StudyRoom roomRegister(StudyRoom studyRoom) {
@@ -66,14 +67,6 @@ public class StudyRoomRepository {
         StudyRoomInfo info = em.find(StudyRoomInfo.class, studyRoomInfo.getId());
         info.infoUpdate(studyRoomInfo);
     }
-//
-//    private BooleanExpression statusTrue(boolean findTrue) {
-//        return findTrue == true ? studyRoomInfo.status.eq(true) : null;
-//    }
-//
-//    private BooleanExpression statusFalse(boolean findFalse) {
-//        return findFalse == true ? studyRoomInfo.status.eq(false) : null;
-//    }
 
     /** 수업 계획서 조회하기 */
     public StudyRoomInfo findStudyRoomInfo(String teacherId, String studentId, boolean findTrue, boolean findFalse) {
@@ -103,13 +96,13 @@ public class StudyRoomRepository {
                 .where(QStudyRoom.studyRoom.teacherId.id.eq(teacherId)
                         .and(QStudyRoom.studyRoom.studentId.id.eq(studentId)))
                 .fetchOne();
-        if(studyRoom == null) return null;
+        if(studyRoom == null) throw new NullPointerException("일치하는 스터디룸을 찾을 수 없습니다.");
 
         boolean isExist = findStudyRoomInfo(teacherId, studentId, findOpen, findClose) != null;
 
         if(isExist) return studyRoom;
 
-        return null;
+        throw new NullPointerException("일치하는 스터디룸을 찾을 수 없습니다.");
     }
 
     /** 스터디룸 아이디로 수업정보 찾기 */
@@ -232,10 +225,10 @@ public class StudyRoomRepository {
             name = name.split("\\.pdf")[0];
         }
 
-        PostExamDTO dto = findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json");
+        PostExamDTO dto = objectMapper.convertValue(findExamByIdnName(userFile.getStudyRoomId(), name + "_teacher_answer.json"), PostExamDTO.class);
 
         List<ProblemDTO> teacher = dto.getProblem();
-        List<ProblemDTO> student = findExamByIdnName(userFile.getStudyRoomId(), name + "_student_answer.json").getProblem();
+        List<ProblemDTO> student = objectMapper.convertValue(findExamByIdnName(userFile.getStudyRoomId(), name + "_student_answer.json"), PostExamDTO.class).getProblem();
         List<AnswerDTO> answer = new ArrayList<>();
 
         for (int i = 0; i < teacher.size(); i++) {
@@ -247,27 +240,23 @@ public class StudyRoomRepository {
                 answer.add(new AnswerDTO(teacher.get(i).getQuestion(), answerType.NONE, teacher.get(i).getAns(), student.get(i).getAns()));
             }
         }
-
         return new PostAnswerDTO(Long.valueOf(teacher.size()), dto.getDueDate(), answer);
     }
 
     /** 스터디룸 아이디와 파일 이름으로 답안지 찾기 - (json -> 객체) 반환까지 완료 */
-    public PostExamDTO findExamByIdnName(StudyRoom studyRoom, String name) throws IOException {
+    public Object findExamByIdnName(StudyRoom studyRoom, String name) throws IOException {
         String path = jpaQueryFactory.select(userFile.saveTitle).from(userFile)
                 .where(userFile.studyRoomId.eq(studyRoom)
                         .and(userFile.realTitle.eq(name)))
                 .fetchOne();
-        Object object = userFileRepository.changeJsonFile(path);
-        ObjectMapper mapper = new ObjectMapper();
-        PostExamDTO postExamDTO = mapper.convertValue(object, PostExamDTO.class);
-        return postExamDTO;
+        return userFileRepository.changeJsonFile(path);
     }
 
     /** 스터디룸 아이디으로 파일 이름 겹치는 지 확인 */
-    public String findSameNameTestPaper(StudyRoom studyRoom, String name){
-        Long count = jpaQueryFactory.selectFrom(userFile)
+    public Long findSameNameTestPaper(StudyRoom studyRoom, String name){
+        return jpaQueryFactory.selectFrom(userFile)
                 .where(userFile.studyRoomId.eq(studyRoom)
                         .and(userFile.realTitle.contains(name))).fetchCount();
-        return (count > 0) ? name + "(" + count + ")" : name;
     }
+
 }

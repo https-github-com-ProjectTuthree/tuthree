@@ -22,7 +22,7 @@ public class PoststudyDTO {
     @NotNull(message = "수업 보고서 날짜 입력값 필요")
     private Date date;
 
-    @NotBlank(message = "수업 보고서 차수 입력값 필요")
+    @NotNull(message = "수업 보고서 차수 입력값 필요")
     private Long number;
 
     private String start;
